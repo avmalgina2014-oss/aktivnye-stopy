@@ -6,7 +6,7 @@
 <title>Активные Стопы — Коллекция</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Nunito', sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -25,175 +25,59 @@
     box-shadow: 0 20px 60px rgba(0,0,0,0.2);
     text-align: center;
   }
-  h1 {
-    font-family: 'Fredoka One', cursive;
-    font-size: 28px;
-    color: #2d2d2d;
-    margin-bottom: 4px;
-  }
-  .subtitle {
-    font-size: 14px;
-    color: #888;
-    margin-bottom: 24px;
-    font-weight: 700;
-  }
-
-  /* Name screen */
-  #nameScreen input {
-    width: 100%;
-    border: 3px solid #e0e4ef;
-    border-radius: 16px;
-    padding: 14px 18px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-    outline: none;
-    text-align: center;
-    margin-bottom: 16px;
-    transition: border-color 0.2s;
-  }
-  #nameScreen input:focus { border-color: #667eea; }
+  h1 { font-family: 'Fredoka One', cursive; font-size: 28px; color: #2d2d2d; margin-bottom: 4px; }
+  .subtitle { font-size: 14px; color: #888; margin-bottom: 24px; font-weight: 700; }
   .btn {
     background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    border: none;
-    border-radius: 16px;
-    padding: 14px 28px;
-    font-family: 'Fredoka One', cursive;
-    font-size: 20px;
-    cursor: pointer;
-    width: 100%;
+    color: white; border: none; border-radius: 16px;
+    padding: 14px 28px; font-family: 'Fredoka One', cursive;
+    font-size: 20px; cursor: pointer; width: 100%;
     transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 4px 16px rgba(102,126,234,0.4);
+    box-shadow: 0 4px 16px rgba(102,126,234,0.4); margin-top: 8px;
   }
-  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.5); }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-  .btn-green {
-    background: linear-gradient(135deg, #2E7D32, #4CAF50);
-    box-shadow: 0 4px 16px rgba(46,125,50,0.4);
+  .btn:hover { transform: translateY(-2px); }
+  .btn-green { background: linear-gradient(135deg, #2E7D32, #4CAF50); box-shadow: 0 4px 16px rgba(46,125,50,0.4); }
+  #nameScreen input {
+    width: 100%; border: 3px solid #e0e4ef; border-radius: 16px;
+    padding: 14px 18px; font-family: 'Nunito', sans-serif;
+    font-size: 18px; font-weight: 700; outline: none;
+    text-align: center; margin-bottom: 16px; transition: border-color 0.2s;
   }
-
-  /* Collection screen */
-  .greeting {
-    font-size: 22px;
-    font-weight: 900;
-    color: #2d2d2d;
-    margin-bottom: 4px;
-  }
-  .progress-text {
-    font-size: 14px;
-    color: #888;
-    font-weight: 700;
-    margin-bottom: 20px;
-  }
-
-  /* Character display */
-  .character-box {
-    background: linear-gradient(135deg, #f8f9ff, #e8ecff);
-    border-radius: 24px;
-    padding: 24px;
-    margin-bottom: 20px;
-    position: relative;
-    min-height: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  .parts-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    width: 100%;
-    margin-bottom: 16px;
-  }
-  .part {
-    aspect-ratio: 1;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    transition: all 0.3s;
-  }
-  .part.locked {
-    background: #e0e4ef;
-    font-size: 20px;
-  }
-  .part.unlocked {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    box-shadow: 0 4px 12px rgba(102,126,234,0.4);
-    animation: pop 0.4s ease;
-  }
-  @keyframes pop {
-    0% { transform: scale(0); }
-    70% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-  }
-
-  .complete-badge {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: white;
-    border-radius: 20px;
-    padding: 8px 20px;
-    font-family: 'Fredoka One', cursive;
-    font-size: 16px;
-    display: none;
-    margin-bottom: 12px;
-  }
-
-  /* Action button */
-  .action-area { margin-top: 8px; }
-  .cooldown-msg {
-    background: #f0f4ff;
-    border-radius: 16px;
-    padding: 16px;
-    font-size: 15px;
-    font-weight: 700;
-    color: #667eea;
-    display: none;
-  }
-  .cooldown-msg .time { font-size: 24px; font-family: 'Fredoka One', cursive; display: block; margin-top: 4px; }
-
-  /* Celebration */
-  .celebration {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-  }
-  .celebration.show { display: flex; }
-  .celebration-box {
-    background: white;
-    border-radius: 32px;
-    padding: 40px 32px;
-    text-align: center;
-    max-width: 320px;
-    animation: zoomIn 0.4s ease;
-  }
-  @keyframes zoomIn {
-    from { transform: scale(0.5); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-  .celebration-emoji { font-size: 80px; display: block; margin-bottom: 16px; }
-  .celebration-title { font-family: 'Fredoka One', cursive; font-size: 28px; color: #2d2d2d; margin-bottom: 8px; }
-  .celebration-part { font-size: 60px; margin: 16px 0; }
-  .celebration-text { font-size: 15px; color: #888; font-weight: 700; margin-bottom: 24px; }
-
-  /* Loading */
-  .loading { color: #888; font-weight: 700; font-size: 16px; padding: 20px; }
-
-  /* Change name */
+  #nameScreen input:focus { border-color: #667eea; }
+  .greeting { font-size: 22px; font-weight: 900; color: #2d2d2d; margin-bottom: 4px; }
+  .char-name { font-family: 'Fredoka One', cursive; font-size: 22px; margin-bottom: 12px; }
+  .progress-text { font-size: 13px; color: #888; font-weight: 700; margin-bottom: 16px; }
+  .squares-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+  .square { aspect-ratio: 1; border-radius: 16px; transition: all 0.5s ease; border: 3px solid #e0e4ef; background: #e0e4ef; }
+  .square.unlocked { border-color: transparent; box-shadow: 0 4px 16px rgba(0,0,0,0.15); animation: popIn 0.5s ease; }
+  @keyframes popIn { 0%{transform:scale(0)} 70%{transform:scale(1.15)} 100%{transform:scale(1)} }
+  .char-image-wrap { border-radius: 20px; overflow: hidden; margin-bottom: 16px; display: none; background: #f5f5f5; }
+  .char-image-wrap img { width: 100%; height: 220px; object-fit: contain; display: block; }
+  .char-image-wrap.show { display: block; animation: zoomIn 0.6s ease; }
+  @keyframes zoomIn { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
+  .cooldown-msg { background: #f0f4ff; border-radius: 16px; padding: 14px; font-size: 14px; font-weight: 700; color: #667eea; display: none; margin-top: 8px; }
+  .cooldown-time { font-family: 'Fredoka One', cursive; font-size: 22px; display: block; margin-top: 4px; }
   .change-name { font-size: 12px; color: #bbb; margin-top: 16px; cursor: pointer; font-weight: 700; }
   .change-name:hover { color: #667eea; }
+  .collection-btn { background: none; border: 2px solid #e0e4ef; border-radius: 12px; padding: 8px 16px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800; color: #888; cursor: pointer; margin-top: 12px; transition: all 0.2s; }
+  .collection-btn:hover { border-color: #667eea; color: #667eea; }
+  #galleryScreen { display: none; }
+  .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 16px 0; }
+  .gallery-item { border-radius: 16px; overflow: hidden; border: 3px solid #e0e4ef; background: #f5f5f5; }
+  .gallery-item img { width: 100%; height: 120px; object-fit: contain; display: block; }
+  .gallery-item-name { font-family: 'Fredoka One', cursive; font-size: 14px; padding: 6px; text-align: center; }
+  .gallery-item.locked-item { opacity: 0.4; }
+  .celebration { display: none; position: fixed; top:0;left:0;right:0;bottom:0; background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .celebration.show { display: flex; }
+  .celebration-box { background: white; border-radius: 32px; padding: 32px 28px; text-align: center; max-width: 360px; width: 100%; animation: zoomIn 0.4s ease; }
+  .celebration-emoji { font-size: 60px; display: block; margin-bottom: 12px; }
+  .celebration-title { font-family: 'Fredoka One', cursive; font-size: 26px; color: #2d2d2d; margin-bottom: 8px; }
+  .celebration-img { width: 100%; max-height: 180px; object-fit: contain; border-radius: 16px; margin: 12px 0; display: none; }
+  .celebration-text { font-size: 15px; color: #888; font-weight: 700; margin-bottom: 20px; }
 </style>
 </head>
 <body>
 
-<!-- NAME SCREEN -->
 <div class="card" id="nameScreen">
   <h1>👣 Активные Стопы</h1>
   <div class="subtitle">Коллекция персонажей</div>
@@ -202,49 +86,52 @@
   <button class="btn" onclick="startGame()">Вперёд! 🚀</button>
 </div>
 
-<!-- COLLECTION SCREEN -->
-<div class="card" id="collectionScreen" style="display:none;">
+<div class="card" id="gameScreen" style="display:none;">
   <div class="greeting" id="greetingText">Привет!</div>
-  <div class="progress-text" id="progressText">Загрузка...</div>
-
-  <div class="character-box">
-    <div id="completeBadge" class="complete-badge">🎉 Персонаж собран!</div>
-    <div class="parts-grid" id="partsGrid"></div>
-    <div id="loadingMsg" class="loading">Загрузка...</div>
+  <div class="char-name" id="charName"></div>
+  <div class="progress-text" id="progressText"></div>
+  <div class="squares-grid" id="squaresGrid">
+    <div class="square" id="sq0"></div>
+    <div class="square" id="sq1"></div>
+    <div class="square" id="sq2"></div>
+    <div class="square" id="sq3"></div>
   </div>
-
-  <div class="action-area">
-    <button class="btn btn-green" id="claimBtn" onclick="claimPart()" style="display:none;">
-      💪 Я сделал зарядку!
-    </button>
-    <div class="cooldown-msg" id="cooldownMsg">
-      Отличная работа! Следующая часть откроется завтра 🌙
-      <span class="time" id="cooldownTime"></span>
-    </div>
+  <div class="char-image-wrap" id="charImageWrap">
+    <img id="charImage" src="" alt="персонаж">
   </div>
-
+  <button class="btn btn-green" id="claimBtn" style="display:none;">💪 Я сделал зарядку!</button>
+  <div class="cooldown-msg" id="cooldownMsg">
+    Молодец! Приходи завтра 🌙
+    <span class="cooldown-time" id="cooldownTime"></span>
+  </div>
+  <button class="collection-btn" onclick="showGallery()">🏆 Моя коллекция</button>
   <div class="change-name" onclick="changeName()">Это не я → сменить имя</div>
 </div>
 
-<!-- CELEBRATION -->
+<div class="card" id="galleryScreen">
+  <h1 style="margin-bottom:8px;">🏆 Коллекция</h1>
+  <div class="subtitle" id="gallerySubtitle"></div>
+  <div class="gallery-grid" id="galleryGrid"></div>
+  <button class="btn" onclick="hideGallery()">← Назад</button>
+</div>
+
 <div class="celebration" id="celebration">
   <div class="celebration-box">
-    <span class="celebration-emoji">🎊</span>
-    <div class="celebration-title">Ура! Новая часть!</div>
-    <div class="celebration-part" id="celebrationPart"></div>
-    <div class="celebration-text" id="celebrationText"></div>
+    <span class="celebration-emoji" id="celebEmoji">🎉</span>
+    <div class="celebration-title" id="celebTitle">Ура!</div>
+    <img class="celebration-img" id="celebImg" src="" alt="">
+    <div class="celebration-text" id="celebText"></div>
     <button class="btn" onclick="closeCelebration()">Ура! 🎉</button>
   </div>
 </div>
 
-<!-- Firebase -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
-  // ⚠️ ЗАМЕНИТЕ НА СВОИ ДАННЫЕ ИЗ FIREBASE
   const firebaseConfig = {
-     apiKey: "AIzaSyB5wc1u9TR31jKCV6ds1T3So7v2vux-NCo",
+    apiKey: "AIzaSyB5wc1u9TR31jKCV6ds1T3So7v2vux-NCo",
     authDomain: "aktivnye-stopy.firebaseapp.com",
     projectId: "aktivnye-stopy",
     storageBucket: "aktivnye-stopy.firebasestorage.app",
@@ -255,212 +142,222 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // Персонажи — части коллекции
   const CHARACTERS = [
-    const CHARACTERS = [
-    { name: "Солнышки", color: "#FFD700", parts: ["🟡","🟡","🟡","🟡"] },
-    { name: "Шустрики", color: "#E07000", parts: ["🟠","🟠","🟠","🟠"] },
-    { name: "Силачи",   color: "#CC0000", parts: ["🔴","🔴","🔴","🔴"] },
-    { name: "Грации",   color: "#1565C0", parts: ["🔵","🔵","🔵","🔵"] },
-    { name: "Сони",     color: "#2E7D32", parts: ["🟢","🟢","🟢","🟢"] },
-  ];
+    { name: "Солнышки", color: "#FFD700", image: "images/solnyshki.png" },
+    { name: "Шустрики", color: "#E07000", image: "images/shystriki.png" },
+    { name: "Силачи",   color: "#CC0000", image: "images/silachi.png"   },
+    { name: "Грации",   color: "#1565C0", image: "images/gratsii.png"   },
+    { name: "Сони",     color: "#2E7D32", image: "images/soni.png"      },
   ];
 
-  // Получаем kit ID из URL (?kit=123)
+  const TOTAL_STEPS = 5;
   const urlParams = new URLSearchParams(window.location.search);
   const kitId = urlParams.get('kit') || 'demo';
-
   let playerData = null;
   let childName = '';
 
-  // ── Запуск игры ──
   window.startGame = async function() {
     const input = document.getElementById('nameInput').value.trim();
     if (!input) { alert('Введи своё имя!'); return; }
     childName = input;
-    localStorage.setItem('childName_' + kitId, childName);
+    localStorage.setItem('child_' + kitId, childName);
     await loadPlayer();
   };
 
-  // ── Загрузка данных игрока ──
   async function loadPlayer() {
     document.getElementById('nameScreen').style.display = 'none';
-    document.getElementById('collectionScreen').style.display = 'block';
+    document.getElementById('gameScreen').style.display = 'block';
     document.getElementById('greetingText').textContent = 'Привет, ' + childName + '! 👋';
-
     const docId = kitId + '_' + childName.toLowerCase().replace(/\s+/g, '_');
     const ref = doc(db, 'players', docId);
-
     try {
       const snap = await getDoc(ref);
       if (snap.exists()) {
         playerData = snap.data();
       } else {
-        // Новый игрок — выбираем случайного персонажа
         const charIndex = Math.floor(Math.random() * CHARACTERS.length);
-        playerData = {
-          name: childName,
-          kitId: kitId,
-          charIndex: charIndex,
-          unlockedParts: [],
-          lastClaim: null,
-          createdAt: serverTimestamp()
-        };
+        playerData = { name: childName, kitId, charIndex, step: 0, collectedChars: [], lastClaim: null, createdAt: serverTimestamp() };
         await setDoc(ref, playerData);
       }
-      renderCollection();
+      renderGame();
     } catch(e) {
-      document.getElementById('loadingMsg').textContent = 'Ошибка загрузки. Проверь интернет.';
+      alert('Ошибка загрузки. Проверь интернет.');
     }
   }
 
-  // ── Отрисовка коллекции ──
-  function renderCollection() {
+  function declension(n, one, few, many) {
+    const m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return one;
+    if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return few;
+    return many;
+  }
+
+  function renderGame() {
     const char = CHARACTERS[playerData.charIndex];
-    const unlocked = playerData.unlockedParts || [];
-    const total = char.parts.length;
-    const done = unlocked.length;
+    const step = playerData.step || 0;
+    document.getElementById('charName').textContent = char.name;
+    document.getElementById('charName').style.color = char.color;
 
-    document.getElementById('loadingMsg').style.display = 'none';
-    document.getElementById('progressText').textContent =
-      char.name + ' — собрано ' + done + ' из ' + total;
+    const grid = document.getElementById('squaresGrid');
+    const imageWrap = document.getElementById('charImageWrap');
+    const claimBtn = document.getElementById('claimBtn');
 
-    // Сетка частей
-    const grid = document.getElementById('partsGrid');
-    grid.innerHTML = '';
-    char.parts.forEach((part, i) => {
-      const div = document.createElement('div');
-      div.className = 'part ' + (unlocked.includes(i) ? 'unlocked' : 'locked');
-      div.textContent = unlocked.includes(i) ? part : '🔒';
-      grid.appendChild(div);
-    });
+    if (step >= TOTAL_STEPS) {
+      grid.style.display = 'none';
+      imageWrap.classList.add('show');
+      document.getElementById('charImage').src = char.image;
+      document.getElementById('progressText').textContent = char.name + ' собраны! 🎉';
+      claimBtn.style.display = 'block';
+      claimBtn.textContent = '🎊 Начать нового персонажа!';
+      claimBtn.onclick = startNewChar;
+      document.getElementById('cooldownMsg').style.display = 'none';
+    } else {
+      grid.style.display = 'grid';
+      imageWrap.classList.remove('show');
+      claimBtn.onclick = claimPart;
+      claimBtn.textContent = '💪 Я сделал зарядку!';
 
-    // Персонаж собран полностью
-    if (done >= total) {
-      document.getElementById('completeBadge').style.display = 'inline-block';
-      // Начинаем нового персонажа
-      showNewCharacterOption();
-      return;
+      for (let i = 0; i < 4; i++) {
+        const sq = document.getElementById('sq' + i);
+        if (i < step) {
+          sq.classList.add('unlocked');
+          sq.style.background = char.color;
+        } else {
+          sq.classList.remove('unlocked');
+          sq.style.background = '';
+        }
+      }
+
+      const remaining = TOTAL_STEPS - step;
+      document.getElementById('progressText').textContent =
+        'До ' + char.name + ': ' + remaining + ' ' + declension(remaining, 'день', 'дня', 'дней');
+      checkCooldown();
     }
-
-    // Проверяем можно ли получить часть сегодня
-    checkCooldown();
+    renderGallery();
   }
 
-  // ── Проверка кулдауна (1 раз в день) ──
   function checkCooldown() {
     const claimBtn = document.getElementById('claimBtn');
     const cooldownMsg = document.getElementById('cooldownMsg');
-
     if (!playerData.lastClaim) {
       claimBtn.style.display = 'block';
+      cooldownMsg.style.display = 'none';
       return;
     }
-
-    const lastClaim = playerData.lastClaim.toDate ? playerData.lastClaim.toDate() : new Date(playerData.lastClaim);
-    const now = new Date();
-    const nextClaim = new Date(lastClaim);
-    nextClaim.setHours(nextClaim.getHours() + 24);
-
-    if (now >= nextClaim) {
+    const last = playerData.lastClaim.toDate ? playerData.lastClaim.toDate() : new Date(playerData.lastClaim);
+    const next = new Date(last.getTime() + 24 * 3600 * 1000);
+    if (new Date() >= next) {
       claimBtn.style.display = 'block';
+      cooldownMsg.style.display = 'none';
     } else {
       claimBtn.style.display = 'none';
       cooldownMsg.style.display = 'block';
-      // Показываем обратный отсчёт
-      updateCountdown(nextClaim);
-      setInterval(() => updateCountdown(nextClaim), 60000);
+      updateCountdown(next);
+      const iv = setInterval(() => {
+        if (new Date() >= next) { clearInterval(iv); renderGame(); }
+        else updateCountdown(next);
+      }, 30000);
     }
   }
 
-  function updateCountdown(nextClaim) {
-    const now = new Date();
-    const diff = nextClaim - now;
-    const hours = Math.floor(diff / 3600000);
-    const mins = Math.floor((diff % 3600000) / 60000);
-    document.getElementById('cooldownTime').textContent = hours + ' ч ' + mins + ' мин';
+  function updateCountdown(next) {
+    const diff = next - new Date();
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    document.getElementById('cooldownTime').textContent = h + ' ч ' + m + ' мин';
   }
 
-  // ── Получить новую часть ──
   window.claimPart = async function() {
-    const char = CHARACTERS[playerData.charIndex];
-    const unlocked = playerData.unlockedParts || [];
-    const allParts = char.parts.map((_, i) => i);
-    const remaining = allParts.filter(i => !unlocked.includes(i));
-
-    if (remaining.length === 0) return;
-
-    // Случайная часть из оставшихся
-    const randomPart = remaining[Math.floor(Math.random() * remaining.length)];
-    const newUnlocked = [...unlocked, randomPart];
-
     const docId = kitId + '_' + childName.toLowerCase().replace(/\s+/g, '_');
     const ref = doc(db, 'players', docId);
-
+    const newStep = (playerData.step || 0) + 1;
+    const char = CHARACTERS[playerData.charIndex];
     try {
-      await updateDoc(ref, {
-        unlockedParts: newUnlocked,
-        lastClaim: serverTimestamp()
-      });
-      playerData.unlockedParts = newUnlocked;
+      await updateDoc(ref, { step: newStep, lastClaim: serverTimestamp() });
+      playerData.step = newStep;
       playerData.lastClaim = new Date();
-
-      // Показываем праздник
-      showCelebration(char, randomPart, newUnlocked.length, char.parts.length);
-    } catch(e) {
-      alert('Ошибка сохранения. Проверь интернет.');
-    }
+      if (newStep >= TOTAL_STEPS) {
+        const collected = playerData.collectedChars || [];
+        if (!collected.includes(playerData.charIndex)) {
+          collected.push(playerData.charIndex);
+          await updateDoc(ref, { collectedChars: collected });
+          playerData.collectedChars = collected;
+        }
+        document.getElementById('celebEmoji').textContent = '🎉';
+        document.getElementById('celebTitle').textContent = char.name + ' собраны!';
+        const img = document.getElementById('celebImg');
+        img.src = char.image; img.style.display = 'block';
+        document.getElementById('celebText').textContent = 'Поздравляем! Персонаж добавлен в коллекцию!';
+      } else {
+        document.getElementById('celebEmoji').textContent = '✨';
+        document.getElementById('celebTitle').textContent = 'Отлично!';
+        document.getElementById('celebImg').style.display = 'none';
+        document.getElementById('celebText').textContent =
+          'Часть ' + newStep + ' из 4 открыта! До ' + char.name + ' осталось ' +
+          (TOTAL_STEPS - newStep) + ' ' + declension(TOTAL_STEPS - newStep, 'день', 'дня', 'дней') + '!';
+      }
+      document.getElementById('celebration').classList.add('show');
+    } catch(e) { alert('Ошибка сохранения. Проверь интернет.'); }
   };
-
-  // ── Праздник открытия ──
-  function showCelebration(char, partIndex, done, total) {
-    document.getElementById('celebrationPart').textContent = char.parts[partIndex];
-    document.getElementById('celebrationText').textContent =
-      'Собрано ' + done + ' из ' + total + ' частей ' + char.name + '!';
-    document.getElementById('celebration').classList.add('show');
-  }
 
   window.closeCelebration = function() {
     document.getElementById('celebration').classList.remove('show');
-    renderCollection();
+    renderGame();
   };
 
-  // ── Новый персонаж после завершения ──
-  function showNewCharacterOption() {
-    const claimBtn = document.getElementById('claimBtn');
-    claimBtn.style.display = 'block';
-    claimBtn.textContent = '🎊 Начать нового персонажа!';
-    claimBtn.onclick = startNewCharacter;
-  }
-
-  async function startNewCharacter() {
-    const newCharIndex = Math.floor(Math.random() * CHARACTERS.length);
+  async function startNewChar() {
     const docId = kitId + '_' + childName.toLowerCase().replace(/\s+/g, '_');
     const ref = doc(db, 'players', docId);
-    await updateDoc(ref, { charIndex: newCharIndex, unlockedParts: [], lastClaim: null });
-    playerData.charIndex = newCharIndex;
-    playerData.unlockedParts = [];
-    playerData.lastClaim = null;
-    document.getElementById('completeBadge').style.display = 'none';
-    document.getElementById('claimBtn').onclick = claimPart;
-    renderCollection();
+    const collected = playerData.collectedChars || [];
+    let available = CHARACTERS.map((_,i) => i).filter(i => !collected.includes(i));
+    if (available.length === 0) available = CHARACTERS.map((_,i) => i);
+    const newChar = available[Math.floor(Math.random() * available.length)];
+    await updateDoc(ref, { charIndex: newChar, step: 0, lastClaim: null });
+    playerData.charIndex = newChar; playerData.step = 0; playerData.lastClaim = null;
+    renderGame();
   }
 
-  // ── Сменить имя ──
+  function renderGallery() {
+    const collected = playerData.collectedChars || [];
+    document.getElementById('gallerySubtitle').textContent = 'Собрано ' + collected.length + ' из ' + CHARACTERS.length;
+    const grid = document.getElementById('galleryGrid');
+    grid.innerHTML = '';
+    CHARACTERS.forEach((char, i) => {
+      const isCollected = collected.includes(i);
+      const div = document.createElement('div');
+      div.className = 'gallery-item' + (isCollected ? '' : ' locked-item');
+      const img = document.createElement('img');
+      img.src = isCollected ? char.image : '';
+      img.alt = char.name;
+      const name = document.createElement('div');
+      name.className = 'gallery-item-name';
+      name.style.color = isCollected ? char.color : '#bbb';
+      name.textContent = isCollected ? char.name : '???';
+      div.appendChild(img); div.appendChild(name);
+      grid.appendChild(div);
+    });
+  }
+
+  window.showGallery = function() {
+    renderGallery();
+    document.getElementById('gameScreen').style.display = 'none';
+    document.getElementById('galleryScreen').style.display = 'block';
+  };
+
+  window.hideGallery = function() {
+    document.getElementById('galleryScreen').style.display = 'none';
+    document.getElementById('gameScreen').style.display = 'block';
+  };
+
   window.changeName = function() {
-    localStorage.removeItem('childName_' + kitId);
-    document.getElementById('collectionScreen').style.display = 'none';
+    localStorage.removeItem('child_' + kitId);
+    document.getElementById('gameScreen').style.display = 'none';
     document.getElementById('nameScreen').style.display = 'block';
     document.getElementById('nameInput').value = '';
   };
 
-  // ── Авто-вход если имя сохранено ──
-  const savedName = localStorage.getItem('childName_' + kitId);
-  if (savedName) {
-    childName = savedName;
-    document.getElementById('nameInput').value = savedName;
-    loadPlayer();
-  }
+  const saved = localStorage.getItem('child_' + kitId);
+  if (saved) { childName = saved; document.getElementById('nameInput').value = saved; loadPlayer(); }
 </script>
 </body>
 </html>
