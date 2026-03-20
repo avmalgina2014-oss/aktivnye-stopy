@@ -44,6 +44,7 @@
     text-align: center; margin-bottom: 16px; transition: border-color 0.2s;
   }
   #nameScreen input:focus { border-color: #667eea; }
+  .input-label { font-size: 13px; color: #aaa; font-weight: 700; margin-bottom: 6px; text-align: left; padding-left: 4px; }
   .greeting { font-size: 22px; font-weight: 900; color: #2d2d2d; margin-bottom: 4px; }
   .char-name { font-family: 'Fredoka One', cursive; font-size: 22px; margin-bottom: 12px; }
   .progress-text { font-size: 13px; color: #888; font-weight: 700; margin-bottom: 16px; }
@@ -82,7 +83,10 @@
   <h1>👣 Активные Стопы</h1>
   <div class="subtitle">Коллекция персонажей</div>
   <p style="font-size:15px;color:#555;font-weight:700;margin-bottom:20px;">Как тебя зовут?</p>
-  <input type="text" id="nameInput" placeholder="Введи своё имя" maxlength="20" onkeypress="if(event.key==='Enter')startGame()">
+  <div class="input-label">Твоё имя</div>
+  <input type="text" id="nameInput" placeholder="Например: Настя" maxlength="20">
+  <div class="input-label">Придумай ник</div>
+  <input type="text" id="nickInput" placeholder="Например: ЛисичкаОгонь" maxlength="20" onkeypress="if(event.key==='Enter')startGame()">
   <button class="btn" onclick="startGame()">Вперёд! 🚀</button>
 </div>
 
@@ -155,28 +159,38 @@
   const kitId = urlParams.get('kit') || 'demo';
   let playerData = null;
   let childName = '';
+  let childNick = '';
 
   window.startGame = async function() {
-    const input = document.getElementById('nameInput').value.trim();
-    if (!input) { alert('Введи своё имя!'); return; }
-    childName = input;
-    localStorage.setItem('child_' + kitId, childName);
+    const nameVal = document.getElementById('nameInput').value.trim();
+    const nickVal = document.getElementById('nickInput').value.trim();
+    if (!nameVal) { alert('Введи своё имя!'); return; }
+    if (!nickVal) { alert('Придумай ник!'); return; }
+    childName = nameVal;
+    childNick = nickVal;
+    localStorage.setItem('child_name_' + kitId, childName);
+    localStorage.setItem('child_nick_' + kitId, childNick);
     await loadPlayer();
   };
+
+  function makeDocId() {
+    const safeName = childName.toLowerCase().replace(/\s+/g, '_');
+    const safeNick = childNick.toLowerCase().replace(/\s+/g, '_');
+    return kitId + '_' + safeName + '_' + safeNick;
+  }
 
   async function loadPlayer() {
     document.getElementById('nameScreen').style.display = 'none';
     document.getElementById('gameScreen').style.display = 'block';
     document.getElementById('greetingText').textContent = 'Привет, ' + childName + '! 👋';
-    const docId = kitId + '_' + childName.toLowerCase().replace(/\s+/g, '_');
-    const ref = doc(db, 'players', docId);
+    const ref = doc(db, 'players', makeDocId());
     try {
       const snap = await getDoc(ref);
       if (snap.exists()) {
         playerData = snap.data();
       } else {
         const charIndex = Math.floor(Math.random() * CHARACTERS.length);
-        playerData = { name: childName, kitId, charIndex, step: 0, collectedChars: [], lastClaim: null, createdAt: serverTimestamp() };
+        playerData = { name: childName, nick: childNick, kitId, charIndex, step: 0, collectedChars: [], lastClaim: null, createdAt: serverTimestamp() };
         await setDoc(ref, playerData);
       }
       renderGame();
@@ -195,8 +209,16 @@
   function renderGame() {
     const char = CHARACTERS[playerData.charIndex];
     const step = playerData.step || 0;
-    document.getElementById('charName').textContent = char.name;
-    document.getElementById('charName').style.color = char.color;
+    const charNameEl = document.getElementById('charName');
+
+    // Скрываем имя персонажа до финала
+    if (step >= TOTAL_STEPS) {
+      charNameEl.textContent = char.name;
+      charNameEl.style.color = char.color;
+    } else {
+      charNameEl.textContent = '??? 🔒';
+      charNameEl.style.color = '#bbb';
+    }
 
     const grid = document.getElementById('squaresGrid');
     const imageWrap = document.getElementById('charImageWrap');
@@ -221,7 +243,7 @@
         const sq = document.getElementById('sq' + i);
         if (i < step) {
           sq.classList.add('unlocked');
-          sq.style.background = char.color;
+          sq.style.background = '#667eea';
         } else {
           sq.classList.remove('unlocked');
           sq.style.background = '';
@@ -230,7 +252,7 @@
 
       const remaining = TOTAL_STEPS - step;
       document.getElementById('progressText').textContent =
-        'До ' + char.name + ': ' + remaining + ' ' + declension(remaining, 'день', 'дня', 'дней');
+        'До персонажа: ' + remaining + ' ' + declension(remaining, 'день', 'дня', 'дней');
       checkCooldown();
     }
     renderGallery();
@@ -268,8 +290,7 @@
   }
 
   window.claimPart = async function() {
-    const docId = kitId + '_' + childName.toLowerCase().replace(/\s+/g, '_');
-    const ref = doc(db, 'players', docId);
+    const ref = doc(db, 'players', makeDocId());
     const newStep = (playerData.step || 0) + 1;
     const char = CHARACTERS[playerData.charIndex];
     try {
@@ -293,7 +314,7 @@
         document.getElementById('celebTitle').textContent = 'Отлично!';
         document.getElementById('celebImg').style.display = 'none';
         document.getElementById('celebText').textContent =
-          'Часть ' + newStep + ' из 4 открыта! До ' + char.name + ' осталось ' +
+          'Часть ' + newStep + ' из 4 открыта! До персонажа осталось ' +
           (TOTAL_STEPS - newStep) + ' ' + declension(TOTAL_STEPS - newStep, 'день', 'дня', 'дней') + '!';
       }
       document.getElementById('celebration').classList.add('show');
@@ -306,8 +327,7 @@
   };
 
   async function startNewChar() {
-    const docId = kitId + '_' + childName.toLowerCase().replace(/\s+/g, '_');
-    const ref = doc(db, 'players', docId);
+    const ref = doc(db, 'players', makeDocId());
     const collected = playerData.collectedChars || [];
     let available = CHARACTERS.map((_,i) => i).filter(i => !collected.includes(i));
     if (available.length === 0) available = CHARACTERS.map((_,i) => i);
@@ -350,14 +370,23 @@
   };
 
   window.changeName = function() {
-    localStorage.removeItem('child_' + kitId);
+    localStorage.removeItem('child_name_' + kitId);
+    localStorage.removeItem('child_nick_' + kitId);
     document.getElementById('gameScreen').style.display = 'none';
     document.getElementById('nameScreen').style.display = 'block';
     document.getElementById('nameInput').value = '';
+    document.getElementById('nickInput').value = '';
   };
 
-  const saved = localStorage.getItem('child_' + kitId);
-  if (saved) { childName = saved; document.getElementById('nameInput').value = saved; loadPlayer(); }
+  const savedName = localStorage.getItem('child_name_' + kitId);
+  const savedNick = localStorage.getItem('child_nick_' + kitId);
+  if (savedName && savedNick) {
+    childName = savedName;
+    childNick = savedNick;
+    document.getElementById('nameInput').value = savedName;
+    document.getElementById('nickInput').value = savedNick;
+    loadPlayer();
+  }
 </script>
 </body>
 </html>
