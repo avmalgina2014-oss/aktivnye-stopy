@@ -129,6 +129,51 @@
   </div>
 </div>
 
+<script>
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+  let ctx = null;
+  function getCtx() { if (!ctx) ctx = new AudioCtx(); return ctx; }
+
+  window.playClickSound = function() {
+    const c = getCtx();
+    const o = c.createOscillator(); const g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type = 'sine'; o.frequency.setValueAtTime(520, c.currentTime);
+    o.frequency.exponentialRampToValueAtTime(780, c.currentTime + 0.1);
+    g.gain.setValueAtTime(0.3, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.3);
+    o.start(); o.stop(c.currentTime + 0.3);
+  };
+
+  window.playSquareSound = function() {
+    const c = getCtx();
+    [440, 550, 660].forEach((freq, i) => {
+      const o = c.createOscillator(); const g = c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type = 'triangle'; o.frequency.value = freq;
+      const t = c.currentTime + i * 0.08;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.2, t + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+      o.start(t); o.stop(t + 0.25);
+    });
+  };
+
+  window.playFanfare = function() {
+    const c = getCtx();
+    const notes = [523, 659, 784, 1047];
+    notes.forEach((freq, i) => {
+      const o = c.createOscillator(); const g = c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type = 'square'; o.frequency.value = freq;
+      const t = c.currentTime + i * 0.15;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.15, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+      o.start(t); o.stop(t + 0.4);
+    });
+  };
+</script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp }
@@ -290,6 +335,7 @@
   }
 
   window.claimPart = async function() {
+    playClickSound();
     const ref = doc(db, 'players', makeDocId());
     const newStep = (playerData.step || 0) + 1;
     const char = CHARACTERS[playerData.charIndex];
@@ -298,6 +344,7 @@
       playerData.step = newStep;
       playerData.lastClaim = new Date();
       if (newStep >= TOTAL_STEPS) {
+        playFanfare();
         const collected = playerData.collectedChars || [];
         if (!collected.includes(playerData.charIndex)) {
           collected.push(playerData.charIndex);
@@ -310,6 +357,7 @@
         img.src = char.image; img.style.display = 'block';
         document.getElementById('celebText').textContent = 'Поздравляем! Персонаж добавлен в коллекцию!';
       } else {
+        playSquareSound();
         document.getElementById('celebEmoji').textContent = '✨';
         document.getElementById('celebTitle').textContent = 'Отлично!';
         document.getElementById('celebImg').style.display = 'none';
