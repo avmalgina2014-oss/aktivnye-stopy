@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Активные Стопы — Коллекция</title>
+<title>Активные Стопы — Суперсилы</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -19,106 +19,153 @@
   .card {
     background: white;
     border-radius: 32px;
-    padding: 32px 28px;
+    padding: 28px 24px;
     max-width: 420px;
     width: 100%;
     box-shadow: 0 20px 60px rgba(0,0,0,0.2);
     text-align: center;
   }
-  h1 { font-family: 'Fredoka One', cursive; font-size: 28px; color: #2d2d2d; margin-bottom: 4px; }
-  .subtitle { font-size: 14px; color: #888; margin-bottom: 24px; font-weight: 700; }
+  h1 { font-family: 'Fredoka One', cursive; font-size: 26px; color: #2d2d2d; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 20px; font-weight: 700; }
+
   .btn {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white; border: none; border-radius: 16px;
-    padding: 14px 28px; font-family: 'Fredoka One', cursive;
-    font-size: 20px; cursor: pointer; width: 100%;
-    transition: transform 0.15s, box-shadow 0.15s;
+    padding: 13px 24px; font-family: 'Fredoka One', cursive;
+    font-size: 19px; cursor: pointer; width: 100%;
+    transition: transform 0.15s;
     box-shadow: 0 4px 16px rgba(102,126,234,0.4); margin-top: 8px;
   }
   .btn:hover { transform: translateY(-2px); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
   .btn-green { background: linear-gradient(135deg, #2E7D32, #4CAF50); box-shadow: 0 4px 16px rgba(46,125,50,0.4); }
-  #nameScreen input {
-    width: 100%; border: 3px solid #e0e4ef; border-radius: 16px;
-    padding: 14px 18px; font-family: 'Nunito', sans-serif;
-    font-size: 18px; font-weight: 700; outline: none;
-    text-align: center; margin-bottom: 16px; transition: border-color 0.2s;
-  }
-  #nameScreen input:focus { border-color: #667eea; }
-  .input-label { font-size: 13px; color: #aaa; font-weight: 700; margin-bottom: 6px; text-align: left; padding-left: 4px; }
-  .greeting { font-size: 22px; font-weight: 900; color: #2d2d2d; margin-bottom: 4px; }
-  .char-name { font-family: 'Fredoka One', cursive; font-size: 22px; margin-bottom: 12px; }
-  .progress-text { font-size: 13px; color: #888; font-weight: 700; margin-bottom: 16px; }
-  .squares-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
-  .square { aspect-ratio: 1; border-radius: 16px; transition: all 0.5s ease; border: 3px solid #e0e4ef; background: #e0e4ef; }
-  .square.unlocked { border-color: transparent; box-shadow: 0 4px 16px rgba(0,0,0,0.15); animation: popIn 0.5s ease; }
-  @keyframes popIn { 0%{transform:scale(0)} 70%{transform:scale(1.15)} 100%{transform:scale(1)} }
-  .char-image-wrap { border-radius: 20px; overflow: hidden; margin-bottom: 16px; display: none; background: #f5f5f5; }
-  .char-image-wrap img { width: 100%; height: 220px; object-fit: contain; display: block; }
+  .btn-gold { background: linear-gradient(135deg, #F9A825, #FF6F00); box-shadow: 0 4px 16px rgba(249,168,37,0.4); }
+  .btn-outline { background: none; border: 2px solid #e0e4ef; border-radius: 12px; padding: 8px 16px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800; color: #888; cursor: pointer; margin-top: 10px; transition: all 0.2s; width: auto; box-shadow: none; }
+  .btn-outline:hover { border-color: #667eea; color: #667eea; transform: none; }
+
+  /* Экран входа */
+  .field-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; text-align: left; }
+  .field-input { width: 100%; border: 3px solid #e0e4ef; border-radius: 14px; padding: 11px 14px; font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 700; outline: none; text-align: center; margin-bottom: 14px; transition: border-color 0.2s; }
+  .field-input:focus { border-color: #667eea; }
+  .nick-preview { background: #f0f4ff; border-radius: 12px; padding: 10px; font-family: 'Fredoka One', cursive; font-size: 17px; color: #667eea; margin-bottom: 14px; min-height: 42px; }
+
+  /* Топ-бар */
+  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .rank-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 20px; font-family: 'Fredoka One', cursive; font-size: 14px; }
+  .rank-novice { background: #e8f5e9; color: #2E7D32; }
+  .rank-student { background: linear-gradient(135deg, #FFF8E1, #FFE082); color: #F57F17; }
+  .rank-master { background: linear-gradient(135deg, #1a1a2e, #16213e); color: #fff; }
+  .coins-display { display: flex; align-items: center; gap: 4px; background: #fffde7; border: 2px solid #FFE082; border-radius: 20px; padding: 4px 12px; font-family: 'Fredoka One', cursive; font-size: 15px; color: #F57F17; }
+
+  .greeting { font-size: 18px; font-weight: 900; color: #2d2d2d; margin-bottom: 10px; }
+  .char-name { font-family: 'Fredoka One', cursive; font-size: 19px; margin-bottom: 6px; }
+  .progress-text { font-size: 12px; color: #888; font-weight: 700; margin-bottom: 12px; }
+
+  /* Ключи */
+  .keys-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+  .key-slot { aspect-ratio: 1; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; border: 3px dashed #e0e4ef; background: #f9f9f9; transition: all 0.4s ease; }
+  .key-slot.filled { border: 3px solid gold; background: linear-gradient(135deg, #fffde7, #fff9c4); box-shadow: 0 4px 12px rgba(255,215,0,0.4); animation: popIn 0.5s ease; }
+  @keyframes popIn { 0%{transform:scale(0)} 70%{transform:scale(1.2)} 100%{transform:scale(1)} }
+
+  .char-image-wrap { border-radius: 18px; overflow: hidden; margin-bottom: 14px; display: none; background: #f5f5f5; }
+  .char-image-wrap img { width: 100%; height: 200px; object-fit: contain; display: block; }
   .char-image-wrap.show { display: block; animation: zoomIn 0.6s ease; }
   @keyframes zoomIn { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
-  .cooldown-msg { background: #f0f4ff; border-radius: 16px; padding: 14px; font-size: 14px; font-weight: 700; color: #667eea; display: none; margin-top: 8px; }
-  .cooldown-time { font-family: 'Fredoka One', cursive; font-size: 22px; display: block; margin-top: 4px; }
-  .change-name { font-size: 12px; color: #bbb; margin-top: 16px; cursor: pointer; font-weight: 700; }
+
+  .cooldown-msg { background: #f0f4ff; border-radius: 14px; padding: 12px; font-size: 13px; font-weight: 700; color: #667eea; display: none; margin-top: 8px; }
+  .cooldown-time { font-family: 'Fredoka One', cursive; font-size: 20px; display: block; margin-top: 4px; }
+  .change-name { font-size: 11px; color: #ccc; margin-top: 10px; cursor: pointer; font-weight: 700; }
   .change-name:hover { color: #667eea; }
-  .collection-btn { background: none; border: 2px solid #e0e4ef; border-radius: 12px; padding: 8px 16px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800; color: #888; cursor: pointer; margin-top: 12px; transition: all 0.2s; }
-  .collection-btn:hover { border-color: #667eea; color: #667eea; }
+
+  /* Коллекция */
+  .collection-section { margin-top: 16px; border-top: 2px solid #f0f0f0; padding-top: 14px; }
+  .collection-title { font-family: 'Fredoka One', cursive; font-size: 15px; color: #888; margin-bottom: 10px; }
+  .powers-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .power-slot { border-radius: 12px; border: 2px solid #e0e4ef; background: #f9f9f9; padding: 6px 4px; text-align: center; transition: all 0.3s; }
+  .power-slot.unlocked { border-color: transparent; box-shadow: 0 3px 10px rgba(0,0,0,0.12); }
+  .power-slot img { width: 100%; height: 50px; object-fit: contain; display: block; }
+  .power-slot .power-q { font-size: 22px; height: 50px; display: flex; align-items: center; justify-content: center; }
+  .power-slot .power-name { font-size: 9px; font-weight: 800; margin-top: 3px; color: #bbb; }
+  .power-slot.unlocked .power-name { color: #555; }
+
+  /* Витрина (УЧЕНИК) */
   #galleryScreen { display: none; }
-  .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 16px 0; }
-  .gallery-item { border-radius: 16px; overflow: hidden; border: 3px solid #e0e4ef; background: #f5f5f5; }
-  .gallery-item img { width: 100%; height: 120px; object-fit: contain; display: block; }
-  .gallery-item-name { font-family: 'Fredoka One', cursive; font-size: 14px; padding: 6px; text-align: center; }
-  .gallery-item.locked-item { opacity: 0.4; }
+  .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 14px 0; }
+  .gallery-item { border-radius: 14px; overflow: hidden; border: 3px solid #e0e4ef; background: #f5f5f5; }
+  .gallery-item img { width: 100%; height: 110px; object-fit: contain; display: block; }
+  .gallery-item-name { font-family: 'Fredoka One', cursive; font-size: 13px; padding: 5px; text-align: center; }
+
+  /* Праздник */
   .celebration { display: none; position: fixed; top:0;left:0;right:0;bottom:0; background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
   .celebration.show { display: flex; }
-  .celebration-box { background: white; border-radius: 32px; padding: 32px 28px; text-align: center; max-width: 360px; width: 100%; animation: zoomIn 0.4s ease; }
-  .celebration-emoji { font-size: 60px; display: block; margin-bottom: 12px; }
-  .celebration-title { font-family: 'Fredoka One', cursive; font-size: 26px; color: #2d2d2d; margin-bottom: 8px; }
-  .celebration-img { width: 100%; max-height: 180px; object-fit: contain; border-radius: 16px; margin: 12px 0; display: none; }
-  .celebration-text { font-size: 15px; color: #888; font-weight: 700; margin-bottom: 20px; }
+  .celebration-box { background: white; border-radius: 32px; padding: 28px 24px; text-align: center; max-width: 360px; width: 100%; animation: zoomIn 0.4s ease; }
+  .celebration-emoji { font-size: 56px; display: block; margin-bottom: 10px; }
+  .celebration-title { font-family: 'Fredoka One', cursive; font-size: 24px; color: #2d2d2d; margin-bottom: 6px; }
+  .celebration-img { width: 100%; max-height: 160px; object-fit: contain; border-radius: 14px; margin: 10px 0; display: none; }
+  .celebration-text { font-size: 14px; color: #888; font-weight: 700; margin-bottom: 18px; }
 </style>
 </head>
 <body>
 
+<!-- ЭКРАН ВХОДА -->
 <div class="card" id="nameScreen">
   <h1>👣 Активные Стопы</h1>
-  <div class="subtitle">Коллекция персонажей</div>
-  <p style="font-size:15px;color:#555;font-weight:700;margin-bottom:20px;">Как тебя зовут?</p>
-  <div class="input-label">Твоё имя</div>
-  <input type="text" id="nameInput" placeholder="Например: Настя" maxlength="20">
-  <div class="input-label">Придумай ник</div>
-  <input type="text" id="nickInput" placeholder="Например: ЛисичкаОгонь" maxlength="20" onkeypress="if(event.key==='Enter')startGame()">
-  <button class="btn" onclick="startGame()">Вперёд! 🚀</button>
+  <div class="subtitle">Собери все суперсилы!</div>
+  <div class="field-label">Твоё имя</div>
+  <input type="text" class="field-input" id="nameInput" placeholder="Например: Саша" maxlength="15" oninput="updatePreview()">
+  <div class="field-label">Придумай ник</div>
+  <input type="text" class="field-input" id="nickInput" placeholder="Например: Ракета или 🚀" maxlength="20" oninput="updatePreview()">
+  <button class="btn" id="startBtn" onclick="startGame()" disabled>Вперёд! 🚀</button>
 </div>
 
+<!-- ЭКРАН ИГРЫ -->
 <div class="card" id="gameScreen" style="display:none;">
+  <div class="top-bar">
+    <div id="rankBadge" class="rank-badge rank-novice">🌱 НОВИЧОК</div>
+    <div class="coins-display">🪙 <span id="coinsCount">0</span></div>
+  </div>
   <div class="greeting" id="greetingText">Привет!</div>
   <div class="char-name" id="charName"></div>
   <div class="progress-text" id="progressText"></div>
-  <div class="squares-grid" id="squaresGrid">
-    <div class="square" id="sq0"></div>
-    <div class="square" id="sq1"></div>
-    <div class="square" id="sq2"></div>
-    <div class="square" id="sq3"></div>
+
+  <div class="keys-grid" id="keysGrid">
+    <div class="key-slot" id="key0"></div>
+    <div class="key-slot" id="key1"></div>
+    <div class="key-slot" id="key2"></div>
   </div>
+
   <div class="char-image-wrap" id="charImageWrap">
-    <img id="charImage" src="" alt="персонаж">
+    <img id="charImage" src="" alt="суперсила">
   </div>
-  <button class="btn btn-green" id="claimBtn" style="display:none;">💪 Я сделал зарядку!</button>
+
+  <button class="btn btn-green" id="claimBtn" style="display:none;">🔑 Я сделал зарядку!</button>
+
   <div class="cooldown-msg" id="cooldownMsg">
-    Молодец! Приходи завтра 🌙
+    Отличная работа! Приходи завтра 🌙
     <span class="cooldown-time" id="cooldownTime"></span>
   </div>
-  <button class="collection-btn" onclick="showGallery()">🏆 Моя коллекция</button>
+
+  <!-- Коллекция — всегда видна -->
+  <div class="collection-section">
+    <div class="collection-title">🏅 Моя коллекция суперсил</div>
+    <div class="powers-grid" id="powersGrid"></div>
+  </div>
+
+  <!-- Витрина — только для УЧЕНИКА -->
+  <button class="btn-outline" id="galleryBtn" onclick="showGallery()" style="display:none;">🏆 Витрина</button>
   <div class="change-name" onclick="changeName()">Это не я → сменить имя</div>
 </div>
 
+<!-- ВИТРИНА -->
 <div class="card" id="galleryScreen">
-  <h1 style="margin-bottom:8px;">🏆 Коллекция</h1>
+  <div class="rank-badge rank-student" style="margin-bottom:10px; display:inline-block;">⭐ УЧЕНИК</div>
+  <h1 style="margin-bottom:6px;">🏆 Витрина суперсил</h1>
   <div class="subtitle" id="gallerySubtitle"></div>
   <div class="gallery-grid" id="galleryGrid"></div>
   <button class="btn" onclick="hideGallery()">← Назад</button>
 </div>
 
+<!-- ПРАЗДНИК -->
 <div class="celebration" id="celebration">
   <div class="celebration-box">
     <span class="celebration-emoji" id="celebEmoji">🎉</span>
@@ -129,51 +176,6 @@
   </div>
 </div>
 
-<script>
-  const AudioCtx = window.AudioContext || window.webkitAudioContext;
-  let ctx = null;
-  function getCtx() { if (!ctx) ctx = new AudioCtx(); return ctx; }
-
-  window.playClickSound = function() {
-    const c = getCtx();
-    const o = c.createOscillator(); const g = c.createGain();
-    o.connect(g); g.connect(c.destination);
-    o.type = 'sine'; o.frequency.setValueAtTime(520, c.currentTime);
-    o.frequency.exponentialRampToValueAtTime(780, c.currentTime + 0.1);
-    g.gain.setValueAtTime(0.3, c.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.3);
-    o.start(); o.stop(c.currentTime + 0.3);
-  };
-
-  window.playSquareSound = function() {
-    const c = getCtx();
-    [440, 550, 660].forEach((freq, i) => {
-      const o = c.createOscillator(); const g = c.createGain();
-      o.connect(g); g.connect(c.destination);
-      o.type = 'triangle'; o.frequency.value = freq;
-      const t = c.currentTime + i * 0.08;
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.2, t + 0.03);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-      o.start(t); o.stop(t + 0.25);
-    });
-  };
-
-  window.playFanfare = function() {
-    const c = getCtx();
-    const notes = [523, 659, 784, 1047];
-    notes.forEach((freq, i) => {
-      const o = c.createOscillator(); const g = c.createGain();
-      o.connect(g); g.connect(c.destination);
-      o.type = 'square'; o.frequency.value = freq;
-      const t = c.currentTime + i * 0.15;
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.15, t + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-      o.start(t); o.stop(t + 0.4);
-    });
-  };
-</script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
   import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp }
@@ -192,50 +194,68 @@
   const db = getFirestore(app);
 
   const CHARACTERS = [
-    { name:"Гибкость 🌟" , color: "#FFD700", image: "solnyshki.png" },
-    { name:"Скорость ⚡" , color: "#E07000", image: "shystriki.png" },
-    { name:"Сила 💪" ,   color: "#CC0000", image: "silachi.png"   },
-    { name:"Баланс 🎯" ,   color: "#1565C0", image: "gratsii.png"   },
-    { name:"Восстановление 💚",     color: "#2E7D32", image: "soni.png"      },
+    { name: "Лёгкость",       color: "#FFD700", image: "solnyshki.png" },
+    { name: "Скорость ⚡",    color: "#E07000", image: "shystriki.png" },
+    { name: "Сила 💪",        color: "#CC0000", image: "silachi.png"   },
+    { name: "Баланс 🎯",      color: "#1565C0", image: "gratsii.png"   },
+    { name: "Восстановление", color: "#2E7D32", image: "soni.png"      },
   ];
 
-  const TOTAL_STEPS = 5;
+  const KEYS_NEEDED = 3;  // 3 ключа → на 4й день персонаж
+  const TOTAL_CHARS = CHARACTERS.length;
   const urlParams = new URLSearchParams(window.location.search);
   const kitId = urlParams.get('kit') || 'demo';
+
   let playerData = null;
   let childName = '';
   let childNick = '';
+  let docId = '';
 
-  window.startGame = async function() {
-    const nameVal = document.getElementById('nameInput').value.trim();
-    const nickVal = document.getElementById('nickInput').value.trim();
-    if (!nameVal) { alert('Введи своё имя!'); return; }
-    if (!nickVal) { alert('Придумай ник!'); return; }
-    childName = nameVal;
-    childNick = nickVal;
-    localStorage.setItem('child_name_' + kitId, childName);
-    localStorage.setItem('child_nick_' + kitId, childNick);
-    await loadPlayer();
+  // ── Превью ника ──
+  window.updatePreview = function() {
+    const name = document.getElementById('nameInput').value.trim();
+    const nick = document.getElementById('nickInput').value.trim();
+    const preview = document.getElementById('nickPreview');
+    const startBtn = document.getElementById('startBtn');
+    if (name && nick) {
+      preview.textContent = name + ' · ' + nick;
+      startBtn.disabled = false;
+    } else {
+      preview.textContent = name ? name + ' · введи ник' : 'Введи имя и ник';
+      startBtn.disabled = true;
+    }
   };
 
-  function makeDocId() {
-    const safeName = childName.toLowerCase().replace(/\s+/g, '_');
-    const safeNick = childNick.toLowerCase().replace(/\s+/g, '_');
-    return kitId + '_' + safeName + '_' + safeNick;
-  }
+  // ── Старт ──
+  window.startGame = async function() {
+    const name = document.getElementById('nameInput').value.trim();
+    const nick = document.getElementById('nickInput').value.trim();
+    if (!name || !nick) { alert('Введи имя и ник!'); return; }
+    childName = name;
+    childNick = nick;
+    docId = kitId + '_' + (name + nick).toLowerCase().replace(/[^a-zа-яё0-9]/gi, '_');
+    localStorage.setItem('child_' + kitId, JSON.stringify({ name, nick }));
+    await loadPlayer();
+  };
 
   async function loadPlayer() {
     document.getElementById('nameScreen').style.display = 'none';
     document.getElementById('gameScreen').style.display = 'block';
-    document.getElementById('greetingText').textContent = 'Привет, ' + childName + '! 👋';
-    const ref = doc(db, 'players', makeDocId());
+    document.getElementById('greetingText').textContent = childName + ' · ' + childNick;
+
+    const ref = doc(db, 'players', docId);
     try {
       const snap = await getDoc(ref);
       if (snap.exists()) {
         playerData = snap.data();
       } else {
-        const charIndex = Math.floor(Math.random() * CHARACTERS.length);
-        playerData = { name: childName, nick: childNick, kitId, charIndex, step: 0, collectedChars: [], lastClaim: null, createdAt: serverTimestamp() };
+        const charIndex = Math.floor(Math.random() * TOTAL_CHARS);
+        playerData = {
+          name: childName, nick: childNick, kitId,
+          charIndex, step: 0, collectedChars: [],
+          coins: 0, weekCount: 0, weekStart: null,
+          lastClaim: null, createdAt: serverTimestamp()
+        };
         await setDoc(ref, playerData);
       }
       renderGame();
@@ -251,56 +271,111 @@
     return many;
   }
 
+  function getWeekStart(date) {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    d.setDate(diff);
+    d.setHours(0,0,0,0);
+    return d.getTime();
+  }
+
   function renderGame() {
     const char = CHARACTERS[playerData.charIndex];
     const step = playerData.step || 0;
-    const charNameEl = document.getElementById('charName');
+    const collected = playerData.collectedChars || [];
+    const coins = playerData.coins || 0;
 
-    // Скрываем имя персонажа до финала
-    if (step >= TOTAL_STEPS) {
-      charNameEl.textContent = char.name;
-      charNameEl.style.color = char.color;
+    document.getElementById('charName').textContent = char.name;
+    document.getElementById('charName').style.color = char.color;
+    document.getElementById('coinsCount').textContent = coins;
+
+    // Звание
+    const badge = document.getElementById('rankBadge');
+    const galleryBtn = document.getElementById('galleryBtn');
+    if (collected.length >= TOTAL_CHARS) {
+      badge.className = 'rank-badge rank-student';
+      badge.textContent = '⭐ УЧЕНИК';
+      galleryBtn.style.display = 'inline-block';
     } else {
-      charNameEl.textContent = '??? 🔒';
-      charNameEl.style.color = '#bbb';
+      badge.className = 'rank-badge rank-novice';
+      badge.textContent = '🌱 НОВИЧОК';
+      galleryBtn.style.display = 'none';
     }
 
-    const grid = document.getElementById('squaresGrid');
+    // Коллекция — всегда видна
+    renderPowersGrid(collected);
+
+    const keysGrid = document.getElementById('keysGrid');
     const imageWrap = document.getElementById('charImageWrap');
     const claimBtn = document.getElementById('claimBtn');
 
-    if (step >= TOTAL_STEPS) {
-      grid.style.display = 'none';
+    if (step > KEYS_NEEDED) {
+      // Суперсила открыта
+      keysGrid.style.display = 'none';
       imageWrap.classList.add('show');
       document.getElementById('charImage').src = char.image;
-      document.getElementById('progressText').textContent = char.name + ' собраны! 🎉';
+      document.getElementById('progressText').textContent = char.name + ' открыта! 🎉';
       claimBtn.style.display = 'block';
-      claimBtn.textContent = '🎊 Начать нового персонажа!';
+      claimBtn.textContent = '✨ Следующая суперсила!';
+      claimBtn.className = 'btn btn-gold';
       claimBtn.onclick = startNewChar;
       document.getElementById('cooldownMsg').style.display = 'none';
     } else {
-      grid.style.display = 'grid';
+      keysGrid.style.display = 'grid';
       imageWrap.classList.remove('show');
+      claimBtn.className = 'btn btn-green';
       claimBtn.onclick = claimPart;
-      claimBtn.textContent = '💪 Я сделал зарядку!';
+      claimBtn.textContent = '🔑 Я сделал зарядку!';
 
-      for (let i = 0; i < 4; i++) {
-        const sq = document.getElementById('sq' + i);
-        if (i < step) {
-          sq.classList.add('unlocked');
-          sq.style.background = '#667eea';
-        } else {
-          sq.classList.remove('unlocked');
-          sq.style.background = '';
+      for (let i = 0; i < KEYS_NEEDED; i++) {
+        const slot = document.getElementById('key' + i);
+        if (slot) {
+          if (i < step) {
+            slot.classList.add('filled');
+            slot.textContent = '🔑';
+          } else {
+            slot.classList.remove('filled');
+            slot.textContent = '';
+          }
         }
       }
 
-      const remaining = TOTAL_STEPS - step;
+      const remaining = KEYS_NEEDED + 1 - step;
       document.getElementById('progressText').textContent =
-        'До персонажа: ' + remaining + ' ' + declension(remaining, 'день', 'дня', 'дней');
+        'До суперсилы: ' + remaining + ' ' + declension(remaining, 'день', 'дня', 'дней');
       checkCooldown();
     }
-    renderGallery();
+  }
+
+  function renderPowersGrid(collected) {
+    const grid = document.getElementById('powersGrid');
+    grid.innerHTML = '';
+    CHARACTERS.forEach((char, i) => {
+      const isCollected = collected.includes(i);
+      const div = document.createElement('div');
+      div.className = 'power-slot' + (isCollected ? ' unlocked' : '');
+      if (isCollected) div.style.borderColor = char.color + '88';
+
+      if (isCollected) {
+        const img = document.createElement('img');
+        img.src = char.image;
+        img.alt = char.name;
+        div.appendChild(img);
+      } else {
+        const q = document.createElement('div');
+        q.className = 'power-q';
+        q.textContent = '❓';
+        div.appendChild(q);
+      }
+
+      const name = document.createElement('div');
+      name.className = 'power-name';
+      name.style.color = isCollected ? char.color : '#bbb';
+      name.textContent = isCollected ? char.name : '???';
+      div.appendChild(name);
+      grid.appendChild(div);
+    });
   }
 
   function checkCooldown() {
@@ -335,35 +410,68 @@
   }
 
   window.claimPart = async function() {
-    playClickSound();
-    const ref = doc(db, 'players', makeDocId());
+    const ref = doc(db, 'players', docId);
     const newStep = (playerData.step || 0) + 1;
     const char = CHARACTERS[playerData.charIndex];
+    const now = new Date();
+
+    // Считаем недельный счётчик
+    const currentWeekStart = getWeekStart(now);
+    let weekCount = playerData.weekCount || 0;
+    const storedWeekStart = playerData.weekStart;
+
+    if (!storedWeekStart || storedWeekStart < currentWeekStart) {
+      weekCount = 1; // новая неделя
+    } else {
+      weekCount += 1;
+    }
+
+    // Бонусные монетки за 5-7й день
+    let bonusCoins = 0;
+    if (weekCount === 5) bonusCoins = 1;
+    else if (weekCount === 6) bonusCoins = 2;
+    else if (weekCount === 7) bonusCoins = 3;
+
+    const newCoins = (playerData.coins || 0) + bonusCoins;
+
     try {
-      await updateDoc(ref, { step: newStep, lastClaim: serverTimestamp() });
+      await updateDoc(ref, {
+        step: newStep,
+        lastClaim: serverTimestamp(),
+        weekCount,
+        weekStart: currentWeekStart,
+        coins: newCoins
+      });
       playerData.step = newStep;
-      playerData.lastClaim = new Date();
-      if (newStep >= TOTAL_STEPS) {
-        playFanfare();
+      playerData.lastClaim = now;
+      playerData.weekCount = weekCount;
+      playerData.weekStart = currentWeekStart;
+      playerData.coins = newCoins;
+
+      if (newStep > KEYS_NEEDED) {
+        // Суперсила открыта!
         const collected = playerData.collectedChars || [];
         if (!collected.includes(playerData.charIndex)) {
           collected.push(playerData.charIndex);
           await updateDoc(ref, { collectedChars: collected });
           playerData.collectedChars = collected;
         }
-        document.getElementById('celebEmoji').textContent = '🎉';
-        document.getElementById('celebTitle').textContent = char.name + ' собраны!';
+        const isStudent = collected.length >= TOTAL_CHARS;
+        document.getElementById('celebEmoji').textContent = isStudent ? '🏆' : '🎉';
+        document.getElementById('celebTitle').textContent = isStudent ? 'Ты УЧЕНИК! ⭐' : char.name + ' открыта!';
         const img = document.getElementById('celebImg');
         img.src = char.image; img.style.display = 'block';
-        document.getElementById('celebText').textContent = 'Поздравляем! Персонаж добавлен в коллекцию!';
+        document.getElementById('celebText').textContent = isStudent
+          ? 'Все суперсилы собраны! Открыта Витрина! 🏆'
+          : 'Суперсила добавлена в коллекцию!';
       } else {
-        playSquareSound();
-        document.getElementById('celebEmoji').textContent = '✨';
-        document.getElementById('celebTitle').textContent = 'Отлично!';
+        let celebText = 'Ключей: ' + newStep + ' из ' + KEYS_NEEDED + '. До суперсилы: ' +
+          (KEYS_NEEDED + 1 - newStep) + ' ' + declension(KEYS_NEEDED + 1 - newStep, 'день', 'дня', 'дней') + '!';
+        if (bonusCoins > 0) celebText += '\n+' + bonusCoins + ' 🪙 в копилку!';
+        document.getElementById('celebEmoji').textContent = bonusCoins > 0 ? '🪙' : '🔑';
+        document.getElementById('celebTitle').textContent = bonusCoins > 0 ? 'Бонус!' : 'Ключ ' + newStep + ' из ' + KEYS_NEEDED + '!';
         document.getElementById('celebImg').style.display = 'none';
-        document.getElementById('celebText').textContent =
-          'Часть ' + newStep + ' из 4 открыта! До персонажа осталось ' +
-          (TOTAL_STEPS - newStep) + ' ' + declension(TOTAL_STEPS - newStep, 'день', 'дня', 'дней') + '!';
+        document.getElementById('celebText').textContent = celebText;
       }
       document.getElementById('celebration').classList.add('show');
     } catch(e) { alert('Ошибка сохранения. Проверь интернет.'); }
@@ -375,7 +483,7 @@
   };
 
   async function startNewChar() {
-    const ref = doc(db, 'players', makeDocId());
+    const ref = doc(db, 'players', docId);
     const collected = playerData.collectedChars || [];
     let available = CHARACTERS.map((_,i) => i).filter(i => !collected.includes(i));
     if (available.length === 0) available = CHARACTERS.map((_,i) => i);
@@ -385,29 +493,25 @@
     renderGame();
   }
 
-  function renderGallery() {
+  window.showGallery = function() {
     const collected = playerData.collectedChars || [];
-    document.getElementById('gallerySubtitle').textContent = 'Собрано ' + collected.length + ' из ' + CHARACTERS.length;
+    document.getElementById('gallerySubtitle').textContent = 'Собрано ' + collected.length + ' из ' + TOTAL_CHARS + ' суперсил';
     const grid = document.getElementById('galleryGrid');
     grid.innerHTML = '';
     CHARACTERS.forEach((char, i) => {
       const isCollected = collected.includes(i);
       const div = document.createElement('div');
-      div.className = 'gallery-item' + (isCollected ? '' : ' locked-item');
+      div.className = 'gallery-item';
       const img = document.createElement('img');
       img.src = isCollected ? char.image : '';
-      img.alt = char.name;
+      if (!isCollected) img.style.display = 'none';
       const name = document.createElement('div');
       name.className = 'gallery-item-name';
       name.style.color = isCollected ? char.color : '#bbb';
-      name.textContent = isCollected ? char.name : '???';
+      name.textContent = isCollected ? char.name : '🔒';
       div.appendChild(img); div.appendChild(name);
       grid.appendChild(div);
     });
-  }
-
-  window.showGallery = function() {
-    renderGallery();
     document.getElementById('gameScreen').style.display = 'none';
     document.getElementById('galleryScreen').style.display = 'block';
   };
@@ -418,22 +522,24 @@
   };
 
   window.changeName = function() {
-    localStorage.removeItem('child_name_' + kitId);
-    localStorage.removeItem('child_nick_' + kitId);
+    localStorage.removeItem('child_' + kitId);
     document.getElementById('gameScreen').style.display = 'none';
     document.getElementById('nameScreen').style.display = 'block';
     document.getElementById('nameInput').value = '';
     document.getElementById('nickInput').value = '';
+    updatePreview();
   };
 
-  const savedName = localStorage.getItem('child_name_' + kitId);
-  const savedNick = localStorage.getItem('child_nick_' + kitId);
-  if (savedName && savedNick) {
-    childName = savedName;
-    childNick = savedNick;
-    document.getElementById('nameInput').value = savedName;
-    document.getElementById('nickInput').value = savedNick;
-    loadPlayer();
+  // Авто-вход
+  const saved = localStorage.getItem('child_' + kitId);
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      childName = data.name;
+      childNick = data.nick;
+      docId = kitId + '_' + (data.name + data.nick).toLowerCase().replace(/[^a-zа-яё0-9]/gi, '_');
+      loadPlayer();
+    } catch(e) { localStorage.removeItem('child_' + kitId); }
   }
 </script>
 </body>
