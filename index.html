@@ -59,7 +59,7 @@
 
   .greeting { font-size: 18px; font-weight: 900; color: #2d2d2d; margin-bottom: 10px; }
   .char-name { font-family: 'Fredoka One', cursive; font-size: 19px; margin-bottom: 6px; }
-  .progress-text { font-size: 12px; color: #888; font-weight: 700; margin-bottom: 12px; }
+  .progress-text { font-size: 12px; color: #888; font-weight: 700; margin-bottom: 12px; line-height: 1.6; }
 
   /* Ключи */
   .keys-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
@@ -244,7 +244,7 @@
   async function loadPlayer() {
     document.getElementById('nameScreen').style.display = 'none';
     document.getElementById('gameScreen').style.display = 'block';
-    document.getElementById('greetingText').textContent = childName + ' · ' + childNick;
+    document.getElementById('greetingText').textContent = 'Привет, ' + childName + '! · ' + childNick;
 
     const ref = doc(db, 'players', docId);
     try {
@@ -352,8 +352,16 @@
       }
 
       const remaining = KEYS_NEEDED + 1 - step;
-      document.getElementById('progressText').textContent =
-        'До суперсилы: ' + remaining + ' ' + declension(remaining, 'игра', 'игры', 'игр');
+      const keysEarned = '🔑'.repeat(step) + '⬜'.repeat(KEYS_NEEDED - step);
+      const wc = playerData.weekCount || 0;
+      let weekLine = '1 персонаж в неделю';
+      if (wc >= 4 && wc < 5) weekLine = '🔥 Ещё 1 день — монетка!';
+      else if (wc === 5) weekLine = '🪙 +1 монетка за 5-й день!';
+      else if (wc === 6) weekLine = '🪙🪙 +2 монетки за 6-й день!';
+      else if (wc >= 7) weekLine = '🪙🪙🪙 +3 монетки за 7-й день!';
+      document.getElementById('progressText').innerHTML =
+        '<span style="font-size:22px;letter-spacing:4px">' + keysEarned + '</span>' +
+        '<br><span style="font-size:11px;color:#aaa">' + weekLine + '</span>';
       checkCooldown();
     }
   }
@@ -530,21 +538,27 @@
         div.style.borderColor = char.color + '99';
         div.style.background = char.color + '10';
       }
+      const area = document.createElement('div');
+      area.className = 'gallery-image-area';
       if (isCollected) {
-        const area = document.createElement('div');
-        area.className = 'gallery-image-area';
         const img = document.createElement('img');
         img.src = char.image;
         img.alt = char.power;
         area.appendChild(img);
-        div.appendChild(area);
+      } else {
+        const q = document.createElement('div');
+        q.style.cssText = 'font-size:36px;color:#ccc;';
+        q.textContent = '❓';
+        area.appendChild(q);
+      }
+      div.appendChild(area);
+      if (isCollected) {
         const pname = document.createElement('div');
         pname.className = 'gallery-power-name';
         pname.style.color = char.color;
         pname.textContent = char.power;
         div.appendChild(pname);
       }
-      // locked = пустой квадрат, ничего не показываем
       grid.appendChild(div);
     });
     document.getElementById('gameScreen').style.display = 'none';
