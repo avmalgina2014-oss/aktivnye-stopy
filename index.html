@@ -78,27 +78,23 @@
   .change-name:hover { color: #667eea; }
 
   /* Коллекция */
-  .collection-section { margin-top: 16px; border-top: 2px solid #f0f0f0; padding-top: 14px; }
-  .collection-title { font-family: 'Fredoka One', cursive; font-size: 15px; color: #888; margin-bottom: 10px; }
+  .collection-section { margin-top: 16px; border-top: 2px solid #f0f0f0; padding-top: 14px; cursor: pointer; }
+  .collection-section:hover .collection-title { color: #667eea; }
+  .collection-title { font-family: 'Fredoka One', cursive; font-size: 15px; color: #888; margin-bottom: 10px; transition: color 0.2s; }
   .powers-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-  .power-slot { border-radius: 14px; border: 2px solid #e0e4ef; background: #f9f9f9; padding: 8px 4px 6px; text-align: center; transition: all 0.3s; }
-  .power-slot.unlocked { box-shadow: 0 3px 12px rgba(0,0,0,0.10); }
-  .power-slot img { width: 100%; height: 48px; object-fit: contain; display: block; }
-  .power-slot .power-shoe { font-size: 16px; line-height: 1; margin-bottom: 3px; }
-  .power-slot .power-q { font-size: 20px; height: 48px; display: flex; align-items: center; justify-content: center; color: #ccc; }
-  .power-slot .power-name { font-size: 9px; font-weight: 800; margin-top: 4px; color: #bbb; line-height: 1.2; }
-  .power-slot.unlocked .power-name { color: #555; }
+  .power-slot { border-radius: 14px; border: 2px solid #e0e4ef; background: #f0f0f0; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.3s; overflow: hidden; padding: 4px; }
+  .power-slot.unlocked { background: #fff; box-shadow: 0 3px 12px rgba(0,0,0,0.10); }
+  .power-slot img { width: 100%; height: 44px; object-fit: contain; display: block; }
+  .power-slot .power-name { font-size: 8px; font-weight: 800; margin-top: 3px; color: #555; line-height: 1.2; text-align: center; }
 
-  /* Витрина (УЧЕНИК) */
+  /* Коллекция (Галерея) */
   #galleryScreen { display: none; }
   .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 14px 0; }
-  .gallery-item { border-radius: 18px; border: 2px solid #e0e4ef; background: #f9f9f9; padding: 10px 8px; text-align: center; transition: all 0.3s; }
-  .gallery-item.unlocked { box-shadow: 0 4px 14px rgba(0,0,0,0.10); }
-  .gallery-power-name { font-family: 'Fredoka One', cursive; font-size: 14px; color: #bbb; margin-bottom: 8px; }
-  .gallery-item.unlocked .gallery-power-name { color: #444; }
-  .gallery-image-area { height: 100px; display: flex; align-items: center; justify-content: center; background: #f0f0f0; border-radius: 12px; }
-  .gallery-image-area img { width: 100%; height: 100px; object-fit: contain; border-radius: 12px; }
-  .gallery-image-area .gallery-q { font-size: 34px; color: #ccc; }
+  .gallery-item { border-radius: 18px; border: 2px solid #e8e8e8; background: #f0f0f0; padding: 10px 8px; text-align: center; transition: all 0.3s; min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .gallery-item.unlocked { background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.10); }
+  .gallery-power-name { font-family: 'Fredoka One', cursive; font-size: 15px; margin-top: 8px; }
+  .gallery-image-area { height: 100px; width: 100%; display: flex; align-items: center; justify-content: center; }
+  .gallery-image-area img { width: 100%; height: 100px; object-fit: contain; }
 
   /* Праздник */
   .celebration { display: none; position: fixed; top:0;left:0;right:0;bottom:0; background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
@@ -150,21 +146,17 @@
     <span class="cooldown-time" id="cooldownTime"></span>
   </div>
 
-  <!-- Коллекция — всегда видна -->
-  <div class="collection-section">
-    <div class="collection-title">🏅 Мои суперсилы</div>
+  <!-- Коллекция — кликабельна всегда -->
+  <div class="collection-section" onclick="showGallery()">
+    <div class="collection-title">🏅 Мои суперсилы →</div>
     <div class="powers-grid" id="powersGrid"></div>
   </div>
-
-  <!-- Витрина — только для УЧЕНИКА -->
-  <button class="btn-outline" id="galleryBtn" onclick="showGallery()" style="display:none;">🏆 Витрина</button>
   <div class="change-name" onclick="changeName()">Это не я → сменить имя</div>
 </div>
 
 <!-- ВИТРИНА -->
 <div class="card" id="galleryScreen">
-  <div id="galleryRankBadge" class="rank-badge rank-student" style="margin-bottom:10px; display:inline-block;">⭐ УЧЕНИК</div>
-  <h1 style="margin-bottom:6px;">🏆 Моя коллекция</h1>
+  <h1 style="margin-bottom:6px;">🏅 Мои суперсилы</h1>
   <div class="subtitle" id="gallerySubtitle"></div>
   <div class="gallery-grid" id="galleryGrid"></div>
   <button class="btn" onclick="hideGallery()">← Назад</button>
@@ -297,21 +289,18 @@
     const collected = playerData.collectedChars || [];
     const coins = playerData.coins || 0;
 
-    document.getElementById('charName').textContent = char.power;
+    document.getElementById('charName').textContent = ''; // суперсила — сюрприз!
     document.getElementById('charName').style.color = char.color;
     document.getElementById('coinsCount').textContent = coins;
 
     // Звание — НОВИЧОК → УЧЕНИК (МАСТЕР появится позже)
     const badge = document.getElementById('rankBadge');
-    const galleryBtn = document.getElementById('galleryBtn');
     if (collected.length >= TOTAL_CHARS) {
       badge.className = 'rank-badge rank-student';
       badge.textContent = '⭐ УЧЕНИК';
-      galleryBtn.style.display = 'inline-block';
     } else {
       badge.className = 'rank-badge rank-novice';
       badge.textContent = '🌱 НОВИЧОК';
-      galleryBtn.style.display = 'none';
     }
 
     // Коллекция — всегда видна
@@ -327,11 +316,21 @@
       imageWrap.classList.add('show');
       document.getElementById('charImage').src = char.image;
       document.getElementById('progressText').textContent = char.power + ' открыта! 🎉';
-      claimBtn.style.display = 'block';
-      claimBtn.textContent = '✨ Следующая суперсила!';
-      claimBtn.className = 'btn btn-gold';
-      claimBtn.onclick = startNewChar;
       document.getElementById('cooldownMsg').style.display = 'none';
+      // Проверяем недельный лимит
+      const currentWeekStart = getWeekStart(new Date());
+      const lastUnlockWeek = playerData.lastUnlockWeek || 0;
+      if (lastUnlockWeek >= currentWeekStart) {
+        claimBtn.style.display = 'none';
+        const coolEl = document.getElementById('cooldownMsg');
+        coolEl.style.display = 'block';
+        coolEl.innerHTML = 'Новый персонаж появится на следующей неделе! 🗓️<span class="cooldown-time">Молодец, так держать! 💪</span>';
+      } else {
+        claimBtn.style.display = 'block';
+        claimBtn.textContent = '✨ Следующая суперсила!';
+        claimBtn.className = 'btn btn-gold';
+        claimBtn.onclick = startNewChar;
+      }
     } else {
       keysGrid.style.display = 'grid';
       imageWrap.classList.remove('show');
@@ -354,7 +353,7 @@
 
       const remaining = KEYS_NEEDED + 1 - step;
       document.getElementById('progressText').textContent =
-        'До суперсилы: ' + remaining + ' ' + declension(remaining, 'день', 'дня', 'дней');
+        'До суперсилы: ' + remaining + ' ' + declension(remaining, 'игра', 'игры', 'игр');
       checkCooldown();
     }
   }
@@ -370,32 +369,18 @@
         div.style.borderColor = char.color + '88';
         div.style.background = char.color + '15';
       }
-
-      // Иконка обуви
-      const shoeDiv = document.createElement('div');
-      shoeDiv.className = 'power-shoe';
-      shoeDiv.textContent = char.shoe;
-      div.appendChild(shoeDiv);
-
-      // Картинка персонажа или ?
       if (isCollected) {
         const img = document.createElement('img');
         img.src = char.image;
-        img.alt = char.name;
+        img.alt = char.power;
         div.appendChild(img);
-      } else {
-        const q = document.createElement('div');
-        q.className = 'power-q';
-        q.textContent = '❓';
-        div.appendChild(q);
+        const name = document.createElement('div');
+        name.className = 'power-name';
+        name.style.color = char.color;
+        name.textContent = char.power;
+        div.appendChild(name);
       }
-
-      // Название суперсилы — всегда видно
-      const name = document.createElement('div');
-      name.className = 'power-name';
-      name.style.color = isCollected ? char.color : '#aaa';
-      name.textContent = char.power;
-      div.appendChild(name);
+      // locked = просто пустой серый квадрат
       grid.appendChild(div);
     });
   }
@@ -475,8 +460,10 @@
         const collected = playerData.collectedChars || [];
         if (!collected.includes(playerData.charIndex)) {
           collected.push(playerData.charIndex);
-          await updateDoc(ref, { collectedChars: collected });
+          const currentWeekStart = getWeekStart(now);
+          await updateDoc(ref, { collectedChars: collected, lastUnlockWeek: currentWeekStart });
           playerData.collectedChars = collected;
+          playerData.lastUnlockWeek = currentWeekStart;
         }
         const isStudent = collected.length >= TOTAL_CHARS;
         document.getElementById('celebEmoji').textContent = isStudent ? '🏆' : '🎉';
@@ -488,7 +475,7 @@
           : 'Суперсила добавлена в коллекцию!';
       } else {
         let celebText = 'Ключей: ' + newStep + ' из ' + KEYS_NEEDED + '. До суперсилы: ' +
-          (KEYS_NEEDED + 1 - newStep) + ' ' + declension(KEYS_NEEDED + 1 - newStep, 'день', 'дня', 'дней') + '!';
+          (KEYS_NEEDED + 1 - newStep) + ' ' + declension(KEYS_NEEDED + 1 - newStep, 'игра', 'игры', 'игр') + '!';
         if (bonusCoins > 0) celebText += '\n+' + bonusCoins + ' 🪙 в копилку!';
         document.getElementById('celebEmoji').textContent = bonusCoins > 0 ? '🪙' : '🔑';
         document.getElementById('celebTitle').textContent = bonusCoins > 0 ? 'Бонус!' : 'Ключ ' + newStep + ' из ' + KEYS_NEEDED + '!';
@@ -506,6 +493,21 @@
 
   async function startNewChar() {
     const ref = doc(db, 'players', docId);
+    const now = new Date();
+    const currentWeekStart = getWeekStart(now);
+    const lastUnlockWeek = playerData.lastUnlockWeek || 0;
+
+    // Не больше 1 персонажа в неделю
+    if (lastUnlockWeek >= currentWeekStart) {
+      document.getElementById('celebEmoji').textContent = '📅';
+      document.getElementById('celebTitle').textContent = 'Отдыхаем до следующей недели!';
+      document.getElementById('celebImg').style.display = 'none';
+      document.getElementById('celebText').textContent = 'Суперсила открыта! Новый персонаж появится на следующей неделе 💪';
+      document.getElementById('celebration').classList.add('show');
+      renderGame();
+      return;
+    }
+
     const collected = playerData.collectedChars || [];
     let available = CHARACTERS.map((_,i) => i).filter(i => !collected.includes(i));
     if (available.length === 0) available = CHARACTERS.map((_,i) => i);
@@ -526,32 +528,23 @@
       div.className = 'gallery-item' + (isCollected ? ' unlocked' : '');
       if (isCollected) {
         div.style.borderColor = char.color + '99';
-        div.style.background = char.color + '12';
+        div.style.background = char.color + '10';
       }
-
-      // Название суперсилы — всегда видно сверху
-      const pname = document.createElement('div');
-      pname.className = 'gallery-power-name';
-      if (isCollected) pname.style.color = char.color;
-      pname.textContent = char.power;
-      div.appendChild(pname);
-
-      // Картинка или ❓
-      const area = document.createElement('div');
-      area.className = 'gallery-image-area';
       if (isCollected) {
+        const area = document.createElement('div');
+        area.className = 'gallery-image-area';
         const img = document.createElement('img');
         img.src = char.image;
         img.alt = char.power;
         area.appendChild(img);
-      } else {
-        const q = document.createElement('div');
-        q.className = 'gallery-q';
-        q.textContent = '❓';
-        area.appendChild(q);
+        div.appendChild(area);
+        const pname = document.createElement('div');
+        pname.className = 'gallery-power-name';
+        pname.style.color = char.color;
+        pname.textContent = char.power;
+        div.appendChild(pname);
       }
-      div.appendChild(area);
-
+      // locked = пустой квадрат, ничего не показываем
       grid.appendChild(div);
     });
     document.getElementById('gameScreen').style.display = 'none';
@@ -586,4 +579,3 @@
 </script>
 </body>
 </html>
-
