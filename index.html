@@ -81,19 +81,24 @@
   .collection-section { margin-top: 16px; border-top: 2px solid #f0f0f0; padding-top: 14px; }
   .collection-title { font-family: 'Fredoka One', cursive; font-size: 15px; color: #888; margin-bottom: 10px; }
   .powers-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-  .power-slot { border-radius: 12px; border: 2px solid #e0e4ef; background: #f9f9f9; padding: 6px 4px; text-align: center; transition: all 0.3s; }
-  .power-slot.unlocked { border-color: transparent; box-shadow: 0 3px 10px rgba(0,0,0,0.12); }
-  .power-slot img { width: 100%; height: 50px; object-fit: contain; display: block; }
-  .power-slot .power-q { font-size: 22px; height: 50px; display: flex; align-items: center; justify-content: center; }
-  .power-slot .power-name { font-size: 9px; font-weight: 800; margin-top: 3px; color: #bbb; }
+  .power-slot { border-radius: 14px; border: 2px solid #e0e4ef; background: #f9f9f9; padding: 8px 4px 6px; text-align: center; transition: all 0.3s; }
+  .power-slot.unlocked { box-shadow: 0 3px 12px rgba(0,0,0,0.10); }
+  .power-slot img { width: 100%; height: 48px; object-fit: contain; display: block; }
+  .power-slot .power-shoe { font-size: 16px; line-height: 1; margin-bottom: 3px; }
+  .power-slot .power-q { font-size: 20px; height: 48px; display: flex; align-items: center; justify-content: center; color: #ccc; }
+  .power-slot .power-name { font-size: 9px; font-weight: 800; margin-top: 4px; color: #bbb; line-height: 1.2; }
   .power-slot.unlocked .power-name { color: #555; }
 
   /* Витрина (УЧЕНИК) */
   #galleryScreen { display: none; }
-  .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 14px 0; }
-  .gallery-item { border-radius: 14px; overflow: hidden; border: 3px solid #e0e4ef; background: #f5f5f5; }
-  .gallery-item img { width: 100%; height: 110px; object-fit: contain; display: block; }
-  .gallery-item-name { font-family: 'Fredoka One', cursive; font-size: 13px; padding: 5px; text-align: center; }
+  .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 14px 0; }
+  .gallery-item { border-radius: 18px; border: 2px solid #e0e4ef; background: #f9f9f9; padding: 10px 8px; text-align: center; transition: all 0.3s; }
+  .gallery-item.unlocked { box-shadow: 0 4px 14px rgba(0,0,0,0.10); }
+  .gallery-power-name { font-family: 'Fredoka One', cursive; font-size: 14px; color: #bbb; margin-bottom: 8px; }
+  .gallery-item.unlocked .gallery-power-name { color: #444; }
+  .gallery-image-area { height: 100px; display: flex; align-items: center; justify-content: center; background: #f0f0f0; border-radius: 12px; }
+  .gallery-image-area img { width: 100%; height: 100px; object-fit: contain; border-radius: 12px; }
+  .gallery-image-area .gallery-q { font-size: 34px; color: #ccc; }
 
   /* Праздник */
   .celebration { display: none; position: fixed; top:0;left:0;right:0;bottom:0; background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
@@ -147,7 +152,7 @@
 
   <!-- Коллекция — всегда видна -->
   <div class="collection-section">
-    <div class="collection-title">🏅 Моя коллекция суперсил</div>
+    <div class="collection-title">🏅 Мои суперсилы</div>
     <div class="powers-grid" id="powersGrid"></div>
   </div>
 
@@ -158,8 +163,8 @@
 
 <!-- ВИТРИНА -->
 <div class="card" id="galleryScreen">
-  <div class="rank-badge rank-student" style="margin-bottom:10px; display:inline-block;">⭐ УЧЕНИК</div>
-  <h1 style="margin-bottom:6px;">🏆 Витрина суперсил</h1>
+  <div id="galleryRankBadge" class="rank-badge rank-student" style="margin-bottom:10px; display:inline-block;">⭐ УЧЕНИК</div>
+  <h1 style="margin-bottom:6px;">🏆 Моя коллекция</h1>
   <div class="subtitle" id="gallerySubtitle"></div>
   <div class="gallery-grid" id="galleryGrid"></div>
   <button class="btn" onclick="hideGallery()">← Назад</button>
@@ -193,12 +198,18 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
+  // ═══════════════════════════════════════════════════
+  // ПЕРСОНАЖИ — добавляй новых сюда, прогресс не пропадёт
+  // shoe: иконка обуви, power: название суперсилы, name: имя персонажа
+  // ═══════════════════════════════════════════════════
   const CHARACTERS = [
-    { name: "Лёгкость",       color: "#FFD700", image: "solnyshki.png" },
-    { name: "Скорость ⚡",    color: "#E07000", image: "shystriki.png" },
-    { name: "Сила 💪",        color: "#CC0000", image: "silachi.png"   },
-    { name: "Баланс 🎯",      color: "#1565C0", image: "gratsii.png"   },
-    { name: "Восстановление", color: "#2E7D32", image: "soni.png"      },
+    { shoe: "👟", power: "Скорость",        name: "Шустрики",   color: "#E07000", image: "shystriki.png" },
+    { shoe: "🥿", power: "Восстановление",  name: "Сони",        color: "#2E7D32", image: "soni.png"      },
+    { shoe: "👢", power: "Сила",            name: "Силачи",      color: "#CC0000", image: "silachi.png"   },
+    { shoe: "🩰", power: "Баланс",          name: "Грации",      color: "#1565C0", image: "gratsii.png"   },
+    { shoe: "👡", power: "Лёгкость",        name: "Солнышки",   color: "#FFD700", image: "solnyshki.png" },
+    // 👇 Добавляй новых персонажей здесь:
+    // { shoe: "⛸️", power: "Ловкость", name: "Скользкие", color: "#9C27B0", image: "novyi.png" },
   ];
 
   const KEYS_NEEDED = 3;  // 3 ключа → на 4й день персонаж
@@ -218,10 +229,10 @@
     const preview = document.getElementById('nickPreview');
     const startBtn = document.getElementById('startBtn');
     if (name && nick) {
-      preview.textContent = name + ' · ' + nick;
+      if (preview) preview.textContent = name + ' · ' + nick;
       startBtn.disabled = false;
     } else {
-      preview.textContent = name ? name + ' · введи ник' : 'Введи имя и ник';
+      if (preview) preview.textContent = name ? name + ' · введи ник' : 'Введи имя и ник';
       startBtn.disabled = true;
     }
   };
@@ -286,11 +297,11 @@
     const collected = playerData.collectedChars || [];
     const coins = playerData.coins || 0;
 
-    document.getElementById('charName').textContent = char.name;
+    document.getElementById('charName').textContent = char.power;
     document.getElementById('charName').style.color = char.color;
     document.getElementById('coinsCount').textContent = coins;
 
-    // Звание
+    // Звание — НОВИЧОК → УЧЕНИК (МАСТЕР появится позже)
     const badge = document.getElementById('rankBadge');
     const galleryBtn = document.getElementById('galleryBtn');
     if (collected.length >= TOTAL_CHARS) {
@@ -315,7 +326,7 @@
       keysGrid.style.display = 'none';
       imageWrap.classList.add('show');
       document.getElementById('charImage').src = char.image;
-      document.getElementById('progressText').textContent = char.name + ' открыта! 🎉';
+      document.getElementById('progressText').textContent = char.power + ' открыта! 🎉';
       claimBtn.style.display = 'block';
       claimBtn.textContent = '✨ Следующая суперсила!';
       claimBtn.className = 'btn btn-gold';
@@ -355,8 +366,18 @@
       const isCollected = collected.includes(i);
       const div = document.createElement('div');
       div.className = 'power-slot' + (isCollected ? ' unlocked' : '');
-      if (isCollected) div.style.borderColor = char.color + '88';
+      if (isCollected) {
+        div.style.borderColor = char.color + '88';
+        div.style.background = char.color + '15';
+      }
 
+      // Иконка обуви
+      const shoeDiv = document.createElement('div');
+      shoeDiv.className = 'power-shoe';
+      shoeDiv.textContent = char.shoe;
+      div.appendChild(shoeDiv);
+
+      // Картинка персонажа или ?
       if (isCollected) {
         const img = document.createElement('img');
         img.src = char.image;
@@ -369,10 +390,11 @@
         div.appendChild(q);
       }
 
+      // Название суперсилы — всегда видно
       const name = document.createElement('div');
       name.className = 'power-name';
-      name.style.color = isCollected ? char.color : '#bbb';
-      name.textContent = isCollected ? char.name : '???';
+      name.style.color = isCollected ? char.color : '#aaa';
+      name.textContent = char.power;
       div.appendChild(name);
       grid.appendChild(div);
     });
@@ -458,7 +480,7 @@
         }
         const isStudent = collected.length >= TOTAL_CHARS;
         document.getElementById('celebEmoji').textContent = isStudent ? '🏆' : '🎉';
-        document.getElementById('celebTitle').textContent = isStudent ? 'Ты УЧЕНИК! ⭐' : char.name + ' открыта!';
+        document.getElementById('celebTitle').textContent = isStudent ? 'Ты УЧЕНИК! ⭐' : char.power + ' открыта!';
         const img = document.getElementById('celebImg');
         img.src = char.image; img.style.display = 'block';
         document.getElementById('celebText').textContent = isStudent
@@ -501,15 +523,35 @@
     CHARACTERS.forEach((char, i) => {
       const isCollected = collected.includes(i);
       const div = document.createElement('div');
-      div.className = 'gallery-item';
-      const img = document.createElement('img');
-      img.src = isCollected ? char.image : '';
-      if (!isCollected) img.style.display = 'none';
-      const name = document.createElement('div');
-      name.className = 'gallery-item-name';
-      name.style.color = isCollected ? char.color : '#bbb';
-      name.textContent = isCollected ? char.name : '🔒';
-      div.appendChild(img); div.appendChild(name);
+      div.className = 'gallery-item' + (isCollected ? ' unlocked' : '');
+      if (isCollected) {
+        div.style.borderColor = char.color + '99';
+        div.style.background = char.color + '12';
+      }
+
+      // Название суперсилы — всегда видно сверху
+      const pname = document.createElement('div');
+      pname.className = 'gallery-power-name';
+      if (isCollected) pname.style.color = char.color;
+      pname.textContent = char.power;
+      div.appendChild(pname);
+
+      // Картинка или ❓
+      const area = document.createElement('div');
+      area.className = 'gallery-image-area';
+      if (isCollected) {
+        const img = document.createElement('img');
+        img.src = char.image;
+        img.alt = char.power;
+        area.appendChild(img);
+      } else {
+        const q = document.createElement('div');
+        q.className = 'gallery-q';
+        q.textContent = '❓';
+        area.appendChild(q);
+      }
+      div.appendChild(area);
+
       grid.appendChild(div);
     });
     document.getElementById('gameScreen').style.display = 'none';
@@ -544,3 +586,4 @@
 </script>
 </body>
 </html>
+
