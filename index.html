@@ -133,6 +133,7 @@
     <div class="key-slot" id="key0"></div>
     <div class="key-slot" id="key1"></div>
     <div class="key-slot" id="key2"></div>
+    <div class="key-slot" id="key3"></div>
   </div>
 
   <div class="char-image-wrap" id="charImageWrap">
@@ -192,19 +193,29 @@
 
   // ═══════════════════════════════════════════════════
   // ПЕРСОНАЖИ — добавляй новых сюда, прогресс не пропадёт
-  // shoe: иконка обуви, power: название суперсилы, name: имя персонажа
+  // animal: эмодзи животного, power: суперсила, name: имя команды
+  // rarity: "common" | "rare" | "epic" | "legendary"
   // ═══════════════════════════════════════════════════
   const CHARACTERS = [
-    { shoe: "👟", power: "Скорость",        name: "Шустрики",   color: "#E07000", image: "shystriki.png" },
-    { shoe: "🥿", power: "Восстановление",  name: "Сони",        color: "#2E7D32", image: "soni.png"      },
-    { shoe: "👢", power: "Сила",            name: "Силачи",      color: "#CC0000", image: "silachi.png"   },
-    { shoe: "🩰", power: "Баланс",          name: "Грации",      color: "#1565C0", image: "gratsii.png"   },
-    { shoe: "👡", power: "Лёгкость",        name: "Солнышки",   color: "#FFD700", image: "solnyshki.png" },
-    // 👇 Добавляй новых персонажей здесь:
-    // { shoe: "⛸️", power: "Ловкость", name: "Скользкие", color: "#9C27B0", image: "novyi.png" },
+    // Обычные (открываются обычными ключами 🔑)
+    { animal: "🐆", power: "Скорость",        name: "Гепард",    color: "#E07000", image: "gepard.png",    rarity: "common" },
+    { animal: "🐦", power: "Лёгкость",        name: "Колибри",   color: "#00ACC1", image: "kolibri.png",   rarity: "common" },
+    { animal: "🐜", power: "Сила",            name: "Муравей",   color: "#CC0000", image: "muravey.png",   rarity: "common" },
+    { animal: "🦩", power: "Баланс",          name: "Фламинго",  color: "#E91E8C", image: "flamingo.png",  rarity: "common" },
+    { animal: "🦥", power: "Восстановление",  name: "Ленивец",   color: "#2E7D32", image: "lenivec.png",   rarity: "common" },
+    // 👇 Редкие (открываются редкими ключами 🗝️ — включаются через admin.html)
+    // { animal: "🦊", power: "Хитрость",     name: "Лиса",      color: "#FF6B35", image: "lisa.png",      rarity: "rare"   },
+    // 👇 Эпические (открываются эпическими ключами ⚜️)
+    // { animal: "🦁", power: "Лидерство",    name: "Лев",       color: "#C0A000", image: "lev.png",       rarity: "epic"   },
+    // 👇 Легендарные (открываются легендарными ключами 💎)
+    // { animal: "🐉", power: "Магия",        name: "Дракон",    color: "#9C27B0", image: "drakon.png",    rarity: "legendary" },
   ];
 
-  const KEYS_NEEDED = 3;  // 3 ключа → на 4й день персонаж
+  // Обычные персонажи (для основного прогресса)
+  const COMMON_CHARS = CHARACTERS.filter((_,i) => CHARACTERS[i].rarity === "common").map((_,i) => i);
+  const TOTAL_CHARS = CHARACTERS.filter(c => c.rarity === "common").length;
+
+  const KEYS_NEEDED = 4;  // 4 ключа → на 4й день персонаж
   const TOTAL_CHARS = CHARACTERS.length;
   const urlParams = new URLSearchParams(window.location.search);
   const kitId = urlParams.get('kit') || 'demo';
@@ -241,16 +252,33 @@
     await loadPlayer();
   };
 
+  // Сохраняем резервную копию прогресса в localStorage
+  function saveBackup(data) {
+    try {
+      const backup = { ...data };
+      if (backup.lastClaim && backup.lastClaim.toDate) backup.lastClaim = backup.lastClaim.toDate().toISOString();
+      localStorage.setItem('backup_' + docId, JSON.stringify({ ...backup, _savedAt: Date.now() }));
+    } catch(e) {}
+  }
+
+  function loadBackup() {
+    try {
+      const raw = localStorage.getItem('backup_' + docId);
+      return raw ? JSON.parse(raw) : null;
+    } catch(e) { return null; }
+  }
+
   async function loadPlayer() {
     document.getElementById('nameScreen').style.display = 'none';
     document.getElementById('gameScreen').style.display = 'block';
-    document.getElementById('greetingText').textContent = 'Привет, ' + childName + '! · ' + childNick;
+    document.getElementById('greetingText').textContent = 'Привет, ' + childName + '!';
 
     const ref = doc(db, 'players', docId);
     try {
       const snap = await getDoc(ref);
       if (snap.exists()) {
         playerData = snap.data();
+        saveBackup(playerData); // обновляем резерв
       } else {
         const charIndex = Math.floor(Math.random() * TOTAL_CHARS);
         playerData = {
@@ -260,10 +288,26 @@
           lastClaim: null, createdAt: serverTimestamp()
         };
         await setDoc(ref, playerData);
+        saveBackup(playerData);
       }
       renderGame();
     } catch(e) {
-      alert('Ошибка загрузки. Проверь интернет.');
+      // Firebase недоступен — грузим из резерва
+      const backup = loadBackup();
+      if (backup) {
+        playerData = backup;
+        renderGame();
+        // Показываем предупреждение
+        setTimeout(() => {
+          const msg = document.getElementById('cooldownMsg');
+          if (msg) {
+            msg.style.display = 'block';
+            msg.innerHTML = '⚠️ Нет интернета — показан сохранённый прогресс<span class="cooldown-time" style="font-size:12px">Зарядку лучше отметить позже</span>';
+          }
+        }, 500);
+      } else {
+        alert('Нет соединения и нет резервной копии. Проверь интернет.');
+      }
     }
   }
 
@@ -320,11 +364,33 @@
       // Проверяем недельный лимит
       const currentWeekStart = getWeekStart(new Date());
       const lastUnlockWeek = playerData.lastUnlockWeek || 0;
+      const wc2 = playerData.weekCount || 0;
       if (lastUnlockWeek >= currentWeekStart) {
+        // Персонаж уже открыт на этой неделе
         claimBtn.style.display = 'none';
         const coolEl = document.getElementById('cooldownMsg');
         coolEl.style.display = 'block';
-        coolEl.innerHTML = 'Новый персонаж появится на следующей неделе! 🗓️<span class="cooldown-time">Молодец, так держать! 💪</span>';
+        if (wc2 < 5) {
+          coolEl.innerHTML = 'Суперсила открыта! 🎉<span class="cooldown-time">С 5-й зарядки — монетки 🪙</span>';
+        } else if (wc2 === 5) {
+          coolEl.innerHTML = 'Отлично! +1 🪙 в копилку!<span class="cooldown-time">Приходи ещё — будет больше!</span>';
+          claimBtn.style.display = 'block';
+          claimBtn.textContent = '🪙 Зарядка за монетку!';
+          claimBtn.className = 'btn btn-gold';
+          claimBtn.onclick = claimPart;
+          coolEl.style.display = 'none';
+        } else if (wc2 === 6) {
+          coolEl.innerHTML = 'Уже +2 🪙🪙!<span class="cooldown-time">7-й день = +3 монетки!</span>';
+          claimBtn.style.display = 'block';
+          claimBtn.textContent = '🪙🪙 Зарядка за монетки!';
+          claimBtn.className = 'btn btn-gold';
+          claimBtn.onclick = claimPart;
+          coolEl.style.display = 'none';
+        } else if (wc2 >= 7) {
+          coolEl.innerHTML = 'Ты собрал все монетки недели! 🏆<span class="cooldown-time">Новый персонаж на следующей неделе 🗓️</span>';
+        } else {
+          coolEl.innerHTML = 'Новый персонаж появится на следующей неделе! 🗓️<span class="cooldown-time">Молодец, так держать! 💪</span>';
+        }
       } else {
         claimBtn.style.display = 'block';
         claimBtn.textContent = '✨ Следующая суперсила!';
@@ -352,16 +418,19 @@
       }
 
       const remaining = KEYS_NEEDED + 1 - step;
-      const keysEarned = '🔑'.repeat(step) + '⬜'.repeat(KEYS_NEEDED - step);
+      const remaining = KEYS_NEEDED - step;
       const wc = playerData.weekCount || 0;
-      let weekLine = '1 персонаж в неделю';
-      if (wc >= 4 && wc < 5) weekLine = '🔥 Ещё 1 день — монетка!';
-      else if (wc === 5) weekLine = '🪙 +1 монетка за 5-й день!';
-      else if (wc === 6) weekLine = '🪙🪙 +2 монетки за 6-й день!';
-      else if (wc >= 7) weekLine = '🪙🪙🪙 +3 монетки за 7-й день!';
+      let subLine = '';
+      if (wc === 4) subLine = '🔥 Ещё 1 зарядка — монетка!';
+      else if (wc === 5) subLine = '🪙 +1 монетка уже в копилке!';
+      else if (wc === 6) subLine = '🪙🪙 +2 монетки уже в копилке!';
+      else if (wc >= 7) subLine = '🪙🪙🪙 +3 монетки уже в копилке!';
+      const mainLine = remaining > 0
+        ? 'До суперсилы: ' + remaining + ' ' + declension(remaining, 'зарядка', 'зарядки', 'зарядок')
+        : 'Собери последний ключ! 🔑';
       document.getElementById('progressText').innerHTML =
-        '<span style="font-size:22px;letter-spacing:4px">' + keysEarned + '</span>' +
-        '<br><span style="font-size:11px;color:#aaa">' + weekLine + '</span>';
+        '<span>' + mainLine + '</span>' +
+        (subLine ? '<br><span style="font-size:11px;color:#aaa">' + subLine + '</span>' : '');
       checkCooldown();
     }
   }
@@ -381,6 +450,8 @@
         const img = document.createElement('img');
         img.src = char.image;
         img.alt = char.power;
+        // показываем эмодзи животного если нет картинки
+        img.onerror = function() { this.style.display='none'; const e=document.createElement('div'); e.style.cssText='font-size:28px;line-height:1;'; e.textContent=char.animal; this.parentNode.appendChild(e); };
         div.appendChild(img);
         const name = document.createElement('div');
         name.className = 'power-name';
@@ -426,6 +497,39 @@
 
   window.claimPart = async function() {
     const ref = doc(db, 'players', docId);
+
+    // Проверяем особый день
+    let specialType = null;
+    try {
+      const settSnap = await getDoc(doc(db, 'settings', 'specialDay'));
+      if (settSnap.exists()) specialType = settSnap.data().type || null;
+    } catch(e) {}
+
+    // Если особый ключ — добавляем в отдельный счётчик и показываем сюрприз
+    if (specialType) {
+      const rareKey = specialType;
+      const rareField = 'rareKeys_' + rareKey;
+      const newRareCount = (playerData[rareField] || 0) + 1;
+      const RARE_NEEDED = 4;
+      try {
+        await updateDoc(ref, { [rareField]: newRareCount, lastClaim: serverTimestamp() });
+        playerData[rareField] = newRareCount;
+        playerData.lastClaim = new Date();
+        saveBackup(playerData);
+        const icons = { rare: '🗝️', epic: '⚜️', legendary: '💎' };
+        const names = { rare: 'Редкий', epic: 'Эпический', legendary: 'Легендарный' };
+        const left = RARE_NEEDED - newRareCount;
+        document.getElementById('celebEmoji').textContent = icons[rareKey] || '🗝️';
+        document.getElementById('celebTitle').textContent = names[rareKey] + ' ключ получен!';
+        document.getElementById('celebImg').style.display = 'none';
+        document.getElementById('celebText').textContent = left > 0
+          ? 'У тебя ' + newRareCount + ' из ' + RARE_NEEDED + ' ключей. Ещё ' + left + '!'
+          : '🎉 Все ' + RARE_NEEDED + ' ключа собраны! Редкий персонаж скоро появится!';
+        document.getElementById('celebration').classList.add('show');
+        return;
+      } catch(e) { alert('Ошибка сохранения. Проверь интернет.'); return; }
+    }
+
     const newStep = (playerData.step || 0) + 1;
     const char = CHARACTERS[playerData.charIndex];
     const now = new Date();
@@ -462,6 +566,7 @@
       playerData.weekCount = weekCount;
       playerData.weekStart = currentWeekStart;
       playerData.coins = newCoins;
+      saveBackup(playerData); // резервная копия
 
       if (newStep > KEYS_NEEDED) {
         // Суперсила открыта!
@@ -482,8 +587,10 @@
           ? 'Все суперсилы собраны! Открыта Витрина! 🏆'
           : 'Суперсила добавлена в коллекцию!';
       } else {
-        let celebText = 'Ключей: ' + newStep + ' из ' + KEYS_NEEDED + '. До суперсилы: ' +
-          (KEYS_NEEDED + 1 - newStep) + ' ' + declension(KEYS_NEEDED + 1 - newStep, 'игра', 'игры', 'игр') + '!';
+        const keysLeft = KEYS_NEEDED - newStep;
+        let celebText = keysLeft > 0
+          ? 'До суперсилы: ещё ' + keysLeft + ' ' + declension(keysLeft, 'зарядка', 'зарядки', 'зарядок') + '!'
+          : 'Ещё одна зарядка — и суперсила твоя! 🔑';
         if (bonusCoins > 0) celebText += '\n+' + bonusCoins + ' 🪙 в копилку!';
         document.getElementById('celebEmoji').textContent = bonusCoins > 0 ? '🪙' : '🔑';
         document.getElementById('celebTitle').textContent = bonusCoins > 0 ? 'Бонус!' : 'Ключ ' + newStep + ' из ' + KEYS_NEEDED + '!';
