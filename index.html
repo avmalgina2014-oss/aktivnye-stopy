@@ -113,9 +113,9 @@
   <h1>👣 Активные Стопы</h1>
   <div class="subtitle">Собери все суперсилы!</div>
   <div class="field-label">Твоё имя</div>
-  <input type="text" class="field-input" id="nameInput" placeholder="Например: Саша" maxlength="15" oninput="updatePreview()">
+  <input type="text" class="field-input" id="nameInput" placeholder="Например: Саша" maxlength="15" oninput="updatePreview()" onchange="updatePreview()">
   <div class="field-label">Придумай ник</div>
-  <input type="text" class="field-input" id="nickInput" placeholder="Например: Ракета или 🚀" maxlength="20" oninput="updatePreview()">
+  <input type="text" class="field-input" id="nickInput" placeholder="Например: Ракета или 🚀" maxlength="20" oninput="updatePreview()" onchange="updatePreview()">
   <button class="btn" id="startBtn" onclick="startGame()" disabled>Вперёд! 🚀</button>
 </div>
 
@@ -203,12 +203,7 @@
     { animal: "🐜", power: "Сила",            name: "Муравей",   color: "#CC0000", image: "muravey.png",   rarity: "common" },
     { animal: "🦩", power: "Баланс",          name: "Фламинго",  color: "#E91E8C", image: "flamingo.png",  rarity: "common" },
     { animal: "🦥", power: "Восстановление",  name: "Ленивец",   color: "#2E7D32", image: "lenivec.png",   rarity: "common" },
-    // 👇 Редкие (открываются редкими ключами 🗝️ — включаются через admin.html)
-    // { animal: "🦊", power: "Хитрость",     name: "Лиса",      color: "#FF6B35", image: "lisa.png",      rarity: "rare"   },
-    // 👇 Эпические (открываются эпическими ключами ⚜️)
-    // { animal: "🦁", power: "Лидерство",    name: "Лев",       color: "#C0A000", image: "lev.png",       rarity: "epic"   },
-    // 👇 Легендарные (открываются легендарными ключами 💎)
-    // { animal: "🐉", power: "Магия",        name: "Дракон",    color: "#9C27B0", image: "drakon.png",    rarity: "legendary" },
+    // 👇 Когда придумаем редких персонажей — добавляй их здесь
   ];
 
   // Обычные персонажи (для основного прогресса)
@@ -683,6 +678,15 @@
     updatePreview();
   };
 
+  // Проверяем автозаполнение браузера каждые 300мс первые 3 секунды
+  let _checkCount = 0;
+  const _checkFill = setInterval(() => {
+    const n = document.getElementById('nameInput');
+    const k = document.getElementById('nickInput');
+    if (n && k) updatePreview();
+    if (++_checkCount >= 10) clearInterval(_checkFill);
+  }, 300);
+
   // Авто-вход
   const saved = localStorage.getItem('child_' + kitId);
   if (saved) {
@@ -697,3 +701,4 @@
 </script>
 </body>
 </html>
+
