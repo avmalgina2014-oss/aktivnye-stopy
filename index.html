@@ -229,13 +229,10 @@
   window.updatePreview = function() {
     const name = document.getElementById('nameInput').value.trim();
     const nick = document.getElementById('nickInput').value.trim();
-    const preview = document.getElementById('nickPreview');
     const startBtn = document.getElementById('startBtn');
     if (name && nick) {
-      if (preview) preview.textContent = name + ' · ' + nick;
       startBtn.disabled = false;
     } else {
-      if (preview) preview.textContent = name ? name + ' · введи ник' : 'Введи имя и ник';
       startBtn.disabled = true;
     }
   };
