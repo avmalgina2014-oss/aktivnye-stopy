@@ -12,7 +12,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: system-ui, 'Segoe UI', 'Nunito', sans-serif;
+      font-family: system-ui, 'Segoe UI', sans-serif;
       margin: 0;
       padding: 20px;
     }
@@ -25,15 +25,8 @@
       box-shadow: 0 20px 40px rgba(0,0,0,0.2);
       text-align: center;
     }
-    h1 {
-      font-size: 28px;
-      margin: 0 0 6px;
-      background: linear-gradient(135deg, #1e2b6e, #4a2b7a);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    .sub { color: #7c7f9b; font-weight: 600; font-size: 13px; margin-bottom: 20px; }
+    h1 { font-size: 28px; margin: 0 0 6px; color: #2d3561; }
+    .sub { color: #7c7f9b; font-size: 13px; margin-bottom: 20px; }
     .field-label { text-align: left; font-size: 12px; font-weight: bold; color: #2d3561; margin-top: 12px; }
     input {
       width: 100%;
@@ -55,15 +48,13 @@
       width: 100%;
       margin-top: 16px;
       cursor: pointer;
-      transition: 0.1s;
     }
     button:active { transform: scale(0.97); }
-    button:disabled { opacity: 0.5; transform: none; cursor: default; }
     .top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .rank { background: #edf2fa; padding: 6px 14px; border-radius: 50px; font-size: 14px; font-weight: bold; color: #1f2b5c; }
+    .rank { background: #edf2fa; padding: 6px 14px; border-radius: 50px; font-size: 14px; font-weight: bold; }
     .key-icons { display: flex; gap: 16px; background: #f5f6fe; padding: 6px 16px; border-radius: 50px; align-items: center; }
     .key-icon { display: flex; align-items: center; gap: 6px; font-size: 20px; font-weight: bold; }
-    .key-icon img { width: 26px; height: 26px; display: inline-block; }
+    .key-icon img { width: 24px; height: 24px; display: inline-block; }
     .greeting { font-size: 22px; font-weight: 800; margin: 12px 0 4px; }
     .progress { background: #f1f3fc; padding: 10px; border-radius: 40px; font-size: 14px; font-weight: bold; margin: 12px 0; }
     .key-slots { display: flex; justify-content: center; gap: 12px; margin: 16px 0; }
@@ -77,8 +68,8 @@
     .cooldown { background: #ffefcc; border-radius: 28px; padding: 12px; margin: 12px 0; font-size: 14px; font-weight: bold; display: none; }
     .collection-btn { margin-top: 18px; background: none; color: #5b4b8c; font-size: 15px; text-decoration: underline; box-shadow: none; }
     .gallery-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; border-bottom: 2px solid #e2e4f0; }
-    .tab-btn { background: none; border: none; padding: 8px 16px; font-size: 15px; font-weight: bold; color: #888; cursor: pointer; margin: 0; width: auto; }
-    .tab-btn.active { color: #5b4b8c; border-bottom: 3px solid #5b4b8c; border-radius: 0; }
+    .tab-btn { background: none; border: none; padding: 8px 16px; font-size: 15px; font-weight: bold; color: #888; cursor: pointer; width: auto; }
+    .tab-btn.active { color: #5b4b8c; border-bottom: 3px solid #5b4b8c; }
     .gallery-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin: 20px 0; }
     .gallery-card { background: #f5f5ff; border-radius: 28px; padding: 12px; text-align: center; }
     .gallery-card img { width: 80px; height: 80px; object-fit: contain; }
@@ -89,52 +80,34 @@
 <div id="app"></div>
 <script>
   (function(){
-    // ----- КЛЮЧИ-КАРТИНКИ (синий и красный) -----
-    const blueKeySvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234285F4'%3E%3Cpath d='M12 2C8 2 4 5 4 9c0 2.5 1 5 3 6.5V20c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-4.5c2-1.5 3-4 3-6.5 0-4-4-7-8-7z'/%3E%3C/svg%3E";
-    const redKeySvg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23F44336'%3E%3Cpath d='M12 2C8 2 4 5 4 9c0 2.5 1 5 3 6.5V20c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2v-4.5c2-1.5 3-4 3-6.5 0-4-4-7-8-7z'/%3E%3C/svg%3E";
-    const goldKeyEmoji = '🔑';
-
+    // ----- ПЕРСОНАЖИ -----
     const BASE = [
-      { power:"Скорость", emoji:"🐆", img:"gepard.png", color:"#E07000" },
-      { power:"Лёгкость", emoji:"🐦", img:"kolibri.png", color:"#00ACC1" },
-      { power:"Сила", emoji:"🐜", img:"muravey.png", color:"#CC0000" },
-      { power:"Баланс", emoji:"🦩", img:"flamingo.png", color:"#E91E8C" },
-      { power:"Восстановление", emoji:"🦥", img:"lenivec.png", color:"#2E7D32" },
-      { power:"Координация", emoji:"🐒", img:"obeziana.png", color:"#8D6E63" },
-      { power:"Выносливость", emoji:"🐫", img:"verblyud.png", color:"#D4A373" },
-      { power:"Гибкость", emoji:"🐱", img:"koshka.png", color:"#FF9800" }
+      { power:"Скорость", img:"gepard.png" }, { power:"Лёгкость", img:"kolibri.png" },
+      { power:"Сила", img:"muravey.png" }, { power:"Баланс", img:"flamingo.png" },
+      { power:"Восстановление", img:"lenivec.png" }, { power:"Координация", img:"obeziana.png" },
+      { power:"Выносливость", img:"verblyud.png" }, { power:"Гибкость", img:"koshka.png" }
     ];
     const RARE = [
-      { power:"Прыгучесть", emoji:"🦘", img:"kenguru.png", color:"#FF5722" },
-      { power:"Цепкость", emoji:"🐙", img:"osminog.png", color:"#7B1FA2" },
-      { power:"Устойчивость", emoji:"🦀", img:"krab.png", color:"#D32F2F" },
-      { power:"Чуткость", emoji:"🐌", img:"ulitka.png", color:"#4CAF50" }
+      { power:"Прыгучесть", img:"kenguru.png" }, { power:"Цепкость", img:"osminog.png" },
+      { power:"Устойчивость", img:"krab.png" }, { power:"Чуткость", img:"ulitka.png" }
     ];
     const EPIC = [
-      { power:"Суперлёгкость", emoji:"🦄", img:"pegas.png", color:"#E040FB" },
-      { power:"Суперсила", emoji:"🐉", img:"drakon.png", color:"#F44336" }
+      { power:"Суперлёгкость", img:"pegas.png" }, { power:"Суперсила", img:"drakon.png" }
     ];
-    const LEGEND = { power:"Возрождение", emoji:"🐦‍🔥", img:"feniks.png", color:"#FF6F00" };
+    const LEGEND = { power:"Возрождение", img:"feniks.png" };
 
     let state = {
-      childName: '', nick: '',
-      collectedBase: [],
-      collectedRare: [],
-      collectedEpic: [],
-      legendaryUnlocked: false,
-      currentBaseIdx: 0,
-      goldProgress: 0,
-      diamondKeys: 0,
-      rubyKeys: 0,
-      lastClaimDate: null,
-      weekCount: 0,
-      weekStart: null
+      childName: '', collectedBase: [], collectedRare: [], collectedEpic: [], legendaryUnlocked: false,
+      currentBaseIdx: 0, goldProgress: 0, diamondKeys: 0, rubyKeys: 0,
+      lastClaimDate: null, weekCount: 0, weekStart: null
     };
     let docId = '';
 
-    function saveToLocal() {
-      if (!docId) return;
+    // ========== СОХРАНЕНИЕ ==========
+    function saveAll() {
+      if(!docId) return;
       const save = {
+        childName: state.childName,
         collectedBase: state.collectedBase,
         collectedRare: state.collectedRare,
         collectedEpic: state.collectedEpic,
@@ -147,15 +120,17 @@
         weekCount: state.weekCount,
         weekStart: state.weekStart
       };
-      localStorage.setItem(`active_stop_${docId}`, JSON.stringify(save));
+      localStorage.setItem(`stop_${docId}`, JSON.stringify(save));
+      localStorage.setItem(`stop_lastName`, state.childName);
     }
 
-    function loadFromLocal() {
-      if (!docId) return false;
-      const raw = localStorage.getItem(`active_stop_${docId}`);
-      if (!raw) return false;
+    function loadAll() {
+      if(!docId) return false;
+      let raw = localStorage.getItem(`stop_${docId}`);
+      if(!raw) return false;
       try {
-        const data = JSON.parse(raw);
+        let data = JSON.parse(raw);
+        state.childName = data.childName || '';
         state.collectedBase = data.collectedBase || [];
         state.collectedRare = data.collectedRare || [];
         state.collectedEpic = data.collectedEpic || [];
@@ -167,295 +142,144 @@
         state.lastClaimDate = data.lastClaimDate ? new Date(data.lastClaimDate) : null;
         state.weekCount = data.weekCount ?? 0;
         state.weekStart = data.weekStart ?? null;
-        if(state.collectedBase.length === 0 && BASE.length) state.currentBaseIdx = Math.floor(Math.random() * BASE.length);
+        if(state.collectedBase.length===0 && BASE.length) state.currentBaseIdx = Math.floor(Math.random()*BASE.length);
         return true;
       } catch(e) { return false; }
     }
 
-    function getWeekStart(date) {
-      const d = new Date(date);
-      const day = d.getDay();
-      const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-      d.setDate(diff);
-      d.setHours(0,0,0,0);
-      return d.getTime();
-    }
-
+    function getWeekStart(date) { let d=new Date(date); let day=d.getDay(); let diff=d.getDate()-day+(day===0?-6:1); d.setDate(diff); d.setHours(0,0,0,0); return d.getTime(); }
     function getRank() {
-      const b = state.collectedBase.length;
-      const r = state.collectedRare.length;
-      const e = state.collectedEpic.length;
+      let b=state.collectedBase.length, r=state.collectedRare.length, e=state.collectedEpic.length;
       if(b>=8 && r>=4 && e>=2) return "👑 МАСТЕР";
       if(b>=6) return "⭐ ПРОФИ";
       if(b>=3) return "📖 УЧЕНИК";
       return "🌱 НОВИЧОК";
     }
-
-    function decl(n, one, two, five) {
-      n = Math.abs(n) % 100;
-      if (n>=11 && n<=19) return five;
-      const last = n % 10;
-      if (last === 1) return one;
-      if (last >=2 && last <=4) return two;
-      return five;
-    }
-
-    function playSound() {
-      try {
-        let ctx = new (window.AudioContext || window.webkitAudioContext)();
-        let o = ctx.createOscillator(), g = ctx.createGain();
-        o.connect(g); g.connect(ctx.destination);
-        o.frequency.value = 880;
-        g.gain.value = 0.2;
-        g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.5);
-        o.start(); o.stop(ctx.currentTime + 0.5);
-      } catch(e) {}
-    }
+    function decl(n, one, two, five) { let m=n%10, m100=n%100; if(m100>=11&&m100<=19) return five; if(m===1) return one; if(m>=2&&m<=4) return two; return five; }
+    function playSound() { try{ let ctx=new (window.AudioContext||window.webkitAudioContext)(); let o=ctx.createOscillator(), g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value=880; g.gain.value=0.2; g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime+0.5); o.start(); o.stop(ctx.currentTime+0.5); } catch(e){} }
 
     function renderGame() {
-      const currentChar = BASE[state.currentBaseIdx];
-      const needProgress = (state.goldProgress >= 4);
-      const allBasesDone = state.collectedBase.length === BASE.length;
-      const allRaresDone = state.collectedRare.length === RARE.length;
-      const allEpicsDone = state.collectedEpic.length === EPIC.length;
-      if(!state.legendaryUnlocked && allBasesDone && allRaresDone && allEpicsDone){
-        state.legendaryUnlocked = true;
-        saveToLocal();
+      let currentChar = BASE[state.currentBaseIdx];
+      let needProgress = state.goldProgress >= 4;
+      let allBase = state.collectedBase.length===BASE.length;
+      let allRare = state.collectedRare.length===RARE.length;
+      let allEpic = state.collectedEpic.length===EPIC.length;
+      if(!state.legendaryUnlocked && allBase && allRare && allEpic){
+        state.legendaryUnlocked=true; saveAll();
         alert("🏆 ПУТЬ ПРОЙДЕН! 🏆\nТы — ЛЕГЕНДА!");
       }
-
-      let html = `
-        <div class="card">
-          <div class="top-row">
-            <div class="rank">${getRank()}</div>
-            <div class="key-icons">
-              <div class="key-icon"><img src="${blueKeySvg}" style="width:24px;height:24px"> ${state.diamondKeys}</div>
-              <div class="key-icon"><img src="${redKeySvg}" style="width:24px;height:24px"> ${state.rubyKeys}</div>
-            </div>
-          </div>
-          <div class="greeting">Привет, ${state.childName || 'игрок'}! 👋</div>
-          <div class="progress">
-            ${ needProgress ? '✨ Суперсила открыта!' : `🔑 До суперсилы: ${4-state.goldProgress} ${decl(4-state.goldProgress, 'зарядка', 'зарядки', 'зарядок')}` }
-          </div>
-          <div class="key-slots">
-            ${ [0,1,2,3].map(i => `<div class="slot ${i < state.goldProgress ? 'filled' : ''}">${i < state.goldProgress ? goldKeyEmoji : ''}</div>`).join('') }
-          </div>
-          ${ needProgress ? `<div style="margin:12px 0"><img src="${currentChar.img}" style="width:140px; height:140px; object-fit:contain" alt="персонаж"></div>` : '' }
-          <button id="workoutBtn">Я сделал(а) зарядку!</button>
-          ${ (needProgress && (state.collectedBase.length < BASE.length || state.diamondKeys>=4 || state.rubyKeys>=4)) ? `
-            <div class="shop">
-              ${ state.diamondKeys>=4 && state.collectedRare.length < RARE.length ? `<button id="unlockRareBtn">✨ Открыть РЕДКОГО (4 синих ключа)</button>` : '' }
-              ${ state.rubyKeys>=4 && state.collectedEpic.length < EPIC.length ? `<button id="unlockEpicBtn">🔥 Открыть ЭПИЧЕСКОГО (4 красных ключа)</button>` : '' }
-            </div>
-          ` : '' }
-          <div class="cooldown" id="cooldownMsg">Отличная работа! Приходи завтра 🌙<br><span id="cooldownTimer"></span></div>
-          <button class="collection-btn" id="collectionBtn">🏅 Мои суперсилы →</button>
-          <button id="changeNameBtn" style="background:none; color:#aaa; font-size:12px; margin-top:10px">Это не я → сменить имя</button>
-        </div>
-      `;
+      let html = `<div class="card"><div class="top-row"><div class="rank">${getRank()}</div><div class="key-icons"><div class="key-icon"><img src="blue_key.png" alt="🔷"> ${state.diamondKeys}</div><div class="key-icon"><img src="red_key.png" alt="🔶"> ${state.rubyKeys}</div></div></div>
+      <div class="greeting">Привет, ${state.childName || 'игрок'}!</div>
+      <div class="progress">${needProgress ? '✨ Суперсила открыта!' : `🔑 До суперсилы: ${4-state.goldProgress} ${decl(4-state.goldProgress,'зарядка','зарядки','зарядок')}`}</div>
+      <div class="key-slots">${[0,1,2,3].map(i=>`<div class="slot ${i<state.goldProgress?'filled':''}">${i<state.goldProgress?'🔑':''}</div>`).join('')}</div>
+      ${needProgress ? `<div><img src="${currentChar.img}" style="width:140px;height:140px;object-fit:contain"></div>` : ''}
+      <button id="workoutBtn">Я сделал(а) зарядку!</button>
+      ${(needProgress && (state.collectedBase.length<BASE.length || state.diamondKeys>=4 || state.rubyKeys>=4)) ? `
+        <div class="shop">
+          ${state.diamondKeys>=4 && state.collectedRare.length<RARE.length ? `<button id="unlockRareBtn">✨ Открыть РЕДКОГО (4 синих ключа)</button>` : ''}
+          ${state.rubyKeys>=4 && state.collectedEpic.length<EPIC.length ? `<button id="unlockEpicBtn">🔥 Открыть ЭПИЧЕСКОГО (4 красных ключа)</button>` : ''}
+        </div>` : ''}
+      <div class="cooldown" id="cooldownMsg">Отличная работа! Приходи завтра 🌙<br><span id="cooldownTimer"></span></div>
+      <button class="collection-btn" id="collectionBtn">🏅 Мои суперсилы →</button>
+      <button id="changeNameBtn" style="background:none;color:#aaa;font-size:12px;margin-top:10px">Это не я → сменить имя</button></div>`;
       document.getElementById('app').innerHTML = html;
-
-      document.getElementById('workoutBtn').onclick = () => claimWorkout();
-      if(document.getElementById('unlockRareBtn')) document.getElementById('unlockRareBtn').onclick = () => unlockRare();
-      if(document.getElementById('unlockEpicBtn')) document.getElementById('unlockEpicBtn').onclick = () => unlockEpic();
+      document.getElementById('workoutBtn').onclick = claimWorkout;
+      if(document.getElementById('unlockRareBtn')) document.getElementById('unlockRareBtn').onclick = () => { if(state.diamondKeys>=4 && state.collectedRare.length<RARE.length){ state.diamondKeys-=4; let left=RARE.map((_,i)=>i).filter(i=>!state.collectedRare.includes(i)); state.collectedRare.push(left[Math.floor(Math.random()*left.length)]); saveAll(); renderGame(); } };
+      if(document.getElementById('unlockEpicBtn')) document.getElementById('unlockEpicBtn').onclick = () => { if(state.rubyKeys>=4 && state.collectedEpic.length<EPIC.length){ state.rubyKeys-=4; let left=EPIC.map((_,i)=>i).filter(i=>!state.collectedEpic.includes(i)); state.collectedEpic.push(left[Math.floor(Math.random()*left.length)]); saveAll(); renderGame(); } };
       document.getElementById('collectionBtn').onclick = () => showCollection();
-      document.getElementById('changeNameBtn').onclick = () => startOver();
-      updateCooldownDisplay();
+      document.getElementById('changeNameBtn').onclick = () => { localStorage.removeItem(`stop_${docId}`); localStorage.removeItem(`stop_lastName`); renderNameScreen(); };
+      if(state.lastClaimDate && (new Date()-state.lastClaimDate)<24*3600*1000) showCooldown();
     }
 
     function claimWorkout() {
-      const now = new Date();
-      const currentWeekStart = getWeekStart(now);
-      if(state.lastClaimDate && (now - state.lastClaimDate) < 24*3600*1000){
-        showCooldown();
-        return;
-      }
+      let now = new Date();
+      let weekStart = getWeekStart(now);
+      if(state.lastClaimDate && (now-state.lastClaimDate)<24*3600*1000){ showCooldown(); return; }
       playSound();
-      if(!state.weekStart || state.weekStart !== currentWeekStart){
-        state.weekStart = currentWeekStart;
-        state.weekCount = 1;
-      } else {
-        state.weekCount++;
-      }
-      state.lastClaimDate = now;
-
-      if(state.weekCount <= 3){
-        if(state.goldProgress < 4){
+      if(!state.weekStart || state.weekStart!==weekStart){ state.weekStart=weekStart; state.weekCount=1; }
+      else state.weekCount++;
+      state.lastClaimDate=now;
+      if(state.weekCount<=3){
+        if(state.goldProgress<4){
           state.goldProgress++;
-          if(state.goldProgress === 4){
+          if(state.goldProgress===4){
             if(!state.collectedBase.includes(state.currentBaseIdx)){
               state.collectedBase.push(state.currentBaseIdx);
-              const left = BASE.map((_,idx)=>idx).filter(i=>!state.collectedBase.includes(i));
-              if(left.length) state.currentBaseIdx = left[Math.floor(Math.random()*left.length)];
-              else state.currentBaseIdx = 0;
-              state.goldProgress = 0;
+              let left=BASE.map((_,i)=>i).filter(i=>!state.collectedBase.includes(i));
+              if(left.length) state.currentBaseIdx=left[Math.floor(Math.random()*left.length)];
+              else state.currentBaseIdx=0;
+              state.goldProgress=0;
             }
           }
         }
-      } else if(state.weekCount === 5 || state.weekCount === 6){
-        state.diamondKeys++;
-      } else if(state.weekCount === 7){
-        state.rubyKeys++;
-      }
-      saveToLocal();
-      renderGame();
-    }
-
-    function unlockRare(){
-      if(state.diamondKeys>=4 && state.collectedRare.length < RARE.length){
-        state.diamondKeys -= 4;
-        const left = RARE.map((_,idx)=>idx).filter(i=>!state.collectedRare.includes(i));
-        const rand = left[Math.floor(Math.random()*left.length)];
-        state.collectedRare.push(rand);
-        saveToLocal();
-        renderGame();
-      }
-    }
-
-    function unlockEpic(){
-      if(state.rubyKeys>=4 && state.collectedEpic.length < EPIC.length){
-        state.rubyKeys -= 4;
-        const left = EPIC.map((_,idx)=>idx).filter(i=>!state.collectedEpic.includes(i));
-        const rand = left[Math.floor(Math.random()*left.length)];
-        state.collectedEpic.push(rand);
-        saveToLocal();
-        renderGame();
-      }
+      } else if(state.weekCount===5 || state.weekCount===6) state.diamondKeys++;
+      else if(state.weekCount===7) state.rubyKeys++;
+      saveAll(); renderGame();
     }
 
     function showCooldown(){
-      const msgDiv = document.getElementById('cooldownMsg');
-      const timerSpan = document.getElementById('cooldownTimer');
-      if(msgDiv && state.lastClaimDate){
-        msgDiv.style.display = 'block';
-        const next = new Date(state.lastClaimDate.getTime() + 24*3600*1000);
-        const updateTimer = ()=>{
-          const diff = next - new Date();
-          if(diff<=0){
-            msgDiv.style.display = 'none';
-            renderGame();
-            return;
-          }
-          const h = Math.floor(diff/3600000);
-          const m = Math.floor((diff%3600000)/60000);
-          timerSpan.innerText = `${h} ч ${m} мин`;
-        };
-        updateTimer();
-        const interval = setInterval(()=>{
-          if(!msgDiv || msgDiv.style.display !== 'block') { clearInterval(interval); return; }
-          updateTimer();
-        }, 60000);
-      }
-    }
-
-    function updateCooldownDisplay(){
-      if(state.lastClaimDate){
-        const now = new Date();
-        if(now - state.lastClaimDate < 24*3600*1000) showCooldown();
+      let msg=document.getElementById('cooldownMsg'), timer=document.getElementById('cooldownTimer');
+      if(msg && state.lastClaimDate){
+        msg.style.display='block';
+        let next=new Date(state.lastClaimDate.getTime()+24*3600*1000);
+        let upd=()=>{ let diff=next-new Date(); if(diff<=0){ msg.style.display='none'; renderGame(); return; } timer.innerText=Math.floor(diff/3600000)+' ч '+Math.floor((diff%3600000)/60000)+' мин'; };
+        upd(); setInterval(upd,60000);
       }
     }
 
     function showCollection(){
-      const allBase = BASE.map((c,i)=> ({ ...c, collected: state.collectedBase.includes(i) }));
-      const allRare = RARE.map((c,i)=> ({ ...c, collected: state.collectedRare.includes(i) }));
-      const allEpic = EPIC.map((c,i)=> ({ ...c, collected: state.collectedEpic.includes(i) }));
-      const legendaryObj = { ...LEGEND, collected: state.legendaryUnlocked };
-      const totalBase = allBase;
-      const totalRareEpic = [...allRare, ...allEpic];
-      const legendaryArr = [legendaryObj];
-      const collectedCount = [...totalBase, ...totalRareEpic, ...legendaryArr].filter(t=>t.collected).length;
-      const totalAll = totalBase.length + totalRareEpic.length + legendaryArr.length;
-      let html = `<div class="card">
-        <h1>🏅 Мои суперсилы</h1>
-        <div class="sub">Собрано ${collectedCount} из ${totalAll}</div>
-        <div class="gallery-tabs">
-          <button class="tab-btn active" data-tab="base">Базовые</button>
-          <button class="tab-btn" data-tab="rareEpic">Редкие + Эпические</button>
-          <button class="tab-btn" data-tab="legend">Легенда</button>
-        </div>
-        <div id="galleryContent"></div>
-        <button class="back-btn" id="backBtn">← Назад</button>
-      </div>`;
+      let allBase=BASE.map((c,i)=>({...c,collected:state.collectedBase.includes(i)}));
+      let allRare=RARE.map((c,i)=>({...c,collected:state.collectedRare.includes(i)}));
+      let allEpic=EPIC.map((c,i)=>({...c,collected:state.collectedEpic.includes(i)}));
+      let legend={...LEGEND,collected:state.legendaryUnlocked};
+      let total=allBase.length+allRare.length+allEpic.length+1;
+      let collected=[...allBase,...allRare,...allEpic,legend].filter(c=>c.collected).length;
+      let html=`<div class="card"><h1>🏅 Мои суперсилы</h1><div class="sub">Собрано ${collected} из ${total}</div>
+      <div class="gallery-tabs"><button class="tab-btn active" data-tab="base">Базовые</button><button class="tab-btn" data-tab="rareEpic">Редкие + Эпические</button><button class="tab-btn" data-tab="legend">Легенда</button></div>
+      <div id="galleryContent"></div><button class="back-btn" id="backBtn">← Назад</button></div>`;
       document.getElementById('app').innerHTML = html;
-      const renderTab = (tab) => {
-        let items = [];
-        if(tab === 'base') items = totalBase;
-        else if(tab === 'rareEpic') items = totalRareEpic;
-        else items = legendaryArr;
-        const grid = document.createElement('div');
-        grid.className = 'gallery-grid';
-        items.forEach(item => {
-          const div = document.createElement('div');
-          div.className = 'gallery-card';
-          div.style.border = `2px solid ${item.collected ? item.color : '#ddd'}`;
-          div.style.opacity = item.collected ? '1' : '0.5';
-          if(item.collected){
-            const img = document.createElement('img');
-            img.src = item.img;
-            img.alt = item.power;
-            div.appendChild(img);
-          } else {
-            const q = document.createElement('div');
-            q.style.fontSize = '48px';
-            q.textContent = '❓';
-            div.appendChild(q);
-          }
+      let renderTab = (tab)=>{
+        let items=[];
+        if(tab==='base') items=allBase;
+        else if(tab==='rareEpic') items=[...allRare,...allEpic];
+        else items=[legend];
+        let grid=document.createElement('div'); grid.className='gallery-grid';
+        items.forEach(it=>{
+          let div=document.createElement('div'); div.className='gallery-card';
+          if(it.collected){ let img=document.createElement('img'); img.src=it.img; div.appendChild(img); }
+          else{ let q=document.createElement('div'); q.style.fontSize='48px'; q.textContent='❓'; div.appendChild(q); }
           grid.appendChild(div);
         });
-        const container = document.getElementById('galleryContent');
-        container.innerHTML = '';
-        container.appendChild(grid);
+        document.getElementById('galleryContent').innerHTML=''; document.getElementById('galleryContent').appendChild(grid);
       };
       renderTab('base');
-      const btns = document.querySelectorAll('.tab-btn');
-      btns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          btns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          renderTab(btn.dataset.tab);
-        });
-      });
-      document.getElementById('backBtn').onclick = () => renderGame();
-    }
-
-    function startOver(){
-      localStorage.removeItem(`active_stop_${docId}`);
-      renderNameScreen();
+      document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>{
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active'); renderTab(btn.dataset.tab);
+      }));
+      document.getElementById('backBtn').onclick=()=>renderGame();
     }
 
     function renderNameScreen(){
-      let html = `<div class="card">
-        <h1>👣 Активные Стопы</h1>
-        <div class="sub">Собери все суперсилы!</div>
-        <div class="field-label">Твоё имя</div>
-        <input id="playerName" placeholder="Например: Саша">
-        <div class="field-label">Придумай ник</div>
-        <input id="playerNick" placeholder="Например: Ракета">
-        <button id="startGameBtn">Вперёд! 🚀</button>
-      </div>`;
+      let savedName = localStorage.getItem('stop_lastName') || '';
+      let html = `<div class="card"><h1>👣 Активные Стопы</h1><div class="sub">Собери все суперсилы!</div>
+      <div class="field-label">Твоё имя</div><input id="playerName" placeholder="Саша" value="${savedName.replace(/"/g, '&quot;')}">
+      <div class="field-label">Придумай ник</div><input id="playerNick" placeholder="Ракета">
+      <button id="startGameBtn">Вперёд! 🚀</button></div>`;
       document.getElementById('app').innerHTML = html;
       document.getElementById('startGameBtn').onclick = () => {
-        const name = document.getElementById('playerName').value.trim();
-        const nick = document.getElementById('playerNick').value.trim();
+        let name = document.getElementById('playerName').value.trim();
+        let nick = document.getElementById('playerNick').value.trim();
         if(!name || !nick) return;
         state.childName = name;
-        state.nick = nick;
         docId = `${name}_${nick}`.toLowerCase().replace(/[^a-z0-9_]/g,'_');
-        const loaded = loadFromLocal();
-        if(!loaded){
-          state.collectedBase = [];
-          state.collectedRare = [];
-          state.collectedEpic = [];
-          state.legendaryUnlocked = false;
-          state.currentBaseIdx = Math.floor(Math.random() * BASE.length);
-          state.goldProgress = 0;
-          state.diamondKeys = 0;
-          state.rubyKeys = 0;
-          state.lastClaimDate = null;
-          state.weekCount = 0;
-          state.weekStart = null;
-          saveToLocal();
+        if(!loadAll()){
+          state.collectedBase=[]; state.collectedRare=[]; state.collectedEpic=[]; state.legendaryUnlocked=false;
+          state.currentBaseIdx=Math.floor(Math.random()*BASE.length);
+          state.goldProgress=0; state.diamondKeys=0; state.rubyKeys=0;
+          state.lastClaimDate=null; state.weekCount=0; state.weekStart=null;
         }
+        saveAll();
         renderGame();
       };
     }
