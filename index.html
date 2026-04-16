@@ -6,6 +6,7 @@
 <title>Активные Стопы — Суперсилы</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
+  /* (стили те же, не менялись) */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Nunito', sans-serif;
@@ -27,7 +28,6 @@
   }
   h1 { font-family: 'Fredoka One', cursive; font-size: 26px; color: #2d2d2d; margin-bottom: 4px; }
   .subtitle { font-size: 13px; color: #888; margin-bottom: 20px; font-weight: 700; }
-
   .btn {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white; border: none; border-radius: 16px;
@@ -39,64 +39,53 @@
   .btn:hover { transform: translateY(-2px); }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
   .btn-green { background: linear-gradient(135deg, #2E7D32, #4CAF50); box-shadow: 0 4px 16px rgba(46,125,50,0.4); }
-  .btn-gold { background: linear-gradient(135deg, #F9A825, #FF6F00); box-shadow: 0 4px 16px rgba(249,168,37,0.4); }
-  .btn-outline { background: none; border: 2px solid #e0e4ef; border-radius: 12px; padding: 8px 16px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800; color: #888; cursor: pointer; margin-top: 10px; transition: all 0.2s; width: auto; box-shadow: none; }
-  .btn-outline:hover { border-color: #667eea; color: #667eea; transform: none; }
-
-  /* Экран входа */
   .field-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; text-align: left; }
   .field-input { width: 100%; border: 3px solid #e0e4ef; border-radius: 14px; padding: 11px 14px; font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 700; outline: none; text-align: center; margin-bottom: 14px; transition: border-color 0.2s; }
   .field-input:focus { border-color: #667eea; }
-  .nick-preview { background: #f0f4ff; border-radius: 12px; padding: 10px; font-family: 'Fredoka One', cursive; font-size: 17px; color: #667eea; margin-bottom: 14px; min-height: 42px; }
-
-  /* Топ-бар */
-  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
   .rank-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 20px; font-family: 'Fredoka One', cursive; font-size: 14px; }
   .rank-novice { background: #e8f5e9; color: #2E7D32; }
   .rank-student { background: linear-gradient(135deg, #FFF8E1, #FFE082); color: #F57F17; }
+  .rank-pro { background: linear-gradient(135deg, #E3F2FD, #90CAF9); color: #1565C0; }
   .rank-master { background: linear-gradient(135deg, #1a1a2e, #16213e); color: #fff; }
-  .coins-display { display: flex; align-items: center; gap: 4px; background: #fffde7; border: 2px solid #FFE082; border-radius: 20px; padding: 4px 12px; font-family: 'Fredoka One', cursive; font-size: 15px; color: #F57F17; }
-
+  .keys-panel { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .key-group { background: #f5f5f5; border-radius: 20px; padding: 8px 12px; text-align: center; flex: 1; min-width: 80px; }
+  .key-label { font-size: 11px; font-weight: 800; color: #888; margin-bottom: 4px; }
+  .key-count { font-family: 'Fredoka One', cursive; font-size: 22px; line-height: 1; }
+  .gold .key-count { color: #F9A825; }
+  .diamond .key-count { color: #42A5F5; }
+  .ruby .key-count { color: #EF5350; }
   .greeting { font-size: 18px; font-weight: 900; color: #2d2d2d; margin-bottom: 10px; }
   .char-name { font-family: 'Fredoka One', cursive; font-size: 19px; margin-bottom: 6px; }
   .progress-text { font-size: 12px; color: #888; font-weight: 700; margin-bottom: 12px; line-height: 1.6; }
-
-  /* Ключи */
   .keys-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
   .key-slot { aspect-ratio: 1; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; border: 3px dashed #e0e4ef; background: #f9f9f9; transition: all 0.4s ease; }
   .key-slot.filled { border: 3px solid gold; background: linear-gradient(135deg, #fffde7, #fff9c4); box-shadow: 0 4px 12px rgba(255,215,0,0.4); animation: popIn 0.5s ease; }
   @keyframes popIn { 0%{transform:scale(0)} 70%{transform:scale(1.2)} 100%{transform:scale(1)} }
-
   .char-image-wrap { border-radius: 18px; overflow: hidden; margin-bottom: 14px; display: none; background: #f5f5f5; }
   .char-image-wrap img { width: 100%; height: 200px; object-fit: contain; display: block; }
   .char-image-wrap.show { display: block; animation: zoomIn 0.6s ease; }
   @keyframes zoomIn { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
-
   .cooldown-msg { background: #f0f4ff; border-radius: 14px; padding: 12px; font-size: 13px; font-weight: 700; color: #667eea; display: none; margin-top: 8px; }
   .cooldown-time { font-family: 'Fredoka One', cursive; font-size: 20px; display: block; margin-top: 4px; }
-  .change-name { font-size: 11px; color: #ccc; margin-top: 10px; cursor: pointer; font-weight: 700; }
-  .change-name:hover { color: #667eea; }
-
-  /* Коллекция */
   .collection-section { margin-top: 16px; border-top: 2px solid #f0f0f0; padding-top: 14px; cursor: pointer; }
   .collection-section:hover .collection-title { color: #667eea; }
   .collection-title { font-family: 'Fredoka One', cursive; font-size: 15px; color: #888; margin-bottom: 10px; transition: color 0.2s; }
-  .powers-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .powers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
   .power-slot { border-radius: 14px; border: 2px solid #e0e4ef; background: #f0f0f0; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.3s; overflow: hidden; padding: 4px; }
   .power-slot.unlocked { background: #fff; box-shadow: 0 3px 12px rgba(0,0,0,0.10); }
   .power-slot img { width: 100%; height: 44px; object-fit: contain; display: block; }
   .power-slot .power-name { font-size: 8px; font-weight: 800; margin-top: 3px; color: #555; line-height: 1.2; text-align: center; }
-
-  /* Коллекция (Галерея) */
-  #galleryScreen { display: none; }
+  .shop-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .shop-btn { width: 100%; padding: 10px; border-radius: 14px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px; cursor: pointer; border: none; transition: all 0.2s; }
+  .shop-btn.rare { background: #E3F2FD; color: #1565C0; border: 2px solid #42A5F5; }
+  .shop-btn.epic { background: #FFEBEE; color: #C62828; border: 2px solid #EF5350; }
+  .shop-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 14px 0; }
   .gallery-item { border-radius: 18px; border: 2px solid #e8e8e8; background: #f0f0f0; padding: 10px 8px; text-align: center; transition: all 0.3s; min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .gallery-item.unlocked { background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.10); }
   .gallery-power-name { font-family: 'Fredoka One', cursive; font-size: 15px; margin-top: 8px; }
   .gallery-image-area { height: 100px; width: 100%; display: flex; align-items: center; justify-content: center; }
-  .gallery-image-area img { width: 100%; height: 100px; object-fit: contain; }
-
-  /* Праздник */
   .celebration { display: none; position: fixed; top:0;left:0;right:0;bottom:0; background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
   .celebration.show { display: flex; }
   .celebration-box { background: white; border-radius: 32px; padding: 28px 24px; text-align: center; max-width: 360px; width: 100%; animation: zoomIn 0.4s ease; }
@@ -104,50 +93,56 @@
   .celebration-title { font-family: 'Fredoka One', cursive; font-size: 24px; color: #2d2d2d; margin-bottom: 6px; }
   .celebration-img { width: 100%; max-height: 160px; object-fit: contain; border-radius: 14px; margin: 10px 0; display: none; }
   .celebration-text { font-size: 14px; color: #888; font-weight: 700; margin-bottom: 18px; }
+  .change-name { font-size: 11px; color: #ccc; margin-top: 10px; cursor: pointer; font-weight: 700; }
+  .change-name:hover { color: #667eea; }
 </style>
 </head>
 <body>
 
-<!-- ЭКРАН ВХОДА -->
 <div class="card" id="nameScreen">
   <h1>👣 Активные Стопы</h1>
   <div class="subtitle">Собери все суперсилы!</div>
   <div class="field-label">Твоё имя</div>
-  <input type="text" class="field-input" id="nameInput" placeholder="Например: Саша" maxlength="15" oninput="updatePreview()" onchange="updatePreview()">
+  <input type="text" class="field-input" id="nameInput" placeholder="Например: Саша" maxlength="15" oninput="updatePreview()">
   <div class="field-label">Придумай ник</div>
-  <input type="text" class="field-input" id="nickInput" placeholder="Например: Ракета или 🚀" maxlength="20" oninput="updatePreview()" onchange="updatePreview()">
+  <input type="text" class="field-input" id="nickInput" placeholder="Например: Ракета или 🚀" maxlength="20" oninput="updatePreview()">
   <button class="btn" id="startBtn" onclick="startGame()" disabled>Вперёд! 🚀</button>
 </div>
 
-<!-- ЭКРАН ИГРЫ -->
 <div class="card" id="gameScreen" style="display:none;">
   <div class="top-bar">
     <div id="rankBadge" class="rank-badge rank-novice">🌱 НОВИЧОК</div>
-    <div class="coins-display">🪙 <span id="coinsCount">0</span></div>
   </div>
   <div class="greeting" id="greetingText">Привет!</div>
+
+  <div class="keys-panel">
+    <div class="key-group gold"><div class="key-label">ЗОЛОТЫЕ</div><div class="key-count" id="goldKeys">0</div></div>
+    <div class="key-group diamond"><div class="key-label">БРИЛЛИАНТЫ</div><div class="key-count" id="diamondKeys">0</div></div>
+    <div class="key-group ruby"><div class="key-label">РУБИНЫ</div><div class="key-count" id="rubyKeys">0</div></div>
+  </div>
+
   <div class="char-name" id="charName"></div>
   <div class="progress-text" id="progressText"></div>
 
   <div class="keys-grid" id="keysGrid">
-    <div class="key-slot" id="key0"></div>
-    <div class="key-slot" id="key1"></div>
-    <div class="key-slot" id="key2"></div>
-    <div class="key-slot" id="key3"></div>
+    <div class="key-slot" id="key0"></div><div class="key-slot" id="key1"></div>
+    <div class="key-slot" id="key2"></div><div class="key-slot" id="key3"></div>
   </div>
 
-  <div class="char-image-wrap" id="charImageWrap">
-    <img id="charImage" src="" alt="суперсила">
-  </div>
+  <div class="char-image-wrap" id="charImageWrap"><img id="charImage" src="" alt="суперсила"></div>
 
   <button class="btn btn-green" id="claimBtn" style="display:none;">🔑 Я сделал зарядку!</button>
+
+  <div class="shop-buttons" id="shopButtons" style="display:none;">
+    <button class="shop-btn rare" id="unlockRareBtn">✨ Открыть РЕДКОГО (4 💎)</button>
+    <button class="shop-btn epic" id="unlockEpicBtn">🔥 Открыть ЭПИЧЕСКОГО (4 🔴)</button>
+  </div>
 
   <div class="cooldown-msg" id="cooldownMsg">
     Отличная работа! Приходи завтра 🌙
     <span class="cooldown-time" id="cooldownTime"></span>
   </div>
 
-  <!-- Коллекция — кликабельна всегда -->
   <div class="collection-section" onclick="showGallery()">
     <div class="collection-title">🏅 Мои суперсилы →</div>
     <div class="powers-grid" id="powersGrid"></div>
@@ -155,15 +150,13 @@
   <div class="change-name" onclick="changeName()">Это не я → сменить имя</div>
 </div>
 
-<!-- ВИТРИНА -->
-<div class="card" id="galleryScreen">
-  <h1 style="margin-bottom:6px;">🏅 Мои суперсилы</h1>
+<div class="card" id="galleryScreen" style="display:none;">
+  <h1>🏅 Мои суперсилы</h1>
   <div class="subtitle" id="gallerySubtitle"></div>
   <div class="gallery-grid" id="galleryGrid"></div>
   <button class="btn" onclick="hideGallery()">← Назад</button>
 </div>
 
-<!-- ПРАЗДНИК -->
 <div class="celebration" id="celebration">
   <div class="celebration-box">
     <span class="celebration-emoji" id="celebEmoji">🎉</span>
@@ -174,46 +167,95 @@
   </div>
 </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp }
-    from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+<script>
+  // ========================
+  // ПЕРСОНАЖИ
+  // ========================
+  const BASE_CHARS = [
+    { animal: "🐆", power: "Скорость", name: "Гепард", color: "#E07000", image: "gepard.png" },
+    { animal: "🐦", power: "Лёгкость", name: "Колибри", color: "#00ACC1", image: "kolibri.png" },
+    { animal: "🐜", power: "Сила", name: "Муравей", color: "#CC0000", image: "muravey.png" },
+    { animal: "🦩", power: "Баланс", name: "Фламинго", color: "#E91E8C", image: "flamingo.png" },
+    { animal: "🦥", power: "Восстановление", name: "Ленивец", color: "#2E7D32", image: "lenivec.png" },
+    { animal: "🐒", power: "Координация", name: "Обезьяна", color: "#8D6E63", image: "obeziana.png" },
+    { animal: "🐫", power: "Выносливость", name: "Верблюд", color: "#D4A373", image: "verblyud.png" },
+    { animal: "🐱", power: "Гибкость", name: "Кошка", color: "#FF9800", image: "koshka.png" }
+  ];
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB5wc1u9TR31jKCV6ds1T3So7v2vux-NCo",
-    authDomain: "aktivnye-stopy.firebaseapp.com",
-    projectId: "aktivnye-stopy",
-    storageBucket: "aktivnye-stopy.firebasestorage.app",
-    messagingSenderId: "154203578895",
-    appId: "1:154203578895:web:fa18ecc7e7d4a7a23bf97a"
-  };
+  const RARE_CHARS = [
+    { animal: "🦘", power: "Прыгучесть", name: "Кенгуру", color: "#FF5722", image: "kenguru.png" },
+    { animal: "🐙", power: "Цепкость", name: "Осьминог", color: "#7B1FA2", image: "osminog.png" },
+    { animal: "🦀", power: "Устойчивость", name: "Краб", color: "#D32F2F", image: "krab.png" },
+    { animal: "🐌", power: "Чуткость", name: "Улитка", color: "#4CAF50", image: "ulitka.png" }
+  ];
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const EPIC_CHARS = [
+    { animal: "🦄", power: "Суперлёгкость", name: "Пегас", color: "#E040FB", image: "pegas.png" },
+    { animal: "🐉", power: "Суперсила", name: "Дракон", color: "#F44336", image: "drakon.png" }
+  ];
 
-  // ── Звуки ──────────────────────────────────────────────────────
-  const AudioCtx = window.AudioContext || window.webkitAudioContext;
-  let _audioCtx = null;
-  function getAudio() { if (!_audioCtx) _audioCtx = new AudioCtx(); return _audioCtx; }
+  const LEGENDARY = { animal: "🐦‍🔥", power: "Возрождение", name: "Феникс", color: "#FF6F00", image: "feniks.png" };
+
+  // ========================
+  // ДАННЫЕ ИГРОКА
+  // ========================
+  let currentBaseCharIndex = 0;
+  let collectedBase = [];
+  let collectedRare = [];
+  let collectedEpic = [];
+  let goldKeys = 0;
+  let diamondKeys = 0;
+  let rubyKeys = 0;
+  let currentStep = 0;
+  let lastClaim = null;
+  let weekCount = 0;
+  let weekStart = null;
+  let childName = "";
+  let childNick = "";
+  let docId = "";
+  let legendaryUnlocked = false;
+
+  // ========================
+  // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+  // ========================
+  function getWeekStart(date) {
+    let d = new Date(date);
+    let day = d.getDay();
+    let diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    d.setDate(diff);
+    d.setHours(0,0,0,0);
+    return d.getTime();
+  }
+
+  function getRank() {
+    if (collectedBase.length >= 8 && collectedRare.length >= 4 && collectedEpic.length >= 2) return { name: "МАСТЕР", class: "rank-master", icon: "👑" };
+    if (collectedBase.length >= 6) return { name: "ПРОФИ", class: "rank-pro", icon: "⭐" };
+    if (collectedBase.length >= 3) return { name: "УЧЕНИК", class: "rank-student", icon: "📖" };
+    return { name: "НОВИЧОК", class: "rank-novice", icon: "🌱" };
+  }
+
+  function declension(n, one, few, many) {
+    let m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return one;
+    if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return few;
+    return many;
+  }
 
   function playSound(type) {
     try {
-      const ctx = getAudio();
+      let ctx = new (window.AudioContext || window.webkitAudioContext)();
       if (type === 'start') {
-        // Три ноты вверх при регистрации
-        [440, 550, 660].forEach((freq, i) => {
-          const o = ctx.createOscillator(), g = ctx.createGain();
+        [440, 550, 660].forEach((f, i) => {
+          let o = ctx.createOscillator(), g = ctx.createGain();
           o.connect(g); g.connect(ctx.destination);
-          o.type = 'sine';
-          o.frequency.setValueAtTime(freq, ctx.currentTime + i*0.12);
-          g.gain.setValueAtTime(0.25, ctx.currentTime + i*0.12);
-          g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.12 + 0.3);
-          o.start(ctx.currentTime + i*0.12);
-          o.stop(ctx.currentTime + i*0.12 + 0.3);
+          o.frequency.setValueAtTime(f, ctx.currentTime + i * 0.12);
+          g.gain.setValueAtTime(0.25, ctx.currentTime + i * 0.12);
+          g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.12 + 0.3);
+          o.start(ctx.currentTime + i * 0.12);
+          o.stop(ctx.currentTime + i * 0.12 + 0.3);
         });
       } else if (type === 'key') {
-        // Звяк ключа
-        const o = ctx.createOscillator(), g = ctx.createGain();
+        let o = ctx.createOscillator(), g = ctx.createGain();
         o.connect(g); g.connect(ctx.destination);
         o.type = 'triangle';
         o.frequency.setValueAtTime(900, ctx.currentTime);
@@ -222,472 +264,295 @@
         g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
         o.start(ctx.currentTime); o.stop(ctx.currentTime + 0.25);
       } else if (type === 'win') {
-        // Победная мелодия — открыт персонаж
-        [523, 659, 784, 1047].forEach((freq, i) => {
-          const o = ctx.createOscillator(), g = ctx.createGain();
+        [523, 659, 784, 1047].forEach((f, i) => {
+          let o = ctx.createOscillator(), g = ctx.createGain();
           o.connect(g); g.connect(ctx.destination);
           o.type = 'sine';
-          o.frequency.setValueAtTime(freq, ctx.currentTime + i*0.18);
-          g.gain.setValueAtTime(0.3, ctx.currentTime + i*0.18);
-          g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.18 + 0.4);
-          o.start(ctx.currentTime + i*0.18); o.stop(ctx.currentTime + i*0.18 + 0.4);
+          o.frequency.setValueAtTime(f, ctx.currentTime + i * 0.18);
+          g.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.18);
+          g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.18 + 0.4);
+          o.start(ctx.currentTime + i * 0.18);
+          o.stop(ctx.currentTime + i * 0.18 + 0.4);
+        });
+      } else if (type === 'legendary') {
+        [262, 330, 392, 523, 659].forEach((f, i) => {
+          let o = ctx.createOscillator(), g = ctx.createGain();
+          o.connect(g); g.connect(ctx.destination);
+          o.type = 'sine';
+          o.frequency.setValueAtTime(f, ctx.currentTime + i * 0.25);
+          g.gain.setValueAtTime(0.4, ctx.currentTime + i * 0.25);
+          g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.25 + 0.6);
+          o.start(ctx.currentTime + i * 0.25);
+          o.stop(ctx.currentTime + i * 0.25 + 0.6);
         });
       }
     } catch(e) {}
   }
 
-
-
-  // ═══════════════════════════════════════════════════
-  // ПЕРСОНАЖИ — добавляй новых сюда, прогресс не пропадёт
-  // animal: эмодзи животного, power: суперсила, name: имя команды
-  // rarity: "common" | "rare" | "epic" | "legendary"
-  // ═══════════════════════════════════════════════════
-  const CHARACTERS = [
-    // Обычные (открываются обычными ключами 🔑)
-    { animal: "🐆", power: "Скорость",        name: "Гепард",    color: "#E07000", image: "gepard.png",    rarity: "common" },
-    { animal: "🐦", power: "Лёгкость",        name: "Колибри",   color: "#00ACC1", image: "kolibri.png",   rarity: "common" },
-    { animal: "🐜", power: "Сила",            name: "Муравей",   color: "#CC0000", image: "muravey.png",   rarity: "common" },
-    { animal: "🦩", power: "Баланс",          name: "Фламинго",  color: "#E91E8C", image: "flamingo.png",  rarity: "common" },
-    { animal: "🦥", power: "Восстановление",  name: "Ленивец",   color: "#2E7D32", image: "lenivec.png",   rarity: "common" },
-    // 👇 Когда придумаем редких персонажей — добавляй их здесь
-  ];
-
-  const KEYS_NEEDED = 4;  // 4 ключа → на 4й день персонаж
-  const TOTAL_CHARS  = CHARACTERS.length;
-  const urlParams = new URLSearchParams(window.location.search);
-  const kitId = urlParams.get('kit') || 'demo';
-
-  let playerData = null;
-  let childName = '';
-  let childNick = '';
-  let docId = '';
-
-  // ── Превью ника ──
-  window.updatePreview = function() {
-    const name = document.getElementById('nameInput').value.trim();
-    const nick = document.getElementById('nickInput').value.trim();
-    const startBtn = document.getElementById('startBtn');
-    if (name && nick) {
-      startBtn.disabled = false;
+  function showCelebration(title, text, emoji = "🎉", imgSrc = null) {
+    document.getElementById('celebEmoji').innerHTML = emoji;
+    document.getElementById('celebTitle').innerHTML = title;
+    const imgEl = document.getElementById('celebImg');
+    if (imgSrc) {
+      imgEl.src = imgSrc;
+      imgEl.style.display = 'block';
     } else {
-      startBtn.disabled = true;
+      imgEl.style.display = 'none';
     }
-  };
-
-  // ── Старт ──
-  window.startGame = async function() {
-    const name = document.getElementById('nameInput').value.trim();
-    const nick = document.getElementById('nickInput').value.trim();
-    if (!name || !nick) { alert('Введи имя и ник!'); return; }
-    childName = name;
-    childNick = nick;
-    docId = kitId + '_' + (name + nick).toLowerCase().replace(/[^a-zа-яё0-9]/gi, '_');
-    playSound('start');
-    localStorage.setItem('child_' + kitId, JSON.stringify({ name, nick }));
-    await loadPlayer();
-  };
-
-  // Сохраняем резервную копию прогресса в localStorage
-  function saveBackup(data) {
-    try {
-      const backup = { ...data };
-      if (backup.lastClaim && backup.lastClaim.toDate) backup.lastClaim = backup.lastClaim.toDate().toISOString();
-      localStorage.setItem('backup_' + docId, JSON.stringify({ ...backup, _savedAt: Date.now() }));
-    } catch(e) {}
+    document.getElementById('celebText').innerHTML = text;
+    document.getElementById('celebration').classList.add('show');
   }
 
-  function loadBackup() {
-    try {
-      const raw = localStorage.getItem('backup_' + docId);
-      return raw ? JSON.parse(raw) : null;
-    } catch(e) { return null; }
-  }
+  function updateUI() {
+    document.getElementById('goldKeys').innerText = goldKeys;
+    document.getElementById('diamondKeys').innerText = diamondKeys;
+    document.getElementById('rubyKeys').innerText = rubyKeys;
 
-  async function loadPlayer() {
-    document.getElementById('nameScreen').style.display = 'none';
-    document.getElementById('gameScreen').style.display = 'block';
-    document.getElementById('greetingText').textContent = 'Привет, ' + childName + '!';
+    const rank = getRank();
+    const rankBadge = document.getElementById('rankBadge');
+    rankBadge.className = `rank-badge ${rank.class}`;
+    rankBadge.textContent = `${rank.icon} ${rank.name}`;
 
-    const ref = doc(db, 'players', docId);
-    try {
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        playerData = snap.data();
-        saveBackup(playerData); // обновляем резерв
-      } else {
-        const charIndex = Math.floor(Math.random() * TOTAL_CHARS);
-        playerData = {
-          name: childName, nick: childNick, kitId,
-          charIndex, step: 0, collectedChars: [],
-          coins: 0, weekCount: 0, weekStart: null,
-          lastClaim: null, createdAt: serverTimestamp()
-        };
-        await setDoc(ref, playerData);
-        saveBackup(playerData);
-      }
-      renderGame();
-    } catch(e) {
-      // Firebase недоступен — грузим из резерва
-      const backup = loadBackup();
-      if (backup) {
-        playerData = backup;
-        renderGame();
-        // Показываем предупреждение
-        setTimeout(() => {
-          const msg = document.getElementById('cooldownMsg');
-          if (msg) {
-            msg.style.display = 'block';
-            msg.innerHTML = '⚠️ Нет интернета — показан сохранённый прогресс<span class="cooldown-time" style="font-size:12px">Зарядку лучше отметить позже</span>';
-          }
-        }, 500);
-      } else {
-        alert('Нет соединения и нет резервной копии. Проверь интернет.');
-      }
-    }
-  }
+    const currentChar = BASE_CHARS[currentBaseCharIndex];
+    document.getElementById('charName').innerHTML = `${currentChar.animal} ${currentChar.power}`;
+    document.getElementById('charName').style.color = currentChar.color;
 
-  function declension(n, one, few, many) {
-    const m10 = n % 10, m100 = n % 100;
-    if (m10 === 1 && m100 !== 11) return one;
-    if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return few;
-    return many;
-  }
+    const allBasesCollected = collectedBase.length === BASE_CHARS.length;
+    const allRaresCollected = collectedRare.length === RARE_CHARS.length;
+    const allEpicsCollected = collectedEpic.length === EPIC_CHARS.length;
 
-  function getWeekStart(date) {
-    const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    d.setDate(diff);
-    d.setHours(0,0,0,0);
-    return d.getTime();
-  }
-
-  function renderGame() {
-    const char = CHARACTERS[playerData.charIndex];
-    const step = playerData.step || 0;
-    const collected = playerData.collectedChars || [];
-    const coins = playerData.coins || 0;
-
-    document.getElementById('charName').textContent = ''; // суперсила — сюрприз!
-    document.getElementById('charName').style.color = char.color;
-    document.getElementById('coinsCount').textContent = coins;
-
-    // Звание — НОВИЧОК → УЧЕНИК (МАСТЕР появится позже)
-    const badge = document.getElementById('rankBadge');
-    if (collected.length >= TOTAL_CHARS) {
-      badge.className = 'rank-badge rank-student';
-      badge.textContent = '⭐ УЧЕНИК';
-    } else {
-      badge.className = 'rank-badge rank-novice';
-      badge.textContent = '🌱 НОВИЧОК';
+    if (!legendaryUnlocked && allBasesCollected && allRaresCollected && allEpicsCollected) {
+      legendaryUnlocked = true;
+      playSound('legendary');
+      showCelebration("🏆 ПУТЬ ПРОЙДЕН! 🏆", "Ты — ЛЕГЕНДА!", "🐦‍🔥", LEGENDARY.image);
+      localStorage.setItem(`legendary_${docId}`, 'true');
     }
 
-    // Коллекция — всегда видна
-    renderPowersGrid(collected);
-
-    const keysGrid = document.getElementById('keysGrid');
-    const imageWrap = document.getElementById('charImageWrap');
-    const claimBtn = document.getElementById('claimBtn');
-
-    if (step > KEYS_NEEDED) {
-      // Суперсила открыта
-      keysGrid.style.display = 'none';
-      imageWrap.classList.add('show');
-      document.getElementById('charImage').src = char.image;
-      document.getElementById('progressText').textContent = char.power + ' открыта! 🎉';
-      document.getElementById('cooldownMsg').style.display = 'none';
-      // Проверяем недельный лимит
-      const currentWeekStart = getWeekStart(new Date());
-      const lastUnlockWeek = playerData.lastUnlockWeek || 0;
-      const wc2 = playerData.weekCount || 0;
-      if (lastUnlockWeek >= currentWeekStart) {
-        // Персонаж уже открыт на этой неделе
-        claimBtn.style.display = 'none';
-        const coolEl = document.getElementById('cooldownMsg');
-        coolEl.style.display = 'block';
-        if (wc2 < 5) {
-          coolEl.innerHTML = 'Суперсила открыта! 🎉<span class="cooldown-time">С 5-й зарядки — монетки 🪙</span>';
-        } else if (wc2 === 5) {
-          coolEl.innerHTML = 'Отлично! +1 🪙 в копилку!<span class="cooldown-time">Приходи ещё — будет больше!</span>';
-          claimBtn.style.display = 'block';
-          claimBtn.textContent = '🪙 Зарядка за монетку!';
-          claimBtn.className = 'btn btn-gold';
-          claimBtn.onclick = claimPart;
-          coolEl.style.display = 'none';
-        } else if (wc2 === 6) {
-          coolEl.innerHTML = 'Уже +2 🪙🪙!<span class="cooldown-time">7-й день = +3 монетки!</span>';
-          claimBtn.style.display = 'block';
-          claimBtn.textContent = '🪙🪙 Зарядка за монетки!';
-          claimBtn.className = 'btn btn-gold';
-          claimBtn.onclick = claimPart;
-          coolEl.style.display = 'none';
-        } else if (wc2 >= 7) {
-          coolEl.innerHTML = 'Ты собрал все монетки недели! 🏆<span class="cooldown-time">Новый персонаж на следующей неделе 🗓️</span>';
+    if (currentStep < 4) {
+      document.getElementById('keysGrid').style.display = 'grid';
+      document.getElementById('charImageWrap').classList.remove('show');
+      document.getElementById('shopButtons').style.display = 'none';
+      for (let i = 0; i < 4; i++) {
+        const slot = document.getElementById(`key${i}`);
+        if (i < currentStep) {
+          slot.classList.add('filled');
+          slot.innerHTML = '🔑';
         } else {
-          coolEl.innerHTML = 'Новый персонаж появится на следующей неделе! 🗓️<span class="cooldown-time">Молодец, так держать! 💪</span>';
+          slot.classList.remove('filled');
+          slot.innerHTML = '';
         }
-      } else {
-        claimBtn.style.display = 'block';
-        claimBtn.textContent = '✨ Следующая суперсила!';
-        claimBtn.className = 'btn btn-gold';
-        claimBtn.onclick = startNewChar;
       }
+      const remaining = 4 - currentStep;
+      document.getElementById('progressText').innerHTML = `🔑 До суперсилы: ${remaining} ${declension(remaining, 'зарядка', 'зарядки', 'зарядок')}`;
     } else {
-      keysGrid.style.display = 'grid';
-      imageWrap.classList.remove('show');
-      claimBtn.className = 'btn btn-green';
-      claimBtn.onclick = claimPart;
-      claimBtn.textContent = '🔑 Я сделал зарядку!';
-
-      for (let i = 0; i < KEYS_NEEDED; i++) {
-        const slot = document.getElementById('key' + i);
-        if (slot) {
-          if (i < step) {
-            slot.classList.add('filled');
-            slot.textContent = '🔑';
-          } else {
-            slot.classList.remove('filled');
-            slot.textContent = '';
-          }
-        }
+      document.getElementById('keysGrid').style.display = 'none';
+      document.getElementById('charImageWrap').classList.add('show');
+      document.getElementById('charImage').src = currentChar.image;
+      document.getElementById('progressText').innerHTML = `✨ ${currentChar.power} открыта!`;
+      if (collectedBase.length < BASE_CHARS.length || diamondKeys >= 4 || rubyKeys >= 4) {
+        document.getElementById('shopButtons').style.display = 'flex';
+      } else {
+        document.getElementById('shopButtons').style.display = 'none';
       }
-
-      const remaining = KEYS_NEEDED - step;
-      const wc = playerData.weekCount || 0;
-      let subLine = '';
-      if (wc === 4) subLine = '🔥 Ещё 1 зарядка — монетка!';
-      else if (wc === 5) subLine = '🪙 +1 монетка уже в копилке!';
-      else if (wc === 6) subLine = '🪙🪙 +2 монетки уже в копилке!';
-      else if (wc >= 7) subLine = '🪙🪙🪙 +3 монетки уже в копилке!';
-      const mainLine = remaining > 0
-        ? 'До суперсилы: ' + remaining + ' ' + declension(remaining, 'зарядка', 'зарядки', 'зарядок')
-        : 'Собери последний ключ! 🔑';
-      document.getElementById('progressText').innerHTML =
-        '<span>' + mainLine + '</span>' +
-        (subLine ? '<br><span style="font-size:11px;color:#aaa">' + subLine + '</span>' : '');
-      checkCooldown();
     }
-  }
 
-  function renderPowersGrid(collected) {
-    const grid = document.getElementById('powersGrid');
-    grid.innerHTML = '';
-    CHARACTERS.forEach((char, i) => {
-      const isCollected = collected.includes(i);
+    const gallery = document.getElementById('powersGrid');
+    gallery.innerHTML = '';
+    for (let i = 0; i < BASE_CHARS.length; i++) {
+      const c = BASE_CHARS[i];
+      const isCollected = collectedBase.includes(i);
       const div = document.createElement('div');
-      div.className = 'power-slot' + (isCollected ? ' unlocked' : '');
-      if (isCollected) {
-        div.style.borderColor = char.color + '88';
-        div.style.background = char.color + '15';
-      }
+      div.className = `power-slot ${isCollected ? 'unlocked' : ''}`;
       if (isCollected) {
         const img = document.createElement('img');
-        img.src = char.image;
-        img.alt = char.power;
-        // показываем эмодзи животного если нет картинки
-        img.onerror = function() { this.style.display='none'; const e=document.createElement('div'); e.style.cssText='font-size:28px;line-height:1;'; e.textContent=char.animal; this.parentNode.appendChild(e); };
+        img.src = c.image;
+        img.alt = c.power;
         div.appendChild(img);
         const name = document.createElement('div');
         name.className = 'power-name';
-        name.style.color = char.color;
-        name.textContent = char.power;
+        name.textContent = c.power;
         div.appendChild(name);
       }
-      // locked = просто пустой серый квадрат
-      grid.appendChild(div);
-    });
+      gallery.appendChild(div);
+    }
   }
 
-  function checkCooldown() {
-    const claimBtn = document.getElementById('claimBtn');
-    const cooldownMsg = document.getElementById('cooldownMsg');
-    if (!playerData.lastClaim) {
-      claimBtn.style.display = 'block';
-      cooldownMsg.style.display = 'none';
+  async function claimWorkout() {
+    const now = new Date();
+    const currentWeekStart = getWeekStart(now);
+    if (lastClaim && (now - lastClaim) < 24 * 3600 * 1000) {
+      const next = new Date(lastClaim.getTime() + 24 * 3600 * 1000);
+      const diff = next - now;
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      document.getElementById('cooldownMsg').style.display = 'block';
+      document.getElementById('cooldownTime').innerText = `${h} ч ${m} мин`;
       return;
     }
-    const last = playerData.lastClaim.toDate ? playerData.lastClaim.toDate() : new Date(playerData.lastClaim);
-    const next = new Date(last.getTime() + 24 * 3600 * 1000);
-    if (new Date() >= next) {
-      claimBtn.style.display = 'block';
-      cooldownMsg.style.display = 'none';
+    playSound('key');
+    lastClaim = now;
+    if (!weekStart || weekStart !== currentWeekStart) {
+      weekStart = currentWeekStart;
+      weekCount = 1;
     } else {
-      claimBtn.style.display = 'none';
-      cooldownMsg.style.display = 'block';
-      updateCountdown(next);
-      const iv = setInterval(() => {
-        if (new Date() >= next) { clearInterval(iv); renderGame(); }
-        else updateCountdown(next);
-      }, 30000);
+      weekCount++;
     }
-  }
-
-  function updateCountdown(next) {
-    const diff = next - new Date();
-    const h = Math.floor(diff / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    document.getElementById('cooldownTime').textContent = h + ' ч ' + m + ' мин';
-  }
-
-  window.claimPart = async function() {
-    const ref = doc(db, 'players', docId);
-
-    // Проверяем особый день
-    let specialType = null;
-    try {
-      const settSnap = await getDoc(doc(db, 'settings', 'specialDay'));
-      if (settSnap.exists()) specialType = settSnap.data().type || null;
-    } catch(e) {}
-
-    // Если особый ключ — добавляем в отдельный счётчик и показываем сюрприз
-    if (specialType) {
-      const rareKey = specialType;
-      const rareField = 'rareKeys_' + rareKey;
-      const newRareCount = (playerData[rareField] || 0) + 1;
-      const RARE_NEEDED = 4;
-      try {
-        await updateDoc(ref, { [rareField]: newRareCount, lastClaim: serverTimestamp() });
-        playerData[rareField] = newRareCount;
-        playerData.lastClaim = new Date();
-        saveBackup(playerData);
-        const icons = { rare: '🗝️', epic: '⚜️', legendary: '💎' };
-        const names = { rare: 'Редкий', epic: 'Эпический', legendary: 'Легендарный' };
-        const left = RARE_NEEDED - newRareCount;
-        document.getElementById('celebEmoji').textContent = icons[rareKey] || '🗝️';
-        document.getElementById('celebTitle').textContent = names[rareKey] + ' ключ получен!';
-        document.getElementById('celebImg').style.display = 'none';
-        document.getElementById('celebText').textContent = left > 0
-          ? 'У тебя ' + newRareCount + ' из ' + RARE_NEEDED + ' ключей. Ещё ' + left + '!'
-          : '🎉 Все ' + RARE_NEEDED + ' ключа собраны! Редкий персонаж скоро появится!';
-        document.getElementById('celebration').classList.add('show');
-        return;
-      } catch(e) { alert('Ошибка сохранения. Проверь интернет.'); return; }
-    }
-
-    const newStep = (playerData.step || 0) + 1;
-    const char = CHARACTERS[playerData.charIndex];
-    const now = new Date();
-
-    // Считаем недельный счётчик
-    const currentWeekStart = getWeekStart(now);
-    let weekCount = playerData.weekCount || 0;
-    const storedWeekStart = playerData.weekStart;
-
-    if (!storedWeekStart || storedWeekStart < currentWeekStart) {
-      weekCount = 1; // новая неделя
-    } else {
-      weekCount += 1;
-    }
-
-    // Бонусные монетки за 5-7й день
-    let bonusCoins = 0;
-    if (weekCount === 5) bonusCoins = 1;
-    else if (weekCount === 6) bonusCoins = 2;
-    else if (weekCount === 7) bonusCoins = 3;
-
-    const newCoins = (playerData.coins || 0) + bonusCoins;
-
-    try {
-      await updateDoc(ref, {
-        step: newStep,
-        lastClaim: serverTimestamp(),
-        weekCount,
-        weekStart: currentWeekStart,
-        coins: newCoins
-      });
-      playerData.step = newStep;
-      playerData.lastClaim = now;
-      playerData.weekCount = weekCount;
-      playerData.weekStart = currentWeekStart;
-      playerData.coins = newCoins;
-      saveBackup(playerData); // резервная копия
-
-      if (newStep > KEYS_NEEDED) {
-        // Суперсила открыта!
-        playSound('win');
-        const collected = playerData.collectedChars || [];
-        if (!collected.includes(playerData.charIndex)) {
-          collected.push(playerData.charIndex);
-          const currentWeekStart = getWeekStart(now);
-          await updateDoc(ref, { collectedChars: collected, lastUnlockWeek: currentWeekStart });
-          playerData.collectedChars = collected;
-          playerData.lastUnlockWeek = currentWeekStart;
+    if (weekCount <= 3) {
+      goldKeys++;
+      if (goldKeys >= 4) {
+        goldKeys -= 4;
+        if (currentStep < 4) {
+          currentStep++;
         }
-        const isStudent = collected.length >= TOTAL_CHARS;
-        document.getElementById('celebEmoji').textContent = isStudent ? '🏆' : '🎉';
-        document.getElementById('celebTitle').textContent = isStudent ? 'Ты УЧЕНИК! ⭐' : char.power + ' открыта!';
-        const img = document.getElementById('celebImg');
-        img.src = char.image; img.style.display = 'block';
-        document.getElementById('celebText').textContent = isStudent
-          ? 'Все суперсилы собраны! Открыта Витрина! 🏆'
-          : 'Суперсила добавлена в коллекцию!';
-      } else {
-        playSound('key');
-        const keysLeft = KEYS_NEEDED - newStep;
-        let celebText = keysLeft > 0
-          ? 'До суперсилы: ещё ' + keysLeft + ' ' + declension(keysLeft, 'зарядка', 'зарядки', 'зарядок') + '!'
-          : 'Ещё одна зарядка — и суперсила твоя! 🔑';
-        if (bonusCoins > 0) celebText += '\n+' + bonusCoins + ' 🪙 в копилку!';
-        document.getElementById('celebEmoji').textContent = bonusCoins > 0 ? '🪙' : '🔑';
-        document.getElementById('celebTitle').textContent = bonusCoins > 0 ? 'Бонус!' : 'Ключ ' + newStep + ' из ' + KEYS_NEEDED + '!';
-        document.getElementById('celebImg').style.display = 'none';
-        document.getElementById('celebText').textContent = celebText;
+        if (currentStep >= 4 && !collectedBase.includes(currentBaseCharIndex)) {
+          collectedBase.push(currentBaseCharIndex);
+          playSound('win');
+          if (collectedBase.length < BASE_CHARS.length) {
+            let available = [];
+            for (let i = 0; i < BASE_CHARS.length; i++) {
+              if (!collectedBase.includes(i)) available.push(i);
+            }
+            currentBaseCharIndex = available[Math.floor(Math.random() * available.length)];
+            currentStep = 0;
+          }
+        }
       }
-      document.getElementById('celebration').classList.add('show');
-    } catch(e) { alert('Ошибка сохранения. Проверь интернет.'); }
-  };
-
-  window.closeCelebration = function() {
-    document.getElementById('celebration').classList.remove('show');
-    renderGame();
-  };
-
-  async function startNewChar() {
-    const ref = doc(db, 'players', docId);
-    const now = new Date();
-    const currentWeekStart = getWeekStart(now);
-    const lastUnlockWeek = playerData.lastUnlockWeek || 0;
-
-    // Не больше 1 персонажа в неделю
-    if (lastUnlockWeek >= currentWeekStart) {
-      document.getElementById('celebEmoji').textContent = '📅';
-      document.getElementById('celebTitle').textContent = 'Отдыхаем до следующей недели!';
-      document.getElementById('celebImg').style.display = 'none';
-      document.getElementById('celebText').textContent = 'Суперсила открыта! Новый персонаж появится на следующей неделе 💪';
-      document.getElementById('celebration').classList.add('show');
-      renderGame();
-      return;
+    } else if (weekCount === 5 || weekCount === 6) {
+      diamondKeys++;
+    } else if (weekCount === 7) {
+      rubyKeys++;
     }
-
-    const collected = playerData.collectedChars || [];
-    let available = CHARACTERS.map((_,i) => i).filter(i => !collected.includes(i));
-    if (available.length === 0) available = CHARACTERS.map((_,i) => i);
-    const newChar = available[Math.floor(Math.random() * available.length)];
-    await updateDoc(ref, { charIndex: newChar, step: 0, lastClaim: null });
-    playerData.charIndex = newChar; playerData.step = 0; playerData.lastClaim = null;
-    renderGame();
+    updateUI();
+    saveProgress();
   }
+
+  function unlockRare() {
+    if (diamondKeys >= 4 && collectedRare.length < RARE_CHARS.length) {
+      diamondKeys -= 4;
+      let available = [];
+      for (let i = 0; i < RARE_CHARS.length; i++) {
+        if (!collectedRare.includes(i)) available.push(i);
+      }
+      const newRare = available[Math.floor(Math.random() * available.length)];
+      collectedRare.push(newRare);
+      playSound('win');
+      updateUI();
+      saveProgress();
+    }
+  }
+
+  function unlockEpic() {
+    if (rubyKeys >= 4 && collectedEpic.length < EPIC_CHARS.length) {
+      rubyKeys -= 4;
+      let available = [];
+      for (let i = 0; i < EPIC_CHARS.length; i++) {
+        if (!collectedEpic.includes(i)) available.push(i);
+      }
+      const newEpic = available[Math.floor(Math.random() * available.length)];
+      collectedEpic.push(newEpic);
+      playSound('win');
+      updateUI();
+      saveProgress();
+    }
+  }
+
+  function saveProgress() {
+    const data = {
+      goldKeys, diamondKeys, rubyKeys, currentStep, lastClaim, weekCount, weekStart,
+      collectedBase, collectedRare, collectedEpic, currentBaseCharIndex, legendaryUnlocked
+    };
+    localStorage.setItem(`progress_${docId}`, JSON.stringify(data));
+    localStorage.setItem('child_active_stop', JSON.stringify({ name: childName, nick: childNick }));
+  }
+
+  function loadProgress() {
+    const saved = localStorage.getItem(`progress_${docId}`);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        goldKeys = data.goldKeys || 0;
+        diamondKeys = data.diamondKeys || 0;
+        rubyKeys = data.rubyKeys || 0;
+        currentStep = data.currentStep || 0;
+        lastClaim = data.lastClaim ? new Date(data.lastClaim) : null;
+        weekCount = data.weekCount || 0;
+        weekStart = data.weekStart || null;
+        collectedBase = data.collectedBase || [];
+        collectedRare = data.collectedRare || [];
+        collectedEpic = data.collectedEpic || [];
+        currentBaseCharIndex = data.currentBaseCharIndex || 0;
+        legendaryUnlocked = data.legendaryUnlocked || false;
+        if (collectedBase.length === 0 && BASE_CHARS.length > 0) {
+          currentBaseCharIndex = Math.floor(Math.random() * BASE_CHARS.length);
+        }
+        return true;
+      } catch(e) {}
+    }
+    return false;
+  }
+
+  function resetGame() {
+    goldKeys = 0;
+    diamondKeys = 0;
+    rubyKeys = 0;
+    currentStep = 0;
+    lastClaim = null;
+    weekCount = 0;
+    weekStart = null;
+    collectedBase = [];
+    collectedRare = [];
+    collectedEpic = [];
+    currentBaseCharIndex = Math.floor(Math.random() * BASE_CHARS.length);
+    legendaryUnlocked = false;
+    localStorage.removeItem(`progress_${docId}`);
+    localStorage.removeItem(`legendary_${docId}`);
+    updateUI();
+  }
+
+  function updatePreview() {
+    const name = document.getElementById('nameInput').value.trim();
+    const nick = document.getElementById('nickInput').value.trim();
+    document.getElementById('startBtn').disabled = !(name && nick);
+  }
+
+  window.startGame = function() {
+    childName = document.getElementById('nameInput').value.trim();
+    childNick = document.getElementById('nickInput').value.trim();
+    if (!childName || !childNick) return;
+    docId = `${childName}_${childNick}`.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+    playSound('start');
+    document.getElementById('nameScreen').style.display = 'none';
+    document.getElementById('gameScreen').style.display = 'block';
+    const ending = childName.endsWith('а') ? 'а' : '';
+    document.getElementById('claimBtn').innerHTML = `🔑 Я сделал${ending} зарядку!`;
+    document.getElementById('greetingText').innerHTML = `Привет, ${childName}! 👋`;
+    if (!loadProgress()) {
+      resetGame();
+    }
+    updateUI();
+    document.getElementById('claimBtn').onclick = claimWorkout;
+    document.getElementById('unlockRareBtn').onclick = unlockRare;
+    document.getElementById('unlockEpicBtn').onclick = unlockEpic;
+  };
 
   window.showGallery = function() {
-    const collected = playerData.collectedChars || [];
-    document.getElementById('gallerySubtitle').textContent = 'Собрано ' + collected.length + ' из ' + TOTAL_CHARS + ' суперсил';
-    const grid = document.getElementById('galleryGrid');
-    grid.innerHTML = '';
-    CHARACTERS.forEach((char, i) => {
-      const isCollected = collected.includes(i);
+    const gallery = document.getElementById('galleryGrid');
+    gallery.innerHTML = '';
+    const allChars = [
+      ...BASE_CHARS.map((c, i) => ({ ...c, collected: collectedBase.includes(i), type: 'base' })),
+      ...RARE_CHARS.map((c, i) => ({ ...c, collected: collectedRare.includes(i), type: 'rare' })),
+      ...EPIC_CHARS.map((c, i) => ({ ...c, collected: collectedEpic.includes(i), type: 'epic' })),
+      { ...LEGENDARY, collected: legendaryUnlocked, type: 'legendary' }
+    ];
+    for (const c of allChars) {
       const div = document.createElement('div');
-      div.className = 'gallery-item' + (isCollected ? ' unlocked' : '');
-      if (isCollected) {
-        div.style.borderColor = char.color + '99';
-        div.style.background = char.color + '10';
-      }
+      div.className = `gallery-item ${c.collected ? 'unlocked' : ''}`;
       const area = document.createElement('div');
       area.className = 'gallery-image-area';
-      if (isCollected) {
+      if (c.collected) {
         const img = document.createElement('img');
-        img.src = char.image;
-        img.alt = char.power;
+        img.src = c.image;
+        img.alt = c.power;
         area.appendChild(img);
       } else {
         const q = document.createElement('div');
@@ -696,15 +561,18 @@
         area.appendChild(q);
       }
       div.appendChild(area);
-      if (isCollected) {
+      if (c.collected) {
         const pname = document.createElement('div');
         pname.className = 'gallery-power-name';
-        pname.style.color = char.color;
-        pname.textContent = char.power;
+        pname.style.color = c.color;
+        pname.textContent = c.power;
         div.appendChild(pname);
       }
-      grid.appendChild(div);
-    });
+      gallery.appendChild(div);
+    }
+    const totalCollected = collectedBase.length + collectedRare.length + collectedEpic.length + (legendaryUnlocked ? 1 : 0);
+    const totalAll = BASE_CHARS.length + RARE_CHARS.length + EPIC_CHARS.length + 1;
+    document.getElementById('gallerySubtitle').innerHTML = `Собрано ${totalCollected} из ${totalAll}`;
     document.getElementById('gameScreen').style.display = 'none';
     document.getElementById('galleryScreen').style.display = 'block';
   };
@@ -715,7 +583,8 @@
   };
 
   window.changeName = function() {
-    localStorage.removeItem('child_' + kitId);
+    localStorage.removeItem(`progress_${docId}`);
+    localStorage.removeItem(`legendary_${docId}`);
     document.getElementById('gameScreen').style.display = 'none';
     document.getElementById('nameScreen').style.display = 'block';
     document.getElementById('nameInput').value = '';
@@ -723,25 +592,20 @@
     updatePreview();
   };
 
-  // Проверяем автозаполнение браузера каждые 300мс первые 3 секунды
-  let _checkCount = 0;
-  const _checkFill = setInterval(() => {
-    const n = document.getElementById('nameInput');
-    const k = document.getElementById('nickInput');
-    if (n && k) updatePreview();
-    if (++_checkCount >= 10) clearInterval(_checkFill);
-  }, 300);
+  window.closeCelebration = function() {
+    document.getElementById('celebration').classList.remove('show');
+  };
 
-  // Авто-вход
-  const saved = localStorage.getItem('child_' + kitId);
+  const saved = localStorage.getItem('child_active_stop');
   if (saved) {
     try {
       const data = JSON.parse(saved);
-      childName = data.name;
-      childNick = data.nick;
-      docId = kitId + '_' + (data.name + data.nick).toLowerCase().replace(/[^a-zа-яё0-9]/gi, '_');
-      loadPlayer();
-    } catch(e) { localStorage.removeItem('child_' + kitId); }
+      if (data.name && data.nick) {
+        document.getElementById('nameInput').value = data.name;
+        document.getElementById('nickInput').value = data.nick;
+        updatePreview();
+      }
+    } catch(e) {}
   }
 </script>
 </body>
