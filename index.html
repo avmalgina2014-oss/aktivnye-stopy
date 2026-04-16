@@ -119,7 +119,7 @@
 
   <div class="char-image-wrap" id="charImageWrap"><img id="charImage" src="" alt="суперсила"></div>
 
-  <button class="btn btn-green" id="claimBtn" style="display:block;">🔑 Я сделал(а) зарядку!</button>
+  <button class="btn btn-green" id="claimBtn" style="display:block;">Я сделал(а) зарядку!</button>
 
   <div class="shop-buttons" id="shopButtons" style="display:none;">
     <button class="shop-btn rare" id="unlockRareBtn">✨ Открыть РЕДКОГО (4 🔷)</button>
@@ -206,9 +206,6 @@
   let docId = "";
   let legendaryUnlocked = false;
 
-  // ========================
-  // ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
-  // ========================
   function getWeekStart(date) {
     let d = new Date(date);
     let day = d.getDay();
@@ -552,7 +549,7 @@
     playSound('start');
     document.getElementById('nameScreen').style.display = 'none';
     document.getElementById('gameScreen').style.display = 'block';
-    document.getElementById('claimBtn').innerHTML = `🔑 Я сделал(а) зарядку!`;
+    document.getElementById('claimBtn').innerHTML = `Я сделал(а) зарядку!`;
     document.getElementById('greetingText').innerHTML = `Привет, ${childName}! 👋`;
     if (!loadProgress()) {
       resetGame();
