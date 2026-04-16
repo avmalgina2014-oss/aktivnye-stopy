@@ -6,7 +6,6 @@
 <title>Активные Стопы — Суперсилы</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
-  /* (стили те же, не менялись) */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Nunito', sans-serif;
@@ -48,15 +47,9 @@
   .rank-student { background: linear-gradient(135deg, #FFF8E1, #FFE082); color: #F57F17; }
   .rank-pro { background: linear-gradient(135deg, #E3F2FD, #90CAF9); color: #1565C0; }
   .rank-master { background: linear-gradient(135deg, #1a1a2e, #16213e); color: #fff; }
-  .keys-panel { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
-  .key-group { background: #f5f5f5; border-radius: 20px; padding: 8px 12px; text-align: center; flex: 1; min-width: 80px; }
-  .key-label { font-size: 11px; font-weight: 800; color: #888; margin-bottom: 4px; }
-  .key-count { font-family: 'Fredoka One', cursive; font-size: 22px; line-height: 1; }
-  .gold .key-count { color: #F9A825; }
-  .diamond .key-count { color: #42A5F5; }
-  .ruby .key-count { color: #EF5350; }
+  .keys-panel { display: flex; gap: 12px; align-items: center; }
+  .key-icon { font-size: 22px; line-height: 1; display: inline-flex; align-items: center; gap: 4px; background: #f5f5f5; padding: 4px 10px; border-radius: 30px; }
   .greeting { font-size: 18px; font-weight: 900; color: #2d2d2d; margin-bottom: 10px; }
-  .char-name { font-family: 'Fredoka One', cursive; font-size: 19px; margin-bottom: 6px; }
   .progress-text { font-size: 12px; color: #888; font-weight: 700; margin-bottom: 12px; line-height: 1.6; }
   .keys-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
   .key-slot { aspect-ratio: 1; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; border: 3px dashed #e0e4ef; background: #f9f9f9; transition: all 0.4s ease; }
@@ -71,16 +64,14 @@
   .collection-section { margin-top: 16px; border-top: 2px solid #f0f0f0; padding-top: 14px; cursor: pointer; }
   .collection-section:hover .collection-title { color: #667eea; }
   .collection-title { font-family: 'Fredoka One', cursive; font-size: 15px; color: #888; margin-bottom: 10px; transition: color 0.2s; }
-  .powers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-  .power-slot { border-radius: 14px; border: 2px solid #e0e4ef; background: #f0f0f0; aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.3s; overflow: hidden; padding: 4px; }
-  .power-slot.unlocked { background: #fff; box-shadow: 0 3px 12px rgba(0,0,0,0.10); }
-  .power-slot img { width: 100%; height: 44px; object-fit: contain; display: block; }
-  .power-slot .power-name { font-size: 8px; font-weight: 800; margin-top: 3px; color: #555; line-height: 1.2; text-align: center; }
   .shop-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
   .shop-btn { width: 100%; padding: 10px; border-radius: 14px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px; cursor: pointer; border: none; transition: all 0.2s; }
   .shop-btn.rare { background: #E3F2FD; color: #1565C0; border: 2px solid #42A5F5; }
   .shop-btn.epic { background: #FFEBEE; color: #C62828; border: 2px solid #EF5350; }
   .shop-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .gallery-tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 2px solid #e0e4ef; }
+  .tab-btn { background: none; border: none; padding: 8px 16px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 14px; color: #888; cursor: pointer; transition: all 0.2s; }
+  .tab-btn.active { color: #667eea; border-bottom: 3px solid #667eea; }
   .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 14px 0; }
   .gallery-item { border-radius: 18px; border: 2px solid #e8e8e8; background: #f0f0f0; padding: 10px 8px; text-align: center; transition: all 0.3s; min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .gallery-item.unlocked { background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.10); }
@@ -112,16 +103,13 @@
 <div class="card" id="gameScreen" style="display:none;">
   <div class="top-bar">
     <div id="rankBadge" class="rank-badge rank-novice">🌱 НОВИЧОК</div>
+    <div class="keys-panel">
+      <span class="key-icon">🔵 <span id="diamondKeys">0</span></span>
+      <span class="key-icon">🔴 <span id="rubyKeys">0</span></span>
+    </div>
   </div>
   <div class="greeting" id="greetingText">Привет!</div>
 
-  <div class="keys-panel">
-    <div class="key-group gold"><div class="key-label">ЗОЛОТЫЕ</div><div class="key-count" id="goldKeys">0</div></div>
-    <div class="key-group diamond"><div class="key-label">БРИЛЛИАНТЫ</div><div class="key-count" id="diamondKeys">0</div></div>
-    <div class="key-group ruby"><div class="key-label">РУБИНЫ</div><div class="key-count" id="rubyKeys">0</div></div>
-  </div>
-
-  <div class="char-name" id="charName"></div>
   <div class="progress-text" id="progressText"></div>
 
   <div class="keys-grid" id="keysGrid">
@@ -134,7 +122,7 @@
   <button class="btn btn-green" id="claimBtn" style="display:none;">🔑 Я сделал зарядку!</button>
 
   <div class="shop-buttons" id="shopButtons" style="display:none;">
-    <button class="shop-btn rare" id="unlockRareBtn">✨ Открыть РЕДКОГО (4 💎)</button>
+    <button class="shop-btn rare" id="unlockRareBtn">✨ Открыть РЕДКОГО (4 🔵)</button>
     <button class="shop-btn epic" id="unlockEpicBtn">🔥 Открыть ЭПИЧЕСКОГО (4 🔴)</button>
   </div>
 
@@ -145,15 +133,18 @@
 
   <div class="collection-section" onclick="showGallery()">
     <div class="collection-title">🏅 Мои суперсилы →</div>
-    <div class="powers-grid" id="powersGrid"></div>
   </div>
   <div class="change-name" onclick="changeName()">Это не я → сменить имя</div>
 </div>
 
 <div class="card" id="galleryScreen" style="display:none;">
   <h1>🏅 Мои суперсилы</h1>
-  <div class="subtitle" id="gallerySubtitle"></div>
-  <div class="gallery-grid" id="galleryGrid"></div>
+  <div class="gallery-tabs">
+    <button class="tab-btn active" data-tab="base">Базовые</button>
+    <button class="tab-btn" data-tab="rareEpic">Редкие + Эпические</button>
+    <button class="tab-btn" data-tab="legendary">Легендарный</button>
+  </div>
+  <div id="galleryContent"></div>
   <button class="btn" onclick="hideGallery()">← Назад</button>
 </div>
 
@@ -304,7 +295,6 @@
   }
 
   function updateUI() {
-    document.getElementById('goldKeys').innerText = goldKeys;
     document.getElementById('diamondKeys').innerText = diamondKeys;
     document.getElementById('rubyKeys').innerText = rubyKeys;
 
@@ -312,10 +302,6 @@
     const rankBadge = document.getElementById('rankBadge');
     rankBadge.className = `rank-badge ${rank.class}`;
     rankBadge.textContent = `${rank.icon} ${rank.name}`;
-
-    const currentChar = BASE_CHARS[currentBaseCharIndex];
-    document.getElementById('charName').innerHTML = `${currentChar.animal} ${currentChar.power}`;
-    document.getElementById('charName').style.color = currentChar.color;
 
     const allBasesCollected = collectedBase.length === BASE_CHARS.length;
     const allRaresCollected = collectedRare.length === RARE_CHARS.length;
@@ -347,33 +333,13 @@
     } else {
       document.getElementById('keysGrid').style.display = 'none';
       document.getElementById('charImageWrap').classList.add('show');
-      document.getElementById('charImage').src = currentChar.image;
-      document.getElementById('progressText').innerHTML = `✨ ${currentChar.power} открыта!`;
+      document.getElementById('charImage').src = BASE_CHARS[currentBaseCharIndex].image;
+      document.getElementById('progressText').innerHTML = `✨ Суперсила открыта!`;
       if (collectedBase.length < BASE_CHARS.length || diamondKeys >= 4 || rubyKeys >= 4) {
         document.getElementById('shopButtons').style.display = 'flex';
       } else {
         document.getElementById('shopButtons').style.display = 'none';
       }
-    }
-
-    const gallery = document.getElementById('powersGrid');
-    gallery.innerHTML = '';
-    for (let i = 0; i < BASE_CHARS.length; i++) {
-      const c = BASE_CHARS[i];
-      const isCollected = collectedBase.includes(i);
-      const div = document.createElement('div');
-      div.className = `power-slot ${isCollected ? 'unlocked' : ''}`;
-      if (isCollected) {
-        const img = document.createElement('img');
-        img.src = c.image;
-        img.alt = c.power;
-        div.appendChild(img);
-        const name = document.createElement('div');
-        name.className = 'power-name';
-        name.textContent = c.power;
-        div.appendChild(name);
-      }
-      gallery.appendChild(div);
     }
   }
 
@@ -515,36 +481,22 @@
     document.getElementById('startBtn').disabled = !(name && nick);
   }
 
-  window.startGame = function() {
-    childName = document.getElementById('nameInput').value.trim();
-    childNick = document.getElementById('nickInput').value.trim();
-    if (!childName || !childNick) return;
-    docId = `${childName}_${childNick}`.toLowerCase().replace(/[^a-z0-9_]/g, '_');
-    playSound('start');
-    document.getElementById('nameScreen').style.display = 'none';
-    document.getElementById('gameScreen').style.display = 'block';
-    const ending = childName.endsWith('а') ? 'а' : '';
-    document.getElementById('claimBtn').innerHTML = `🔑 Я сделал${ending} зарядку!`;
-    document.getElementById('greetingText').innerHTML = `Привет, ${childName}! 👋`;
-    if (!loadProgress()) {
-      resetGame();
+  function renderGallery(tab) {
+    const container = document.getElementById('galleryContent');
+    container.innerHTML = '';
+    let chars = [];
+    if (tab === 'base') {
+      chars = BASE_CHARS.map((c, i) => ({ ...c, collected: collectedBase.includes(i) }));
+    } else if (tab === 'rareEpic') {
+      const rare = RARE_CHARS.map((c, i) => ({ ...c, collected: collectedRare.includes(i) }));
+      const epic = EPIC_CHARS.map((c, i) => ({ ...c, collected: collectedEpic.includes(i) }));
+      chars = [...rare, ...epic];
+    } else {
+      chars = [{ ...LEGENDARY, collected: legendaryUnlocked }];
     }
-    updateUI();
-    document.getElementById('claimBtn').onclick = claimWorkout;
-    document.getElementById('unlockRareBtn').onclick = unlockRare;
-    document.getElementById('unlockEpicBtn').onclick = unlockEpic;
-  };
-
-  window.showGallery = function() {
-    const gallery = document.getElementById('galleryGrid');
-    gallery.innerHTML = '';
-    const allChars = [
-      ...BASE_CHARS.map((c, i) => ({ ...c, collected: collectedBase.includes(i), type: 'base' })),
-      ...RARE_CHARS.map((c, i) => ({ ...c, collected: collectedRare.includes(i), type: 'rare' })),
-      ...EPIC_CHARS.map((c, i) => ({ ...c, collected: collectedEpic.includes(i), type: 'epic' })),
-      { ...LEGENDARY, collected: legendaryUnlocked, type: 'legendary' }
-    ];
-    for (const c of allChars) {
+    const grid = document.createElement('div');
+    grid.className = 'gallery-grid';
+    for (const c of chars) {
       const div = document.createElement('div');
       div.className = `gallery-item ${c.collected ? 'unlocked' : ''}`;
       const area = document.createElement('div');
@@ -568,18 +520,48 @@
         pname.textContent = c.power;
         div.appendChild(pname);
       }
-      gallery.appendChild(div);
+      grid.appendChild(div);
     }
-    const totalCollected = collectedBase.length + collectedRare.length + collectedEpic.length + (legendaryUnlocked ? 1 : 0);
-    const totalAll = BASE_CHARS.length + RARE_CHARS.length + EPIC_CHARS.length + 1;
-    document.getElementById('gallerySubtitle').innerHTML = `Собрано ${totalCollected} из ${totalAll}`;
+    container.appendChild(grid);
+  }
+
+  window.showGallery = function() {
     document.getElementById('gameScreen').style.display = 'none';
     document.getElementById('galleryScreen').style.display = 'block';
+    renderGallery('base');
+    const btns = document.querySelectorAll('.tab-btn');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderGallery(btn.dataset.tab);
+      });
+    });
   };
 
   window.hideGallery = function() {
     document.getElementById('galleryScreen').style.display = 'none';
     document.getElementById('gameScreen').style.display = 'block';
+  };
+
+  window.startGame = function() {
+    childName = document.getElementById('nameInput').value.trim();
+    childNick = document.getElementById('nickInput').value.trim();
+    if (!childName || !childNick) return;
+    docId = `${childName}_${childNick}`.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+    playSound('start');
+    document.getElementById('nameScreen').style.display = 'none';
+    document.getElementById('gameScreen').style.display = 'block';
+    const ending = childName.endsWith('а') ? 'а' : '';
+    document.getElementById('claimBtn').innerHTML = `🔑 Я сделал${ending} зарядку!`;
+    document.getElementById('greetingText').innerHTML = `Привет, ${childName}! 👋`;
+    if (!loadProgress()) {
+      resetGame();
+    }
+    updateUI();
+    document.getElementById('claimBtn').onclick = claimWorkout;
+    document.getElementById('unlockRareBtn').onclick = unlockRare;
+    document.getElementById('unlockEpicBtn').onclick = unlockEpic;
   };
 
   window.changeName = function() {
