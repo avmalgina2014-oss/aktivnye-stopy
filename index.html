@@ -54,7 +54,7 @@
     .rank { background: #edf2fa; padding: 6px 14px; border-radius: 50px; font-size: 14px; font-weight: bold; }
     .key-icons { display: flex; gap: 16px; background: #f5f6fe; padding: 6px 16px; border-radius: 50px; align-items: center; }
     .key-icon { display: flex; align-items: center; gap: 6px; font-size: 20px; font-weight: bold; }
-    .key-icon img { width: 40px; height: 40px; display: inline-block; object-fit: contain; }
+    .key-icon img { width: 64px; height: 64px; display: inline-block; object-fit: contain; }
     .greeting { font-size: 22px; font-weight: 800; margin: 12px 0 4px; }
     .progress { background: #f1f3fc; padding: 10px; border-radius: 40px; font-size: 14px; font-weight: bold; margin: 12px 0; }
     .key-slots { display: flex; justify-content: center; gap: 12px; margin: 16px 0; }
@@ -167,7 +167,7 @@
         state.legendaryUnlocked=true; saveAll();
         alert("🏆 ПУТЬ ПРОЙДЕН! 🏆\nТы — ЛЕГЕНДА!");
       }
-      let html = `<div class="card"><div class="top-row"><div class="rank">${getRank()}</div><div class="key-icons"><div class="key-icon"><img src="blue_key.png" alt="🔷"> ${state.diamondKeys}</div><div class="key-icon"><img src="red_key.png" alt="🔶"> ${state.rubyKeys}</div></div></div>
+      let html = `<div class="card"><div class="top-row"><div class="rank">${getRank()}</div><div class="key-icons"><div class="key-icon"><img src="blue_key.png" alt="синий ключ"> ${state.diamondKeys}</div><div class="key-icon"><img src="red_key.png" alt="красный ключ"> ${state.rubyKeys}</div></div></div>
       <div class="greeting">Привет, ${state.childName || 'игрок'}!</div>
       <div class="progress">${needProgress ? '✨ Суперсила открыта!' : `🔑 До суперсилы: ${4-state.goldProgress} ${decl(4-state.goldProgress,'зарядка','зарядки','зарядок')}`}</div>
       <div class="key-slots">${[0,1,2,3].map(i=>`<div class="slot ${i<state.goldProgress?'filled':''}">${i<state.goldProgress?'🔑':''}</div>`).join('')}</div>
