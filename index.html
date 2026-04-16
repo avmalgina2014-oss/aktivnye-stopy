@@ -120,6 +120,7 @@
         weekStart: state.weekStart
       };
       localStorage.setItem(`stop_${docId}`, JSON.stringify(save));
+      localStorage.setItem(`stop_lastName`, state.childName);
     }
 
     function loadAll() {
@@ -166,7 +167,7 @@
         state.legendaryUnlocked=true; saveAll();
         alert("🏆 ПУТЬ ПРОЙДЕН! 🏆\nТы — ЛЕГЕНДА!");
       }
-      let html = `<div class="card"><div class="top-row"><div class="rank">${getRank()}</div><div class="key-icons"><div class="key-icon"><img src="blue_key.png"> ${state.diamondKeys}</div><div class="key-icon"><img src="red_key.png"> ${state.rubyKeys}</div></div></div>
+      let html = `<div class="card"><div class="top-row"><div class="rank">${getRank()}</div><div class="key-icons"><div class="key-icon"><img src="blue_key.png" alt="🔷"> ${state.diamondKeys}</div><div class="key-icon"><img src="red_key.png" alt="🔶"> ${state.rubyKeys}</div></div></div>
       <div class="greeting">Привет, ${state.childName || 'игрок'}!</div>
       <div class="progress">${needProgress ? '✨ Суперсила открыта!' : `🔑 До суперсилы: ${4-state.goldProgress} ${decl(4-state.goldProgress,'зарядка','зарядки','зарядок')}`}</div>
       <div class="key-slots">${[0,1,2,3].map(i=>`<div class="slot ${i<state.goldProgress?'filled':''}">${i<state.goldProgress?'🔑':''}</div>`).join('')}</div>
@@ -185,7 +186,7 @@
       if(document.getElementById('unlockRareBtn')) document.getElementById('unlockRareBtn').onclick = () => { if(state.diamondKeys>=4 && state.collectedRare.length<RARE.length){ state.diamondKeys-=4; let left=RARE.map((_,i)=>i).filter(i=>!state.collectedRare.includes(i)); state.collectedRare.push(left[Math.floor(Math.random()*left.length)]); saveAll(); renderGame(); } };
       if(document.getElementById('unlockEpicBtn')) document.getElementById('unlockEpicBtn').onclick = () => { if(state.rubyKeys>=4 && state.collectedEpic.length<EPIC.length){ state.rubyKeys-=4; let left=EPIC.map((_,i)=>i).filter(i=>!state.collectedEpic.includes(i)); state.collectedEpic.push(left[Math.floor(Math.random()*left.length)]); saveAll(); renderGame(); } };
       document.getElementById('collectionBtn').onclick = () => showCollection();
-      document.getElementById('changeNameBtn').onclick = () => { localStorage.removeItem(`stop_${docId}`); renderNameScreen(); };
+      document.getElementById('changeNameBtn').onclick = () => { localStorage.removeItem(`stop_${docId}`); localStorage.removeItem(`stop_lastName`); renderNameScreen(); };
       if(state.lastClaimDate && (new Date()-state.lastClaimDate)<24*3600*1000) showCooldown();
     }
 
@@ -259,8 +260,9 @@
     }
 
     function renderNameScreen(){
+      let savedName = localStorage.getItem('stop_lastName') || '';
       let html = `<div class="card"><h1>👣 Активные Стопы</h1><div class="sub">Собери все суперсилы!</div>
-      <div class="field-label">Твоё имя</div><input id="playerName" placeholder="Саша">
+      <div class="field-label">Твоё имя</div><input id="playerName" placeholder="Саша" value="${savedName.replace(/"/g, '&quot;')}">
       <div class="field-label">Придумай ник</div><input id="playerNick" placeholder="Ракета">
       <button id="startGameBtn">Вперёд! 🚀</button></div>`;
       document.getElementById('app').innerHTML = html;
