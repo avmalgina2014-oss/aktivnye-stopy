@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -91,6 +92,7 @@ h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:
 
 .change-name{font-size:11px;color:#ccc;margin-top:10px;cursor:pointer;font-weight:700}
 .change-name:hover{color:#667eea}
+.key-img{height:28px;width:auto;vertical-align:middle;margin-right:3px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.15))}
 
 /* Галерея */
 #galleryScreen{display:none}
@@ -138,8 +140,8 @@ h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:
   <div class="top-bar">
     <div id="rankBadge" class="rank-badge rank-novice">🌱 НОВИЧОК</div>
     <div class="keys-wallet">
-      <div class="wallet-slot diamond"><img src="key_diamond.png" style="height:22px;vertical-align:middle;margin-right:2px"> <span id="dKeys">0</span></div>
-      <div class="wallet-slot ruby"><img src="key_ruby.png" style="height:22px;vertical-align:middle;margin-right:2px"> <span id="rKeys">0</span></div>
+      <div class="wallet-slot diamond"><img src="key_diamond.png" class="key-img"> <span id="dKeys">0</span></div>
+      <div class="wallet-slot ruby"><img src="key_ruby.png" class="key-img"> <span id="rKeys">0</span></div>
     </div>
   </div>
 
@@ -166,36 +168,9 @@ h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:
     <span class="cooldown-time" id="cooldownTime"></span>
   </div>
 
-  <!-- Магазин ключей -->
-  <div class="shop-section" id="shopSection">
-    <div class="shop-title">🗝️ Потратить ключи</div>
-    <div class="shop-grid">
-      <button class="shop-card diamond-card" id="buyRareDiamond" onclick="buyChar('rare','diamond')">
-        <span class="shop-card-icon"><img src="key_diamond.png" style="height:28px"></span>
-        Редкий<br>персонаж
-        <div class="shop-card-cost">4 <img src="key_diamond.png" style="height:14px;vertical-align:middle"> бриллианта</div>
-      </button>
-      <button class="shop-card ruby-card" id="buyRareRuby" onclick="buyChar('rare','ruby')">
-        <span class="shop-card-icon"><img src="key_ruby.png" style="height:28px"></span>
-        Редкий<br>персонаж
-        <div class="shop-card-cost">2 <img src="key_ruby.png" style="height:14px;vertical-align:middle"> рубина</div>
-      </button>
-      <button class="shop-card diamond-card" id="buyEpicDiamond" onclick="buyChar('epic','diamond')">
-        <span class="shop-card-icon"><img src="key_diamond.png" style="height:24px"><img src="key_diamond.png" style="height:24px"></span>
-        Эпический<br>персонаж
-        <div class="shop-card-cost">8 <img src="key_diamond.png" style="height:14px;vertical-align:middle"> бриллиантов</div>
-      </button>
-      <button class="shop-card ruby-card" id="buyEpicRuby" onclick="buyChar('epic','ruby')">
-        <span class="shop-card-icon"><img src="key_ruby.png" style="height:24px"><img src="key_ruby.png" style="height:24px"></span>
-        Эпический<br>персонаж
-        <div class="shop-card-cost">4 <img src="key_ruby.png" style="height:14px;vertical-align:middle"> рубина</div>
-      </button>
-    </div>
-  </div>
 
-  <div class="collection-bar" onclick="showGallery()">
+    <div class="collection-bar" onclick="showGallery()">
     <div class="col-title">🏅 Моя коллекция →</div>
-    <div class="mini-grid" id="miniGrid"></div>
   </div>
   <div class="change-name" onclick="changeName()">Это не я → сменить имя</div>
 </div>
@@ -376,9 +351,6 @@ function render() {
   // Имя
   document.getElementById('greeting').textContent = 'Привет, ' + (st.name || '') + '!';
 
-  // Кнопки магазина
-  updateShop();
-
   if (st.step < 4) {
     // — Собираем ключи —
     document.getElementById('keysGrid').style.display = 'grid';
@@ -455,22 +427,7 @@ function render() {
   });
 }
 
-function updateShop() {
-  const show = st.gotBase.length > 0 && (st.dKeys > 0 || st.rKeys > 0)
-             && (st.gotRare.length < RARE.length || st.gotEpic.length < EPIC.length);
-  document.getElementById('shopSection').style.display = show ? 'block' : 'none';
 
-  const noRare = st.gotRare.length >= RARE.length;
-  const noEpic = st.gotEpic.length >= EPIC.length;
-  const setDisabled = (id, cond) => {
-    const el = document.getElementById(id);
-    if (cond) el.setAttribute('disabled',''); else el.removeAttribute('disabled');
-  };
-  setDisabled('buyRareDiamond',  noRare || st.dKeys < 4);
-  setDisabled('buyRareRuby',     noRare || st.rKeys < 2);
-  setDisabled('buyEpicDiamond',  noEpic || st.dKeys < 8);
-  setDisabled('buyEpicRuby',     noEpic || st.rKeys < 4);
-}
 
 // ═══════════════════════════════════════════════════════
 // КУЛДАУН
@@ -613,32 +570,7 @@ function nextChar() {
   render();
 }
 
-// ═══════════════════════════════════════════════════════
-// МАГАЗИН
-// ═══════════════════════════════════════════════════════
-window.buyChar = function(tier, currency) {
-  const costs = { rare:{diamond:4,ruby:2}, epic:{diamond:8,ruby:4} };
-  const cost = costs[tier][currency];
-  const keyField = currency === 'diamond' ? 'dKeys' : 'rKeys';
-  const collection = tier === 'rare' ? 'gotRare' : 'gotEpic';
-  const chars = tier === 'rare' ? RARE : EPIC;
 
-  if (st[keyField] < cost) return;
-  if (st[collection].length >= chars.length) return;
-
-  st[keyField] -= cost;
-  const available = chars.map((_,i) => i).filter(i => !st[collection].includes(i));
-  const newIdx = available[Math.floor(Math.random() * available.length)];
-  st[collection].push(newIdx);
-  save();
-
-  const char = chars[newIdx];
-  const snd = tier === 'epic' ? 'epic' : 'rare';
-  const label = tier === 'rare' ? '✨ Редкий персонаж!' : '🔥 Эпический персонаж!';
-  celebrate(tier === 'rare' ? '✨' : '🔥', label,
-    char.power + ' добавлена в коллекцию!', char.img, snd);
-  checkLegendary();
-};
 
 function checkLegendary() {
   if (!st.gotLegend
@@ -664,20 +596,40 @@ window.switchTab = function(tab, btn) {
 function renderGallery(tab) {
   const cont = document.getElementById('galleryContent');
   cont.innerHTML = '';
-  let chars, collection, rarity;
-  if (tab === 'base')   { chars = BASE;   collection = st.gotBase; rarity = 'base'; }
-  if (tab === 'rare')   { chars = RARE;   collection = st.gotRare; rarity = 'rare'; }
-  if (tab === 'epic')   { chars = EPIC;   collection = st.gotEpic; rarity = 'epic'; }
-  if (tab === 'legend') { chars = [LEGEND]; collection = st.gotLegend ? [0] : []; rarity = 'legendary'; }
+
+  // Шапка с подсказкой по ключам для редких/эпических
+  if (tab === 'rare' || tab === 'epic') {
+    const info = document.createElement('div');
+    info.style.cssText = 'background:#f8f8f8;border-radius:14px;padding:10px 14px;margin-bottom:12px;font-size:12px;font-weight:700;color:#666;text-align:left;line-height:1.8';
+    const costs = tab === 'rare'
+      ? '<img src="key_diamond.png" style="height:16px;vertical-align:middle"> 4 бриллианта <b>или</b> <img src="key_ruby.png" style="height:16px;vertical-align:middle"> 2 рубина за одного'
+      : '<img src="key_diamond.png" style="height:16px;vertical-align:middle"> 8 бриллиантов <b>или</b> <img src="key_ruby.png" style="height:16px;vertical-align:middle"> 4 рубина за одного';
+    info.innerHTML = '🗝️ Стоимость: ' + costs
+      + '<br>У тебя: <img src="key_diamond.png" style="height:16px;vertical-align:middle"> '
+      + (st.dKeys||0) + ' &nbsp; <img src="key_ruby.png" style="height:16px;vertical-align:middle"> ' + (st.rKeys||0);
+    cont.appendChild(info);
+  }
+
+  let chars, rarity;
+  if (tab === 'base')   { chars = BASE;   rarity = 'base'; }
+  if (tab === 'rare')   { chars = RARE;   rarity = 'rare'; }
+  if (tab === 'epic')   { chars = EPIC;   rarity = 'epic'; }
+  if (tab === 'legend') { chars = [LEGEND]; rarity = 'legendary'; }
 
   const grid = document.createElement('div');
   grid.className = 'gallery-grid';
+
   chars.forEach((c, i) => {
-    const got = tab === 'legend' ? st.gotLegend : collection.includes(i);
+    const got = tab === 'legend' ? st.gotLegend
+              : tab === 'base'   ? st.gotBase.includes(i)
+              : tab === 'rare'   ? st.gotRare.includes(i)
+              :                    st.gotEpic.includes(i);
+
     const div = document.createElement('div');
     div.className = 'g-item' + (got ? ' got' : '');
     if (got) { div.style.borderColor = c.color + '99'; div.style.background = c.color + '10'; }
 
+    // Картинка или замок
     const area = document.createElement('div');
     area.className = 'g-img';
     if (got) {
@@ -690,12 +642,56 @@ function renderGallery(tab) {
     }
     div.appendChild(area);
 
+    // Название если открыт
     if (got) {
       const nm = document.createElement('div');
-      nm.className   = 'g-name';
-      nm.style.color = c.color;
+      nm.className = 'g-name'; nm.style.color = c.color;
       nm.textContent = c.power;
       div.appendChild(nm);
+    }
+
+    // Кнопки покупки если не открыт и не базовый
+    if (!got && (tab === 'rare' || tab === 'epic')) {
+      const costD = tab === 'rare' ? 4 : 8;
+      const costR = tab === 'rare' ? 2 : 4;
+      const canD  = (st.dKeys||0) >= costD;
+      const canR  = (st.rKeys||0) >= costR;
+
+      if (canD || canR) {
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'display:flex;flex-direction:column;gap:4px;margin-top:6px;width:100%';
+
+        if (canD) {
+          const btn = document.createElement('button');
+          btn.style.cssText = 'border:none;border-radius:10px;padding:6px 8px;font-family:Nunito,sans-serif;font-weight:800;font-size:11px;cursor:pointer;background:#E3F2FD;color:#1565C0;display:flex;align-items:center;justify-content:center;gap:4px';
+          btn.innerHTML = '<img src="key_diamond.png" style="height:14px"> ' + costD + ' → Открыть!';
+          btn.onclick = (e) => { e.stopPropagation(); spendKeys(tab, 'diamond', i); };
+          wrap.appendChild(btn);
+        }
+        if (canR) {
+          const btn = document.createElement('button');
+          btn.style.cssText = 'border:none;border-radius:10px;padding:6px 8px;font-family:Nunito,sans-serif;font-weight:800;font-size:11px;cursor:pointer;background:#FFEBEE;color:#C62828;display:flex;align-items:center;justify-content:center;gap:4px';
+          btn.innerHTML = '<img src="key_ruby.png" style="height:14px"> ' + costR + ' → Открыть!';
+          btn.onclick = (e) => { e.stopPropagation(); spendKeys(tab, 'ruby', i); };
+          wrap.appendChild(btn);
+        }
+        div.appendChild(wrap);
+      } else {
+        // Показываем цену серым
+        const price = document.createElement('div');
+        price.style.cssText = 'font-size:10px;font-weight:700;color:#bbb;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:4px';
+        price.innerHTML = '<img src="key_diamond.png" style="height:12px;opacity:.4"> ' + costD
+          + ' <span style="color:#ddd">или</span> <img src="key_ruby.png" style="height:12px;opacity:.4"> ' + costR;
+        div.appendChild(price);
+      }
+    }
+
+    // Легендарный — особый текст если не открыт
+    if (tab === 'legend' && !got) {
+      const hint = document.createElement('div');
+      hint.style.cssText = 'font-size:11px;font-weight:700;color:#aaa;margin-top:6px;text-align:center';
+      hint.textContent = 'Собери всех персонажей!';
+      div.appendChild(hint);
     }
 
     const rl = document.createElement('span');
@@ -707,6 +703,30 @@ function renderGallery(tab) {
     grid.appendChild(div);
   });
   cont.appendChild(grid);
+}
+
+// Потратить ключи на конкретного персонажа
+function spendKeys(tab, currency, charIdx) {
+  const costD = tab === 'rare' ? 4 : 8;
+  const costR = tab === 'rare' ? 2 : 4;
+  const cost  = currency === 'diamond' ? costD : costR;
+  const field = currency === 'diamond' ? 'dKeys' : 'rKeys';
+  const coll  = tab === 'rare' ? 'gotRare' : 'gotEpic';
+  const chars = tab === 'rare' ? RARE : EPIC;
+
+  if ((st[field]||0) < cost) return;
+  if (st[coll].includes(charIdx)) return;
+
+  st[field] -= cost;
+  st[coll].push(charIdx);
+  save();
+
+  const char = chars[charIdx];
+  const snd  = tab === 'epic' ? 'epic' : 'rare';
+  const icon = tab === 'epic' ? '🔥' : '✨';
+  celebrate(icon, char.power + ' открыта!',
+    char.name + ' теперь в твоей коллекции!', char.img, snd);
+  checkLegendary();
 }
 
 window.showGallery = function() {
@@ -777,4 +797,3 @@ if (_who) {
 </script>
 </body>
 </html>
-
