@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -170,8 +169,8 @@ function freshState() {
     lastClaim: null,
     weekCount: 0,
     weekStart: null,
-    stars: 0,
-    starsShiny: 0,
+    stars: 0,        // ⭐ для редких
+    starsShiny: 0,   // 🌟 для эпических
     gotBase: [],
     gotRare: [],
     gotEpic: [],
@@ -418,11 +417,11 @@ window.switchTab = function(tab, btn) {
 function renderGallery(tab) {
   const cont = document.getElementById('galleryContent');
   cont.innerHTML = '';
-  let chars, rarity, costStar, costShiny;
-  if (tab === 'base') { chars = BASE; rarity = 'base'; costStar = null; costShiny = null; }
-  if (tab === 'rare') { chars = RARE; rarity = 'rare'; costStar = 4; costShiny = 2; }
-  if (tab === 'epic') { chars = EPIC; rarity = 'epic'; costStar = 8; costShiny = 4; }
-  if (tab === 'legend') { chars = [LEGEND]; rarity = 'legendary'; costStar = null; costShiny = null; }
+  let chars, rarity, cost;
+  if (tab === 'base') { chars = BASE; rarity = 'base'; cost = null; }
+  if (tab === 'rare') { chars = RARE; rarity = 'rare'; cost = 4; }
+  if (tab === 'epic') { chars = EPIC; rarity = 'epic'; cost = 4; }
+  if (tab === 'legend') { chars = [LEGEND]; rarity = 'legendary'; cost = null; }
   const grid = document.createElement('div'); grid.className = 'gallery-grid';
   chars.forEach((c, i) => {
     const got = tab === 'legend' ? st.gotLegend : (tab === 'base' ? st.gotBase.includes(i) : (tab === 'rare' ? st.gotRare.includes(i) : st.gotEpic.includes(i)));
@@ -440,23 +439,36 @@ function renderGallery(tab) {
     if (got) {
       const nm = document.createElement('div'); nm.className = 'g-name'; nm.style.color = c.color; nm.textContent = c.power; div.appendChild(nm);
     }
-    if (!got && (tab === 'rare' || tab === 'epic')) {
-      const canStar = (st.stars||0) >= costStar;
-      const canShiny = (st.starsShiny||0) >= costShiny;
-      const btnWrap = document.createElement('div'); btnWrap.style.cssText = 'display:flex;flex-direction:column;gap:4px;margin-top:6px;width:100%';
-      if (canStar) {
-        const btn = document.createElement('button'); btn.className = 'shop-btn star';
-        btn.innerHTML = '⭐ ' + costStar + ' → Открыть!';
-        btn.onclick = (e) => { e.stopPropagation(); spendStars(tab, 'star', i, costStar); };
-        btnWrap.appendChild(btn);
+    if (!got && cost !== null) {
+      let can = false;
+      let btnHtml = '';
+      if (tab === 'rare') {
+        can = (st.stars||0) >= cost;
+        if (can) {
+          const btn = document.createElement('button'); btn.className = 'shop-btn star';
+          btn.innerHTML = '⭐ ' + cost + ' → Открыть!';
+          btn.onclick = (e) => { e.stopPropagation(); spendStars(tab, i, cost); };
+          div.appendChild(btn);
+        } else {
+          const price = document.createElement('div');
+          price.style.cssText = 'font-size:11px;font-weight:700;color:#bbb;margin-top:6px;text-align:center';
+          price.innerHTML = '⭐ ' + cost;
+          div.appendChild(price);
+        }
+      } else if (tab === 'epic') {
+        can = (st.starsShiny||0) >= cost;
+        if (can) {
+          const btn = document.createElement('button'); btn.className = 'shop-btn star-shiny';
+          btn.innerHTML = '🌟 ' + cost + ' → Открыть!';
+          btn.onclick = (e) => { e.stopPropagation(); spendStars(tab, i, cost); };
+          div.appendChild(btn);
+        } else {
+          const price = document.createElement('div');
+          price.style.cssText = 'font-size:11px;font-weight:700;color:#bbb;margin-top:6px;text-align:center';
+          price.innerHTML = '🌟 ' + cost;
+          div.appendChild(price);
+        }
       }
-      if (canShiny) {
-        const btn = document.createElement('button'); btn.className = 'shop-btn star-shiny';
-        btn.innerHTML = '🌟 ' + costShiny + ' → Открыть!';
-        btn.onclick = (e) => { e.stopPropagation(); spendStars(tab, 'shiny', i, costShiny); };
-        btnWrap.appendChild(btn);
-      }
-      if (btnWrap.children.length) div.appendChild(btnWrap);
     }
     if (tab === 'legend' && !got) {
       const hint = document.createElement('div'); hint.style.cssText = 'font-size:11px;font-weight:700;color:#aaa;margin-top:6px;text-align:center';
@@ -472,19 +484,24 @@ function renderGallery(tab) {
   cont.appendChild(grid);
 }
 
-function spendStars(tab, type, idx, cost) {
-  const field = type === 'star' ? 'stars' : 'starsShiny';
-  const coll = tab === 'rare' ? 'gotRare' : 'gotEpic';
-  const chars = tab === 'rare' ? RARE : EPIC;
-  if ((st[field]||0) < cost) return;
-  if (st[coll].includes(idx)) return;
-  st[field] -= cost;
-  st[coll].push(idx);
-  save();
-  const char = chars[idx];
-  const snd = tab === 'epic' ? 'epic' : 'rare';
-  const icon = tab === 'epic' ? '🌟' : '⭐';
-  celebrate(icon, char.power + ' открыта!', char.name + ' теперь в твоей коллекции!', char.img, snd);
+function spendStars(tab, idx, cost) {
+  if (tab === 'rare') {
+    if ((st.stars||0) < cost) return;
+    if (st.gotRare.includes(idx)) return;
+    st.stars -= cost;
+    st.gotRare.push(idx);
+    save();
+    const char = RARE[idx];
+    celebrate('⭐', char.power + ' открыта!', char.name + ' теперь в твоей коллекции!', char.img, 'rare');
+  } else if (tab === 'epic') {
+    if ((st.starsShiny||0) < cost) return;
+    if (st.gotEpic.includes(idx)) return;
+    st.starsShiny -= cost;
+    st.gotEpic.push(idx);
+    save();
+    const char = EPIC[idx];
+    celebrate('🌟', char.power + ' открыта!', char.name + ' теперь в твоей коллекции!', char.img, 'epic');
+  }
   checkLegendary();
   renderGallery(tab);
 }
