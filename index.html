@@ -53,12 +53,12 @@ h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:
 .tab-btn{flex:1;background:none;border:none;padding:10px 4px;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;color:#aaa;cursor:pointer;transition:all .2s;border-bottom:3px solid transparent;margin-bottom:-2px}
 .tab-btn.active{color:#667eea;border-bottom-color:#667eea}
 .gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
-.g-item{border-radius:18px;border:2px solid #e8e8e8;background:#f0f0f0;padding:0;text-align:center;overflow:hidden;display:flex;flex-direction:column;transition:all .3s;min-height:180px}
+.g-item{border-radius:18px;border:2px solid #e8e8e8;background:#f0f0f0;padding:0;text-align:center;overflow:hidden;display:flex;flex-direction:column;transition:all .3s}
 .g-item.got{background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.1);border-color:transparent}
 .g-item.locked{padding:20px 8px;align-items:center;justify-content:center}
-.g-item .g-img{flex:1;width:100%;display:flex;align-items:center;justify-content:center}
-.g-item .g-img img{width:100%;height:200px;object-fit:contain;display:block}
-.g-item .g-name{font-family:'Fredoka One',cursive;font-size:18px;padding:8px 8px 12px;line-height:1.2;color:#F9A825}
+.g-item .g-img{width:100%;height:200px;overflow:hidden}
+.g-item .g-img img{width:100%;height:100%;object-fit:cover;display:block}
+.g-item .g-name{font-family:'Fredoka One',cursive;font-size:18px;padding:8px 8px 12px;line-height:1.2;color:#9C27B0}
 .g-item .g-q{font-size:44px;color:#ddd;margin-bottom:6px}
 .celebration{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:100;align-items:center;justify-content:center;padding:20px}
 .celebration.show{display:flex}
@@ -260,7 +260,7 @@ function render() {
     document.getElementById('keysGrid').style.display = 'none';
     document.getElementById('charWrap').classList.add('show');
     document.getElementById('charImg').src = char.img;
-    document.getElementById('progressText').innerHTML = '<div style="font-family:Fredoka One,cursive;font-size:26px;font-weight:900;color:#F9A825;margin:12px 0 6px">' + char.power + '</div><div style="font-size:13px;color:#aaa">суперсила открыта ✨</div>';
+    document.getElementById('progressText').innerHTML = '<div style="font-family:Fredoka One,cursive;font-size:26px;font-weight:900;color:#9C27B0;margin:12px 0 6px">' + char.power + '</div><div style="font-size:13px;color:#aaa">суперсила открыта ✨</div>';
     const nowWeek = weekStart(new Date());
     const lastW = st.lastUnlockWeek || 0;
     const wc = st.weekCount || 0;
@@ -414,7 +414,7 @@ function renderGallery(tab) {
   chars.forEach((c, i) => {
     const got = tab === 'legend' ? st.gotLegend : (tab === 'base' ? st.gotBase.includes(i) : (tab === 'rare' ? st.gotRare.includes(i) : st.gotEpic.includes(i)));
     const div = document.createElement('div'); div.className = 'g-item' + (got ? ' got' : ' locked');
-    if (got) { div.style.borderColor = '#F9A825'; div.style.background = '#FFF8E1'; }
+    if (got) { div.style.borderColor = '#9C27B0'; div.style.background = '#F3E5F5'; }
     const area = document.createElement('div'); area.className = 'g-img';
     if (got) {
       const img = document.createElement('img'); img.src = c.img; img.alt = c.power;
@@ -425,7 +425,7 @@ function renderGallery(tab) {
     }
     div.appendChild(area);
     if (got) {
-      const nm = document.createElement('div'); nm.className = 'g-name'; nm.style.color = '#F9A825'; nm.textContent = c.power; div.appendChild(nm);
+      const nm = document.createElement('div'); nm.className = 'g-name'; nm.style.color = '#9C27B0'; nm.textContent = c.power; div.appendChild(nm);
     }
     if (!got && (tab === 'rare' || tab === 'epic')) {
       const cost = 4;
