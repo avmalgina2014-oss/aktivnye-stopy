@@ -39,6 +39,62 @@ h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:
 @keyframes popIn{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
 .char-wrap{border-radius:18px;overflow:hidden;margin-bottom:12px;display:none;background:#f5f5f5}
 .char-wrap img{width:100%;height:200px;object-fit:contain;display:block}
+.char-wrap.show{display:
+Прогресс сохранится?
+Да, прогресс сохранится.
+Структура localStorage не менялась — те же ключи as_имя_ник, те же поля (gotBase, stars, starsShiny, step, charIdx…).
+При замене файла старые сохранённые данные останутся в браузере и подгрузятся.
+
+Единственное — если ты откроешь игру в режиме «инкогнито» или очистишь историю браузера, прогресс пропадёт.
+В обычном режиме — всё останется.
+
+Можно смело заменять файл. Если вдруг что-то пойдёт не так, я помогу восстановить прогресс через консоль браузера.
+
+Жду обновленную версию
+Анастасия, вот полностью исправленный код. Теперь кнопка «Я сделал(а) зарядку!» работает всегда (кроме кулдауна 24 часа), а лишнее сообщение убрано.
+
+html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Активные Стопы</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#fff;border-radius:32px;padding:24px 20px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);text-align:center}
+h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:4px}
+.subtitle{font-size:13px;color:#888;margin-bottom:20px;font-weight:700}
+.btn{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:16px;padding:13px 24px;font-family:'Fredoka One',cursive;font-size:19px;cursor:pointer;width:100%;transition:transform .15s;box-shadow:0 4px 16px rgba(102,126,234,.4);margin-top:8px}
+.btn:hover{transform:translateY(-2px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-green{background:linear-gradient(135deg,#2E7D32,#4CAF50);box-shadow:0 4px 16px rgba(46,125,50,.4)}
+.btn-gold{background:linear-gradient(135deg,#F9A825,#FF6F00);box-shadow:0 4px 16px rgba(249,168,37,.4)}
+.btn-rare{background:linear-gradient(135deg,#1565C0,#42A5F5);box-shadow:0 4px 16px rgba(21,101,192,.3)}
+.btn-ruby{background:linear-gradient(135deg,#B71C1C,#EF5350);box-shadow:0 4px 16px rgba(183,28,28,.3)}
+.field-label{font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;text-align:left}
+.field-input{width:100%;border:3px solid #e0e4ef;border-radius:14px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:17px;font-weight:700;outline:none;text-align:center;margin-bottom:14px;transition:border-color .2s}
+.field-input:focus{border-color:#667eea}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.rank-badge{display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:20px;font-family:'Fredoka One',cursive;font-size:14px}
+.rank-novice{background:#e8f5e9;color:#2E7D32}
+.rank-student{background:linear-gradient(135deg,#FFF8E1,#FFE082);color:#F57F17}
+.rank-pro{background:linear-gradient(135deg,#E3F2FD,#90CAF9);color:#1565C0}
+.rank-master{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff}
+.keys-wallet{display:flex;gap:12px;background:#f5f5f5;border-radius:40px;padding:6px 16px}
+.wallet-slot{display:flex;align-items:center;gap:6px;font-family:'Fredoka One',cursive;font-size:18px}
+.wallet-slot.star{color:#F9A825}
+.wallet-slot.star-shiny{color:#FF6F00}
+.greeting{font-size:18px;font-weight:900;color:#2d2d2d;margin-bottom:4px}
+.progress-text{font-size:13px;color:#888;font-weight:700;margin-bottom:12px;line-height:1.7}
+.keys-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.key-slot{aspect-ratio:1;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;border:3px dashed #e0e4ef;background:#f9f9f9;transition:all .4s ease}
+.key-slot.filled{border:3px solid gold;background:linear-gradient(135deg,#fffde7,#fff9c4);box-shadow:0 4px 12px rgba(255,215,0,.4);animation:popIn .5s ease}
+@keyframes popIn{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+.char-wrap{border-radius:18px;overflow:hidden;margin-bottom:12px;display:none;background:#f5f5f5}
+.char-wrap img{width:100%;height:200px;object-fit:contain;display:block}
 .char-wrap.show{display:block;animation:zoomIn .6s ease}
 @keyframes zoomIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
 .cooldown-msg{background:#f0f4ff;border-radius:14px;padding:12px;font-size:13px;font-weight:700;color:#667eea;display:none;margin-top:8px}
@@ -255,46 +311,21 @@ function render() {
       if (i < st.step) { sl.classList.add('filled'); sl.innerHTML = '🔑'; }
       else { sl.classList.remove('filled'); sl.innerHTML = ''; }
     }
-    checkCooldown();
   } else {
     document.getElementById('keysGrid').style.display = 'none';
     document.getElementById('charWrap').classList.add('show');
     document.getElementById('charImg').src = char.img;
     document.getElementById('progressText').innerHTML = '<div style="font-family:Fredoka One,cursive;font-size:26px;font-weight:900;color:#667eea;margin:12px 0 6px">' + char.power + '</div><div style="font-size:13px;color:#aaa">суперсила открыта ✨</div>';
-    const nowWeek = weekStart(new Date());
-    const lastW = st.lastUnlockWeek || 0;
-    const wc = st.weekCount || 0;
-    const claimBtn = document.getElementById('claimBtn');
-    const coolEl = document.getElementById('cooldown');
-    if (lastW >= nowWeek) {
-      if (wc === 5 || wc === 6) {
-        coolEl.style.display = 'none';
-        claimBtn.style.display = 'block';
-        claimBtn.innerHTML = 'Я сделал(а) зарядку! (+⭐)';
-        claimBtn.className = 'btn btn-rare';
-      } else if (wc === 7) {
-        coolEl.style.display = 'none';
-        claimBtn.style.display = 'block';
-        claimBtn.innerHTML = 'Я сделал(а) зарядку! (+🌟)';
-        claimBtn.className = 'btn btn-ruby';
-      } else {
-        claimBtn.style.display = 'none';
-        coolEl.style.display = 'block';
-        coolEl.innerHTML = wc >= 8 ? 'Неделя завершена! 🎉<span class="cooldown-time">Новый персонаж на следующей неделе →</span>' : 'Суперсила открыта! 🎉<span class="cooldown-time">С 5-й зарядки — ⭐, с 7-й — 🌟</span>';
-      }
-    } else {
-      coolEl.style.display = 'none';
-      claimBtn.style.display = 'block';
-      claimBtn.innerHTML = '✨ Следующая суперсила!';
-      claimBtn.className = 'btn btn-gold';
-      claimBtn.onclick = nextChar;
-    }
   }
+  
+  // Кнопка всегда активна (кроме кулдауна)
+  checkCooldown();
 }
 
 function checkCooldown() {
   const claimBtn = document.getElementById('claimBtn');
   const coolEl = document.getElementById('cooldown');
+  
   if (!st.lastClaim) {
     claimBtn.style.display = 'block';
     claimBtn.className = 'btn btn-green';
@@ -303,8 +334,10 @@ function checkCooldown() {
     coolEl.style.display = 'none';
     return;
   }
+  
   const last = new Date(st.lastClaim);
   const next = new Date(last.getTime() + 24 * 3600 * 1000);
+  
   if (new Date() >= next) {
     claimBtn.style.display = 'block';
     claimBtn.className = 'btn btn-green';
@@ -315,7 +348,10 @@ function checkCooldown() {
     claimBtn.style.display = 'none';
     coolEl.style.display = 'block';
     updateCountdown(next);
-    const iv = setInterval(() => { if (new Date() >= next) { clearInterval(iv); render(); } else updateCountdown(next); }, 30000);
+    const iv = setInterval(() => {
+      if (new Date() >= next) { clearInterval(iv); render(); }
+      else updateCountdown(next);
+    }, 30000);
   }
 }
 
@@ -329,6 +365,7 @@ function updateCountdown(next) {
 
 function doWorkout() {
   const now = new Date();
+  
   if (st.lastClaim && (now - new Date(st.lastClaim)) < 24 * 3600 * 1000) {
     const next = new Date(new Date(st.lastClaim).getTime() + 24 * 3600 * 1000);
     document.getElementById('claimBtn').style.display = 'none';
@@ -336,54 +373,63 @@ function doWorkout() {
     updateCountdown(next);
     return;
   }
+  
   const nowWeek = weekStart(now);
+  
   if (!st.weekStart || st.weekStart < nowWeek) {
     st.weekStart = nowWeek;
     st.weekCount = 0;
     if (st.lastClaim) st.weeksPlayed = (st.weeksPlayed || 0) + 1;
   }
+  
   st.weekCount++;
   st.lastClaim = now.toISOString();
   const wc = st.weekCount;
+  
   if (wc <= 4) {
+    // Основные зарядки (1-4 дни) — собираем ключи для открытия персонажа
     st.step++;
     sound('key');
+    
     if (st.step >= 4) {
-      if (!st.gotBase.includes(st.charIdx)) st.gotBase.push(st.charIdx);
+      // Открываем персонажа
+      if (!st.gotBase.includes(st.charIdx)) {
+        st.gotBase.push(st.charIdx);
+      }
       st.lastUnlockWeek = nowWeek;
       save();
       sound('base');
       celebrate('🎉', BASE[st.charIdx].power + ' открыта!', 'Суперсила добавлена в коллекцию!', BASE[st.charIdx].img);
+      
+      // Выбираем следующего персонажа
+      const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
+      if (available.length > 0) {
+        st.charIdx = available[Math.floor(Math.random() * available.length)];
+      }
+      st.step = 0;
       checkLegendary();
+      render();
       return;
     } else {
       const left = 4 - st.step;
       celebrate('🔑', 'Ключ ' + st.step + ' из 4!', 'До суперсилы: ещё ' + left + ' ' + decl(left,'зарядка','зарядки','зарядок'));
     }
   } else if (wc === 5 || wc === 6) {
+    // 5-6 день: обычная звезда ⭐
     st.stars++;
     save();
     sound('rare');
     celebrate('⭐', 'Звезда получена!', 'У тебя ' + st.stars + ' ⭐. Накопи 4 — открой редкого персонажа!');
-    return;
   } else if (wc === 7) {
+    // 7 день: сияющая звезда 🌟
     st.starsShiny++;
     save();
     sound('rare');
     celebrate('🌟', 'Сияющая звезда получена!', 'У тебя ' + st.starsShiny + ' 🌟. Накопи 4 — открой эпического персонажа!');
-    return;
   } else {
     celebrate('🏃', 'Зарядка засчитана!', 'Новая неделя — новый персонаж! Жди понедельника 🗓️');
   }
-  save();
-  render();
-}
-
-function nextChar() {
-  const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
-  st.charIdx = available.length ? available[Math.floor(Math.random() * available.length)] : Math.floor(Math.random() * BASE.length);
-  st.step = 0;
-  st.lastClaim = null;
+  
   save();
   render();
 }
