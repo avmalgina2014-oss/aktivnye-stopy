@@ -179,7 +179,7 @@
   </div>
   <div class="char-wrap" id="charWrap"><img id="charImg" src="" alt=""></div>
   <button class="btn btn-green" id="claimBtn" onclick="doWorkout()">Я сделал(а) зарядку! 🏃</button>
-  <div class="cooldown-msg" id="cooldown">Отличная работа! Приходи завтра 🌙<span class="cooldown-time" id="cooldownTime"></span></div>
+  <div class="cooldown-msg" id="cooldown"></div>
   <div class="collection-bar" onclick="showGallery()"><div class="col-title">🏅 Моя коллекция →</div></div>
   <div class="change-name" onclick="changeName()">Это не я → сменить имя</div>
 </div>
@@ -381,10 +381,25 @@ function checkCooldown() {
 
 function updateCountdown(next) {
   const diff = next - new Date();
-  const h = Math.floor(diff / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  const el = document.getElementById('cooldownTime');
-  if (el) el.innerText = h + ' ч ' + m + ' мин';
+  const hours = Math.floor(diff / 3600000);
+  const minutes = Math.floor((diff % 3600000) / 60000);
+  const timeString = hours > 0 ? `${hours} ч ${minutes} мин` : `${minutes} мин`;
+  
+  const coolEl = document.getElementById('cooldown');
+  if (!coolEl) return;
+  
+  let message = '';
+  if (diff > 12 * 3600000) {
+    message = 'Отличная работа! Приходи завтра 🌙';
+  } else if (diff > 5 * 3600000) {
+    message = `Скоро можно будет сделать новую зарядку! Осталось: ${timeString}`;
+  } else if (diff > 3600000) {
+    message = `Совсем скоро! Осталось: ${timeString}`;
+  } else {
+    message = `Уже почти! Осталось: ${timeString}`;
+  }
+  
+  coolEl.innerHTML = `${message}<span class="cooldown-time">${timeString}</span>`;
 }
 
 function doWorkout() {
