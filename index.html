@@ -23,14 +23,14 @@ h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:
 .field-input:focus{border-color:#667eea}
 .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
 .rank-badge{display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:20px;font-family:'Fredoka One',cursive;font-size:14px}
-.rank-novice {background:#e8f5e9;color:#2E7D32}
+.rank-novice{background:#e8f5e9;color:#2E7D32}
 .rank-student{background:linear-gradient(135deg,#FFF8E1,#FFE082);color:#F57F17}
-.rank-pro    {background:linear-gradient(135deg,#E3F2FD,#90CAF9);color:#1565C0}
-.rank-master {background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff}
+.rank-pro{background:linear-gradient(135deg,#E3F2FD,#90CAF9);color:#1565C0}
+.rank-master{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff}
 .keys-wallet{display:flex;gap:8px}
 .wallet-slot{display:flex;align-items:center;gap:4px;background:#f5f5f5;border-radius:20px;padding:4px 12px;font-family:'Fredoka One',cursive;font-size:15px}
-.wallet-slot.star{background:#FFF8E1;color:#F9A825}
-.wallet-slot.star-shiny{background:#FFF3E0;color:#FF6F00}
+.wallet-slot.diamond{background:#E3F2FD;color:#1565C0}
+.wallet-slot.ruby{background:#FFEBEE;color:#C62828}
 .greeting{font-size:18px;font-weight:900;color:#2d2d2d;margin-bottom:4px}
 .progress-text{font-size:13px;color:#888;font-weight:700;margin-bottom:12px;line-height:1.7}
 .keys-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
@@ -48,21 +48,23 @@ h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:
 .col-title{font-family:'Fredoka One',cursive;font-size:15px;color:#888;margin-bottom:8px;transition:color .2s}
 .change-name{font-size:11px;color:#ccc;margin-top:10px;cursor:pointer;font-weight:700}
 .change-name:hover{color:#667eea}
+.key-img{height:28px;width:auto;vertical-align:middle;margin-right:3px}
 #galleryScreen{display:none}
 .gallery-tabs{display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid #e0e4ef}
 .tab-btn{flex:1;background:none;border:none;padding:10px 4px;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;color:#aaa;cursor:pointer;transition:all .2s;border-bottom:3px solid transparent;margin-bottom:-2px}
 .tab-btn.active{color:#667eea;border-bottom-color:#667eea}
 .gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
-.g-item{border-radius:18px;border:2px solid #e8e8e8;background:#f0f0f0;padding:10px 8px;text-align:center;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all .3s}
-.g-item.got{background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.1)}
-.g-item .g-img{height:100px;width:100%;display:flex;align-items:center;justify-content:center}
-.g-item .g-img img{width:100%;height:100px;object-fit:contain}
-.g-item .g-name{font-family:'Fredoka One',cursive;font-size:14px;margin-top:6px}
-.g-item .g-q{font-size:36px;color:#ccc}
+.g-item{border-radius:18px;border:2px solid #e8e8e8;background:#f0f0f0;padding:0;text-align:center;overflow:hidden;display:flex;flex-direction:column;transition:all .3s;min-height:180px}
+.g-item.got{background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.1);border-color:transparent}
+.g-item.locked{padding:20px 8px;align-items:center;justify-content:center}
+.g-item .g-img{flex:1;width:100%;display:flex;align-items:center;justify-content:center}
+.g-item .g-img img{width:100%;height:200px;object-fit:contain;display:block}
+.g-item .g-name{font-family:'Fredoka One',cursive;font-size:18px;padding:8px 8px 12px;line-height:1.2}
+.g-item .g-q{font-size:44px;color:#ddd;margin-bottom:6px}
 .rarity-label{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:20px;margin-top:4px;display:inline-block}
-.rarity-base    {background:#e8f5e9;color:#2E7D32}
-.rarity-rare    {background:#FFF8E1;color:#F9A825}
-.rarity-epic    {background:#FFF3E0;color:#FF6F00}
+.rarity-base{background:#e8f5e9;color:#2E7D32}
+.rarity-rare{background:#E3F2FD;color:#1565C0}
+.rarity-epic{background:#FFEBEE;color:#C62828}
 .rarity-legendary{background:linear-gradient(135deg,#FF6F00,#F9A825);color:#fff}
 .celebration{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:100;align-items:center;justify-content:center;padding:20px}
 .celebration.show{display:flex}
@@ -71,47 +73,45 @@ h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:
 .celeb-title{font-family:'Fredoka One',cursive;font-size:24px;color:#2d2d2d;margin-bottom:6px}
 .celeb-img{width:100%;max-height:160px;object-fit:contain;border-radius:14px;margin:10px 0;display:none}
 .celeb-text{font-size:14px;color:#888;font-weight:700;margin-bottom:18px}
-.shop-btn{font-size:12px;padding:6px 12px;border-radius:20px;border:none;cursor:pointer;font-weight:800;margin-top:6px}
-.shop-btn.star{background:#FFF8E1;color:#F9A825}
-.shop-btn.star-shiny{background:#FFF3E0;color:#FF6F00}
 </style>
 </head>
 <body>
 
-<!-- РЕГИСТРАЦИЯ -->
 <div class="card" id="nameScreen">
   <h1>👣 Активные Стопы</h1>
   <div class="subtitle">Собери все суперсилы!</div>
   <div class="field-label">Твоё имя</div>
-  <input class="field-input" id="nameInput" placeholder="Например: Саша" maxlength="15" oninput="checkBtn()">
+  <input class="field-input" id="nameInput" placeholder="Например: Саша" maxlength="15" oninput="checkBtn()" onchange="checkBtn()">
   <div class="field-label">Придумай ник</div>
-  <input class="field-input" id="nickInput" placeholder="Например: Ракета 🚀" maxlength="20" oninput="checkBtn()">
+  <input class="field-input" id="nickInput" placeholder="Например: Ракета 🚀" maxlength="20" oninput="checkBtn()" onchange="checkBtn()">
   <button class="btn" id="startBtn" onclick="startGame()" disabled>Вперёд! 🚀</button>
 </div>
 
-<!-- ИГРА -->
 <div class="card" id="gameScreen" style="display:none">
   <div class="top-bar">
     <div id="rankBadge" class="rank-badge rank-novice">🌱 НОВИЧОК</div>
     <div class="keys-wallet">
-      <div class="wallet-slot star"><span style="font-size:18px">⭐</span> <span id="starCount">0</span></div>
-      <div class="wallet-slot star-shiny"><span style="font-size:18px">🌟</span> <span id="starShinyCount">0</span></div>
+      <div class="wallet-slot diamond"><img src="key_diamond.png" class="key-img"> <span id="dKeys">0</span></div>
+      <div class="wallet-slot ruby"><img src="key_ruby.png" class="key-img"> <span id="rKeys">0</span></div>
     </div>
   </div>
   <div class="greeting" id="greeting">Привет!</div>
   <div class="progress-text" id="progressText"></div>
   <div class="keys-grid" id="keysGrid">
-    <div class="key-slot" id="ks0"></div><div class="key-slot" id="ks1"></div>
-    <div class="key-slot" id="ks2"></div><div class="key-slot" id="ks3"></div>
+    <div class="key-slot" id="ks0"></div>
+    <div class="key-slot" id="ks1"></div>
+    <div class="key-slot" id="ks2"></div>
+    <div class="key-slot" id="ks3"></div>
   </div>
-  <div class="char-wrap" id="charWrap"><img id="charImg" src="" alt=""></div>
+  <div class="char-wrap" id="charWrap">
+    <img id="charImg" src="" alt="">
+  </div>
   <button class="btn btn-green" id="claimBtn" onclick="doWorkout()">Я сделал(а) зарядку! 🏃</button>
   <div class="cooldown-msg" id="cooldown">Отличная работа! Приходи завтра 🌙<span class="cooldown-time" id="cooldownTime"></span></div>
   <div class="collection-bar" onclick="showGallery()"><div class="col-title">🏅 Моя коллекция →</div></div>
   <div class="change-name" onclick="changeName()">Это не я → сменить имя</div>
 </div>
 
-<!-- ГАЛЕРЕЯ -->
 <div class="card" id="galleryScreen">
   <h1 style="margin-bottom:12px">🏅 Моя коллекция</h1>
   <div class="gallery-tabs">
@@ -124,7 +124,6 @@ h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:
   <button class="btn" onclick="hideGallery()">← Назад</button>
 </div>
 
-<!-- ПРАЗДНИК -->
 <div class="celebration" id="celebration">
   <div class="celeb-box">
     <span class="celeb-emoji" id="celebEmoji">🎉</span>
@@ -136,7 +135,6 @@ h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:
 </div>
 
 <script>
-// ПЕРСОНАЖИ
 const BASE = [
   { animal:"🐆", power:"Скорость",       name:"Гепард",   color:"#E07000", img:"gepard.png"    },
   { animal:"🐦", power:"Лёгкость",       name:"Колибри",  color:"#00ACC1", img:"kolibri.png"   },
@@ -169,8 +167,8 @@ function freshState() {
     lastClaim: null,
     weekCount: 0,
     weekStart: null,
-    stars: 0,        // ⭐ для редких
-    starsShiny: 0,   // 🌟 для эпических
+    dKeys: 0,
+    rKeys: 0,
     gotBase: [],
     gotRare: [],
     gotEpic: [],
@@ -230,19 +228,19 @@ function decl(n, a, b, c) {
 
 function getRank() {
   const w = st.weeksPlayed || 0;
-  if (w >= 8) return {label:'👑 МАСТЕР',    cls:'rank-master'};
-  if (w >= 6) return {label:'⚡ ПРОФИ',     cls:'rank-pro'};
-  if (w >= 3) return {label:'📖 УЧЕНИК',    cls:'rank-student'};
-  return            {label:'🌱 НОВИЧОК',   cls:'rank-novice'};
+  if (w >= 8) return {label:'👑 МАСТЕР', cls:'rank-master'};
+  if (w >= 6) return {label:'⚡ ПРОФИ', cls:'rank-pro'};
+  if (w >= 3) return {label:'📖 УЧЕНИК', cls:'rank-student'};
+  return {label:'🌱 НОВИЧОК', cls:'rank-novice'};
 }
 
 function celebrate(emoji, title, text, img, snd) {
-  document.getElementById('celebEmoji').textContent = emoji;
-  document.getElementById('celebTitle').textContent = title;
-  document.getElementById('celebText').textContent = text;
   const el = document.getElementById('celebImg');
   if (img) { el.src = img; el.style.display = 'block'; }
   else { el.style.display = 'none'; }
+  document.getElementById('celebEmoji').innerHTML = emoji;
+  document.getElementById('celebTitle').innerHTML = title;
+  document.getElementById('celebText').innerHTML = text;
   document.getElementById('celebration').classList.add('show');
   if (snd) sound(snd);
 }
@@ -254,25 +252,25 @@ function render() {
   const badge = document.getElementById('rankBadge');
   badge.className = 'rank-badge ' + rank.cls;
   badge.textContent = rank.label;
-  document.getElementById('starCount').textContent = st.stars || 0;
-  document.getElementById('starShinyCount').textContent = st.starsShiny || 0;
-  document.getElementById('greeting').textContent = 'Привет, ' + (st.name || '') + '!';
+  document.getElementById('dKeys').innerText = st.dKeys || 0;
+  document.getElementById('rKeys').innerText = st.rKeys || 0;
+  document.getElementById('greeting').innerHTML = 'Привет, ' + (st.name || '') + '!';
 
   if (st.step < 4) {
     document.getElementById('keysGrid').style.display = 'grid';
     document.getElementById('charWrap').classList.remove('show');
-    document.getElementById('progressText').textContent = 'До суперсилы: ' + (4 - st.step) + ' ' + decl(4 - st.step, 'зарядка', 'зарядки', 'зарядок');
+    document.getElementById('progressText').innerHTML = 'До суперсилы: ' + (4 - st.step) + ' ' + decl(4 - st.step, 'зарядка', 'зарядки', 'зарядок');
     for (let i = 0; i < 4; i++) {
       const sl = document.getElementById('ks' + i);
-      if (i < st.step) { sl.classList.add('filled'); sl.textContent = '🔑'; }
-      else { sl.classList.remove('filled'); sl.textContent = ''; }
+      if (i < st.step) { sl.classList.add('filled'); sl.innerHTML = '🔑'; }
+      else { sl.classList.remove('filled'); sl.innerHTML = ''; }
     }
     checkCooldown();
   } else {
     document.getElementById('keysGrid').style.display = 'none';
     document.getElementById('charWrap').classList.add('show');
     document.getElementById('charImg').src = char.img;
-    document.getElementById('progressText').textContent = char.power + ' открыта! 🎉';
+    document.getElementById('progressText').innerHTML = '<div style="font-family:Fredoka One,cursive;font-size:26px;font-weight:900;color:' + char.color + ';margin:12px 0 6px">' + char.power + '</div><div style="font-size:13px;color:#aaa">суперсила открыта ✨</div>';
     const nowWeek = weekStart(new Date());
     const lastW = st.lastUnlockWeek || 0;
     const wc = st.weekCount || 0;
@@ -282,17 +280,17 @@ function render() {
       if (wc === 5 || wc === 6) {
         coolEl.style.display = 'none';
         claimBtn.style.display = 'block';
-        claimBtn.innerHTML = 'Я сделал(а) зарядку! (+⭐)';
+        claimBtn.innerHTML = 'Я сделал(а) зарядку! (+💎)';
         claimBtn.className = 'btn btn-rare';
       } else if (wc === 7) {
         coolEl.style.display = 'none';
         claimBtn.style.display = 'block';
-        claimBtn.innerHTML = 'Я сделал(а) зарядку! (+🌟)';
+        claimBtn.innerHTML = 'Я сделал(а) зарядку! (+❤️)';
         claimBtn.className = 'btn btn-ruby';
       } else {
         claimBtn.style.display = 'none';
         coolEl.style.display = 'block';
-        coolEl.innerHTML = wc >= 8 ? 'Неделя завершена! 🎉<span class="cooldown-time">Новый персонаж на следующей неделе →</span>' : 'Суперсила открыта! 🎉<span class="cooldown-time">С 5-й зарядки — ⭐, с 7-й — 🌟</span>';
+        coolEl.innerHTML = wc >= 8 ? 'Неделя завершена! 🎉<span class="cooldown-time">Новый персонаж на следующей неделе →</span>' : 'Суперсила открыта! 🎉<span class="cooldown-time">С 5-й зарядки — бриллиантовый ключ 💎</span>';
       }
     } else {
       coolEl.style.display = 'none';
@@ -336,7 +334,7 @@ function updateCountdown(next) {
   const h = Math.floor(diff / 3600000);
   const m = Math.floor((diff % 3600000) / 60000);
   const el = document.getElementById('cooldownTime');
-  if (el) el.textContent = h + ' ч ' + m + ' мин';
+  if (el) el.innerText = h + ' ч ' + m + ' мин';
 }
 
 function doWorkout() {
@@ -373,16 +371,16 @@ function doWorkout() {
       celebrate('🔑', 'Ключ ' + st.step + ' из 4!', 'До суперсилы: ещё ' + left + ' ' + decl(left,'зарядка','зарядки','зарядок'));
     }
   } else if (wc === 5 || wc === 6) {
-    st.stars = (st.stars || 0) + 1;
+    st.dKeys++;
     save();
     sound('rare');
-    celebrate('⭐', 'Звезда получена!', 'У тебя ' + st.stars + ' ⭐. Накопи 4 — открой редкого персонажа!');
+    celebrate('💎', 'Бриллиантовый ключ!', 'У тебя ' + st.dKeys + ' бриллиант. ' + decl(st.dKeys,'ключ','ключа','ключей') + '. За 4 — открой редкого персонажа!');
     return;
   } else if (wc === 7) {
-    st.starsShiny = (st.starsShiny || 0) + 1;
+    st.rKeys++;
     save();
     sound('rare');
-    celebrate('🌟', 'Сияющая звезда получена!', 'У тебя ' + st.starsShiny + ' 🌟. Накопи 4 — открой эпического персонажа!');
+    celebrate('❤️', 'Рубиновый ключ!', 'У тебя ' + st.rKeys + ' рубин. ' + decl(st.rKeys,'ключ','ключа','ключей') + '. За 4 — открой эпического персонажа!');
     return;
   } else {
     celebrate('🏃', 'Зарядка засчитана!', 'Новая неделя — новый персонаж! Жди понедельника 🗓️');
@@ -417,15 +415,16 @@ window.switchTab = function(tab, btn) {
 function renderGallery(tab) {
   const cont = document.getElementById('galleryContent');
   cont.innerHTML = '';
-  let chars, rarity, cost;
-  if (tab === 'base') { chars = BASE; rarity = 'base'; cost = null; }
-  if (tab === 'rare') { chars = RARE; rarity = 'rare'; cost = 4; }
-  if (tab === 'epic') { chars = EPIC; rarity = 'epic'; cost = 4; }
-  if (tab === 'legend') { chars = [LEGEND]; rarity = 'legendary'; cost = null; }
+  let chars, rarity;
+  if (tab === 'base') { chars = BASE; rarity = 'base'; }
+  if (tab === 'rare') { chars = RARE; rarity = 'rare'; }
+  if (tab === 'epic') { chars = EPIC; rarity = 'epic'; }
+  if (tab === 'legend') { chars = [LEGEND]; rarity = 'legendary'; }
   const grid = document.createElement('div'); grid.className = 'gallery-grid';
   chars.forEach((c, i) => {
     const got = tab === 'legend' ? st.gotLegend : (tab === 'base' ? st.gotBase.includes(i) : (tab === 'rare' ? st.gotRare.includes(i) : st.gotEpic.includes(i)));
-    const div = document.createElement('div'); div.className = 'g-item' + (got ? ' got' : '');
+    const div = document.createElement('div');
+    div.className = 'g-item' + (got ? ' got' : ' locked');
     if (got) { div.style.borderColor = c.color + '99'; div.style.background = c.color + '10'; }
     const area = document.createElement('div'); area.className = 'g-img';
     if (got) {
@@ -439,71 +438,66 @@ function renderGallery(tab) {
     if (got) {
       const nm = document.createElement('div'); nm.className = 'g-name'; nm.style.color = c.color; nm.textContent = c.power; div.appendChild(nm);
     }
-    if (!got && cost !== null) {
-      let can = false;
-      let btnHtml = '';
-      if (tab === 'rare') {
-        can = (st.stars||0) >= cost;
-        if (can) {
-          const btn = document.createElement('button'); btn.className = 'shop-btn star';
-          btn.innerHTML = '⭐ ' + cost + ' → Открыть!';
-          btn.onclick = (e) => { e.stopPropagation(); spendStars(tab, i, cost); };
-          div.appendChild(btn);
-        } else {
-          const price = document.createElement('div');
-          price.style.cssText = 'font-size:11px;font-weight:700;color:#bbb;margin-top:6px;text-align:center';
-          price.innerHTML = '⭐ ' + cost;
-          div.appendChild(price);
+    if (!got && (tab === 'rare' || tab === 'epic')) {
+      const costD = tab === 'rare' ? 4 : 8;
+      const costR = tab === 'rare' ? 2 : 4;
+      const canD = (st.dKeys||0) >= costD;
+      const canR = (st.rKeys||0) >= costR;
+      if (canD || canR) {
+        const wrap = document.createElement('div'); wrap.style.cssText = 'display:flex;flex-direction:column;gap:4px;margin-top:6px;width:100%';
+        if (canD) {
+          const btn = document.createElement('button');
+          btn.style.cssText = 'border:none;border-radius:10px;padding:6px 8px;font-family:Nunito,sans-serif;font-weight:800;font-size:11px;cursor:pointer;background:#E3F2FD;color:#1565C0;display:flex;align-items:center;justify-content:center;gap:4px';
+          btn.innerHTML = '<img src="key_diamond.png" style="height:14px"> ' + costD + ' → Открыть!';
+          btn.onclick = (e) => { e.stopPropagation(); spendKeys(tab, 'diamond', i); };
+          wrap.appendChild(btn);
         }
-      } else if (tab === 'epic') {
-        can = (st.starsShiny||0) >= cost;
-        if (can) {
-          const btn = document.createElement('button'); btn.className = 'shop-btn star-shiny';
-          btn.innerHTML = '🌟 ' + cost + ' → Открыть!';
-          btn.onclick = (e) => { e.stopPropagation(); spendStars(tab, i, cost); };
-          div.appendChild(btn);
-        } else {
-          const price = document.createElement('div');
-          price.style.cssText = 'font-size:11px;font-weight:700;color:#bbb;margin-top:6px;text-align:center';
-          price.innerHTML = '🌟 ' + cost;
-          div.appendChild(price);
+        if (canR) {
+          const btn = document.createElement('button');
+          btn.style.cssText = 'border:none;border-radius:10px;padding:6px 8px;font-family:Nunito,sans-serif;font-weight:800;font-size:11px;cursor:pointer;background:#FFEBEE;color:#C62828;display:flex;align-items:center;justify-content:center;gap:4px';
+          btn.innerHTML = '<img src="key_ruby.png" style="height:14px"> ' + costR + ' → Открыть!';
+          btn.onclick = (e) => { e.stopPropagation(); spendKeys(tab, 'ruby', i); };
+          wrap.appendChild(btn);
         }
+        div.appendChild(wrap);
+      } else {
+        const price = document.createElement('div');
+        price.style.cssText = 'font-size:10px;font-weight:700;color:#bbb;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:4px';
+        price.innerHTML = '<img src="key_diamond.png" style="height:12px;opacity:.4"> ' + costD + ' <span style="color:#ddd">или</span> <img src="key_ruby.png" style="height:12px;opacity:.4"> ' + costR;
+        div.appendChild(price);
       }
     }
     if (tab === 'legend' && !got) {
-      const hint = document.createElement('div'); hint.style.cssText = 'font-size:11px;font-weight:700;color:#aaa;margin-top:6px;text-align:center';
-      hint.textContent = 'Собери всех персонажей!';
-      div.appendChild(hint);
+      const hint = document.createElement('div'); hint.style.cssText = 'font-size:11px;font-weight:700;color:#aaa;margin-top:6px;text-align:center'; hint.innerText = 'Собери всех персонажей!'; div.appendChild(hint);
     }
-    const rl = document.createElement('span'); rl.className = 'rarity-label rarity-' + rarity;
-    const labels = {base:'базовый', rare:'редкий', epic:'эпический', legendary:'легендарный'};
-    rl.textContent = labels[rarity];
-    div.appendChild(rl);
+    if (!got && tab !== 'base') {
+      const rl = document.createElement('span'); rl.className = 'rarity-label rarity-' + rarity;
+      const labels = {base:'базовый', rare:'редкий', epic:'эпический', legendary:'легендарный'};
+      rl.innerText = labels[rarity];
+      div.appendChild(rl);
+    }
     grid.appendChild(div);
   });
   cont.appendChild(grid);
 }
 
-function spendStars(tab, idx, cost) {
-  if (tab === 'rare') {
-    if ((st.stars||0) < cost) return;
-    if (st.gotRare.includes(idx)) return;
-    st.stars -= cost;
-    st.gotRare.push(idx);
-    save();
-    const char = RARE[idx];
-    celebrate('⭐', char.power + ' открыта!', char.name + ' теперь в твоей коллекции!', char.img, 'rare');
-  } else if (tab === 'epic') {
-    if ((st.starsShiny||0) < cost) return;
-    if (st.gotEpic.includes(idx)) return;
-    st.starsShiny -= cost;
-    st.gotEpic.push(idx);
-    save();
-    const char = EPIC[idx];
-    celebrate('🌟', char.power + ' открыта!', char.name + ' теперь в твоей коллекции!', char.img, 'epic');
-  }
+function spendKeys(tab, currency, charIdx) {
+  const costD = tab === 'rare' ? 4 : 8;
+  const costR = tab === 'rare' ? 2 : 4;
+  const cost = currency === 'diamond' ? costD : costR;
+  const field = currency === 'diamond' ? 'dKeys' : 'rKeys';
+  const coll = tab === 'rare' ? 'gotRare' : 'gotEpic';
+  const chars = tab === 'rare' ? RARE : EPIC;
+  if ((st[field]||0) < cost) return;
+  if (st[coll].includes(charIdx)) return;
+  st[field] -= cost;
+  st[coll].push(charIdx);
+  save();
+  const char = chars[charIdx];
+  const snd = tab === 'epic' ? 'epic' : 'rare';
+  const icon = tab === 'epic' ? '🔥' : '✨';
+  celebrate(icon, char.power + ' открыта!', char.name + ' теперь в твоей коллекции!', char.img, snd);
   checkLegendary();
-  renderGallery(tab);
 }
 
 window.showGallery = function() {
@@ -512,6 +506,7 @@ window.showGallery = function() {
   renderGallery('base');
   document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===0));
 };
+
 window.hideGallery = function() {
   document.getElementById('galleryScreen').style.display = 'none';
   document.getElementById('gameScreen').style.display = 'block';
@@ -522,6 +517,7 @@ function checkBtn() {
   const k = document.getElementById('nickInput').value.trim();
   document.getElementById('startBtn').disabled = !(n && k);
 }
+
 let _ac = 0;
 const _at = setInterval(() => { checkBtn(); if (++_ac >= 20) clearInterval(_at); }, 200);
 
