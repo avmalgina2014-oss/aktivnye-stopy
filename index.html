@@ -58,7 +58,7 @@ h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:
 .g-item.locked{padding:20px 8px;align-items:center;justify-content:center}
 .g-item .g-img{width:100%}
 .g-item .g-img img{width:100%;height:auto;display:block}
-.g-item .g-name{font-family:'Fredoka One',cursive;font-size:16px;padding:8px 8px 12px;line-height:1.2;color:#00E5A0}
+.g-item .g-name{font-family:'Fredoka One',cursive;font-size:16px;padding:8px 8px 12px;line-height:1.2;color:#667eea}
 .g-item .g-q{font-size:44px;color:#ddd;margin-bottom:6px}
 .celebration{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:100;align-items:center;justify-content:center;padding:20px}
 .celebration.show{display:flex}
@@ -260,7 +260,7 @@ function render() {
     document.getElementById('keysGrid').style.display = 'none';
     document.getElementById('charWrap').classList.add('show');
     document.getElementById('charImg').src = char.img;
-    document.getElementById('progressText').innerHTML = '<div style="font-family:Fredoka One,cursive;font-size:26px;font-weight:900;color:#00E5A0;margin:12px 0 6px">' + char.power + '</div><div style="font-size:13px;color:#aaa">суперсила открыта ✨</div>';
+    document.getElementById('progressText').innerHTML = '<div style="font-family:Fredoka One,cursive;font-size:26px;font-weight:900;color:#667eea;margin:12px 0 6px">' + char.power + '</div><div style="font-size:13px;color:#aaa">суперсила открыта ✨</div>';
     const nowWeek = weekStart(new Date());
     const lastW = st.lastUnlockWeek || 0;
     const wc = st.weekCount || 0;
@@ -414,7 +414,7 @@ function renderGallery(tab) {
   chars.forEach((c, i) => {
     const got = tab === 'legend' ? st.gotLegend : (tab === 'base' ? st.gotBase.includes(i) : (tab === 'rare' ? st.gotRare.includes(i) : st.gotEpic.includes(i)));
     const div = document.createElement('div'); div.className = 'g-item' + (got ? ' got' : ' locked');
-    if (got) { div.style.borderColor = '#00E5A0'; div.style.background = '#E0F7FA'; }
+    if (got) { div.style.borderColor = '#667eea'; div.style.background = '#EDF2FF'; }
     const area = document.createElement('div'); area.className = 'g-img';
     if (got) {
       const img = document.createElement('img'); img.src = c.img; img.alt = c.power;
@@ -425,7 +425,7 @@ function renderGallery(tab) {
     }
     div.appendChild(area);
     if (got) {
-      const nm = document.createElement('div'); nm.className = 'g-name'; nm.style.color = '#00E5A0'; nm.textContent = c.power; div.appendChild(nm);
+      const nm = document.createElement('div'); nm.className = 'g-name'; nm.style.color = '#667eea'; nm.textContent = c.power; div.appendChild(nm);
     }
     if (!got && (tab === 'rare' || tab === 'epic')) {
       const cost = 4;
