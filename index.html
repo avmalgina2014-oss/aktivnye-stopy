@@ -281,7 +281,7 @@ function render(){
   document.getElementById('rankBadge').textContent = rank.label;
   document.getElementById('starCount').textContent  = st.stars||0;
   document.getElementById('shinyCount').textContent = st.shiny||0;
-  document.getElementById('greeting').textContent   = 'Привет, '+(st.name||')!';
+  document.getElementById('greeting').textContent   = 'Привет, '+(st.name||'')+'!';
 
   const phase = st.phase||'collect';
   const wc    = st.weekCount||0;
@@ -295,11 +295,11 @@ function render(){
   if(phase==='collect'){
     keysGrid.style.display='grid';
     charWrap.classList.remove('show');
-    const rem = 4-st.step;
+    const rem = 4 - (st.step||0);
     progress.textContent = 'До суперсилы: '+rem+' '+decl(rem,'зарядка','зарядки','зарядок');
     for(let i=0;i<4;i++){
       const sl=document.getElementById('ks'+i);
-      if(i<st.step){sl.classList.add('filled');sl.textContent='🔑';}
+      if(i<(st.step||0)){sl.classList.add('filled');sl.textContent='🔑';}
       else{sl.classList.remove('filled');sl.textContent='';}
     }
     checkCooldown();
@@ -390,7 +390,7 @@ function tick(next){
 }
 
 // ═══════════════════════════════════════════════════
-// ЗАРЯДКА
+// ЗАРЯДКА (ИСПРАВЛЕНА)
 // ═══════════════════════════════════════════════════
 function doWorkout(){
   const now=new Date();
@@ -405,67 +405,121 @@ function doWorkout(){
 
   const nowWeek=weekTs(now);
   // Новая неделя?
-  if(!st.weekStart||st.weekStart<nowWeek){
+  if(!st.weekStart||st.weekStart!==nowWeek){
     st.weekStart=nowWeek;
     st.weekCount=0;
+    // Если прошлая неделя была активной, увеличиваем счётчик недель
     if(st.lastClaim) st.weeksPlayed=(st.weeksPlayed||0)+1;
+    // Сбрасываем step и phase при начале новой недели
+    if(st.phase !== 'collect') {
+      st.phase = 'collect';
+      st.step = 0;
+      st.charIdx = rndBase(st.gotBase);
+    }
   }
+  
   st.weekCount++;
   st.lastClaim=now.toISOString();
   const wc=st.weekCount;
 
-  if(wc<=4){
-    // ── Собираем ключи ──
-    st.step=(st.step||0)+1;
-    sound('key');
-
-    if(st.step>=4){
-      // Персонаж открыт!
-      if(!st.gotBase.includes(st.charIdx)) st.gotBase.push(st.charIdx);
-      st.phase='bonus';
-      // *** FIX: сбрасываем step ДО save ***
-      const openedChar = BASE[st.charIdx];
-      st.step=0;
-      st.charIdx=rndBase(st.gotBase); // готовим следующего
+  // ★★★ ГЛАВНОЕ: разделяем логику ★★★
+  
+  if(st.phase === 'collect') {
+    // Мы всё ещё собираем ключи (wc 1-4)
+    if(wc <= 4) {
+      // Собираем ключи
+      st.step = (st.step || 0) + 1;
+      sound('key');
+      
+      if(st.step >= 4) {
+        // Персонаж открыт! (это происходит ТОЛЬКО на 4-й зарядке)
+        if(!st.gotBase.includes(st.charIdx)) {
+          st.gotBase.push(st.charIdx);
+        }
+        const openedChar = BASE[st.charIdx];
+        
+        // Переходим в бонусный режим
+        st.phase = 'bonus';
+        st.step = 0;
+        st.charIdx = rndBase(st.gotBase); // готовим следующего
+        
+        save();
+        checkLegendary();
+        sound('base');
+        celebrate('🎉', openedChar.power+' открыта!', 'Суперсила добавлена в коллекцию! С 5-й зарядки — ⭐', openedChar.img);
+      } else {
+        save();
+        const left = 4 - st.step;
+        celebrate('🔑','Ключ '+st.step+' из 4!','До суперсилы: ещё '+left+' '+decl(left,'зарядка','зарядки','зарядок'));
+      }
+    } 
+    else if(wc === 5 || wc === 6) {
+      // Мы в collect phase, но wc=5 или 6 — даём звезду
+      st.stars = (st.stars || 0) + 1;
       save();
-      checkLegendary();
-      sound('base');
-      celebrate('🎉',openedChar.power+' открыта!','Суперсила добавлена в коллекцию! С 5-й зарядки — ⭐',openedChar.img);
-    } else {
-      save();
-      const left=4-st.step;
-      celebrate('🔑','Ключ '+st.step+' из 4!','До суперсилы: ещё '+left+' '+decl(left,'зарядка','зарядки','зарядок'));
+      sound('rare');
+      celebrate('⭐','Звезда получена!','У тебя '+st.stars+' ⭐. Накопи 4 — открой редкого персонажа!');
     }
-
-  } else if(wc===5||wc===6){
-    // ── Звезда ──
-    st.stars=(st.stars||0)+1;
-    save();
-    sound('rare');
-    celebrate('⭐','Звезда получена!','У тебя '+st.stars+' ⭐. Накопи 4 — открой редкого персонажа!');
-
-  } else if(wc===7){
-    // ── Сияющая звезда ──
-    st.shiny=(st.shiny||0)+1;
-    save();
-    sound('rare');
-    celebrate('🌟','Сияющая звезда!','У тебя '+st.shiny+' 🌟. Накопи 4 — открой эпического персонажа!');
-
-  } else {
-    // 8+ день
-    st.phase='wait';
-    save();
-    celebrate('🏃','Зарядка засчитана!','Новая неделя — новый персонаж! Жди понедельника 🗓️');
+    else if(wc === 7) {
+      // Сияющая звезда
+      st.shiny = (st.shiny || 0) + 1;
+      save();
+      sound('rare');
+      celebrate('🌟','Сияющая звезда!','У тебя '+st.shiny+' 🌟. Накопи 4 — открой эпического персонажа!');
+    }
+    else if(wc >= 8) {
+      // Переходим в режим ожидания
+      st.phase = 'wait';
+      save();
+      celebrate('🏃','Зарядка засчитана!','Новая неделя — новый персонаж! Жди понедельника 🗓️');
+    }
+  } 
+  else if(st.phase === 'bonus') {
+    // Бонусный режим (персонаж уже открыт, собираем звёзды)
+    if(wc === 5 || wc === 6) {
+      st.stars = (st.stars || 0) + 1;
+      save();
+      sound('rare');
+      celebrate('⭐','Звезда получена!','У тебя '+st.stars+' ⭐. Накопи 4 — открой редкого персонажа!');
+    }
+    else if(wc === 7) {
+      st.shiny = (st.shiny || 0) + 1;
+      save();
+      sound('rare');
+      celebrate('🌟','Сияющая звезда!','У тебя '+st.shiny+' 🌟. Накопи 4 — открой эпического персонажа!');
+    }
+    else if(wc >= 8) {
+      st.phase = 'wait';
+      save();
+      celebrate('🏃','Зарядка засчитана!','Новая неделя — новый персонаж! Жди понедельника 🗓️');
+    } else {
+      // wc < 5 в бонусном режиме (такое может быть если перешли в bonus не с 4)
+      save();
+      celebrate('🏃','Зарядка засчитана!','С 5-й зарядки недели начнут появляться звёзды ⭐');
+    }
   }
+  else if(st.phase === 'wait') {
+    // Режим ожидания новой недели
+    if(wc >= 8) {
+      // Остаёмся в wait
+      celebrate('🏃','Зарядка засчитана!','Новая неделя начнётся в понедельник 🗓️');
+    }
+    save();
+  }
+  
+  render();
 }
 
 // ═══════════════════════════════════════════════════
 // ЛЕГЕНДАРНЫЙ
 // ═══════════════════════════════════════════════════
 function checkLegendary(){
-  if(!st.gotLegend&&st.gotBase.length>=BASE.length&&st.gotRare.length>=RARE.length&&st.gotEpic.length>=EPIC.length){
-    st.gotLegend=true; save();
-    setTimeout(()=>celebrate('🔥','ЛЕГЕНДА! Феникс получен!','Ты собрал(а) все суперсилы! Ты — Легенда!',LEGEND.img,'legend'),2000);
+  if(!st.gotLegend && st.gotBase.length >= BASE.length && st.gotRare.length >= RARE.length && st.gotEpic.length >= EPIC.length){
+    st.gotLegend=true; 
+    save();
+    setTimeout(() => {
+      celebrate('🔥','ЛЕГЕНДА! Феникс получен!','Ты собрал(а) все суперсилы! Ты — Легенда!',LEGEND.img,'legend');
+    }, 2000);
   }
 }
 
@@ -612,3 +666,4 @@ if(_who){try{const d=JSON.parse(_who);if(d.name&&d.nick){document.getElementById
 </script>
 </body>
 </html>
+
