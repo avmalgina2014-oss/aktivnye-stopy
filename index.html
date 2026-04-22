@@ -6,176 +6,98 @@
 <title>Активные Стопы</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .card {
-    background: #fff;
-    border-radius: 32px;
-    padding: 24px 20px;
-    max-width: 420px;
-    width: 100%;
-    box-shadow: 0 20px 60px rgba(0,0,0,.2);
-    text-align: center;
-  }
-  h1 { font-family: 'Fredoka One', cursive; font-size: 26px; color: #2d2d2d; margin-bottom: 4px; }
-  .subtitle { font-size: 13px; color: #888; margin-bottom: 20px; font-weight: 700; }
-  .btn {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    border: none;
-    border-radius: 16px;
-    padding: 13px 24px;
-    font-family: 'Fredoka One', cursive;
-    font-size: 19px;
-    cursor: pointer;
-    width: 100%;
-    transition: transform .15s;
-    box-shadow: 0 4px 16px rgba(102,126,234,.4);
-    margin-top: 8px;
-  }
-  .btn:hover { transform: translateY(-2px); }
-  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-  .btn-green { background: linear-gradient(135deg, #2E7D32, #4CAF50); box-shadow: 0 4px 16px rgba(46,125,50,.4); }
-  .btn-gold { background: linear-gradient(135deg, #F9A825, #FF6F00); box-shadow: 0 4px 16px rgba(249,168,37,.4); }
-  .btn-rare { background: linear-gradient(135deg, #1565C0, #42A5F5); box-shadow: 0 4px 16px rgba(21,101,192,.3); }
-  .btn-ruby { background: linear-gradient(135deg, #B71C1C, #EF5350); box-shadow: 0 4px 16px rgba(183,28,28,.3); }
-  .field-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; text-align: left; }
-  .field-input {
-    width: 100%;
-    border: 3px solid #e0e4ef;
-    border-radius: 14px;
-    padding: 11px 14px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 17px;
-    font-weight: 700;
-    outline: none;
-    text-align: center;
-    margin-bottom: 14px;
-    transition: border-color .2s;
-  }
-  .field-input:focus { border-color: #667eea; }
-  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
-  .rank-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 5px 14px;
-    border-radius: 20px;
-    font-family: 'Fredoka One', cursive;
-    font-size: 14px;
-  }
-  .rank-novice { background: #e8f5e9; color: #2E7D32; }
-  .rank-student { background: linear-gradient(135deg, #FFF8E1, #FFE082); color: #F57F17; }
-  .rank-pro { background: linear-gradient(135deg, #E3F2FD, #90CAF9); color: #1565C0; }
-  .rank-master { background: linear-gradient(135deg, #1a1a2e, #16213e); color: #fff; }
-  .keys-wallet { display: flex; gap: 12px; background: #f5f5f5; border-radius: 40px; padding: 6px 16px; }
-  .wallet-slot { display: flex; align-items: center; gap: 6px; font-family: 'Fredoka One', cursive; font-size: 18px; }
-  .wallet-slot.star { color: #F9A825; }
-  .wallet-slot.star-shiny { color: #FF6F00; }
-  .greeting { font-size: 18px; font-weight: 900; color: #2d2d2d; margin-bottom: 4px; }
-  .progress-text { font-size: 13px; color: #888; font-weight: 700; margin-bottom: 12px; line-height: 1.7; }
-  .keys-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
-  .key-slot {
-    aspect-ratio: 1;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
-    border: 3px dashed #e0e4ef;
-    background: #f9f9f9;
-    transition: all .4s ease;
-  }
-  .key-slot.filled { border: 3px solid gold; background: linear-gradient(135deg, #fffde7, #fff9c4); box-shadow: 0 4px 12px rgba(255,215,0,.4); animation: popIn .5s ease; }
-  @keyframes popIn { 0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)} }
-  .char-wrap { border-radius: 18px; overflow: hidden; margin-bottom: 12px; display: none; background: #f5f5f5; }
-  .char-wrap img { width: 100%; height: 200px; object-fit: contain; display: block; }
-  .char-wrap.show { display: block; animation: zoomIn .6s ease; }
-  @keyframes zoomIn { from{transform:scale(.5);opacity:0} to{transform:scale(1);opacity:1} }
-  .cooldown-msg { background: #f0f4ff; border-radius: 14px; padding: 12px; font-size: 13px; font-weight: 700; color: #667eea; display: none; margin-top: 8px; }
-  .cooldown-time { font-family: 'Fredoka One', cursive; font-size: 20px; display: block; margin-top: 4px; }
-  .collection-bar { margin-top: 14px; border-top: 2px solid #f0f0f0; padding-top: 12px; cursor: pointer; }
-  .collection-bar:hover .col-title { color: #667eea; }
-  .col-title { font-family: 'Fredoka One', cursive; font-size: 15px; color: #888; margin-bottom: 8px; transition: color .2s; }
-  .change-name { font-size: 11px; color: #ccc; margin-top: 10px; cursor: pointer; font-weight: 700; }
-  .change-name:hover { color: #667eea; }
-  #galleryScreen { display: none; }
-  .gallery-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid #e0e4ef; }
-  .tab-btn {
-    flex: 1;
-    background: none;
-    border: none;
-    padding: 10px 4px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    font-size: 12px;
-    color: #aaa;
-    cursor: pointer;
-    transition: all .2s;
-    border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
-  }
-  .tab-btn.active { color: #667eea; border-bottom-color: #667eea; }
-  .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 14px; }
-  .g-item {
-    border-radius: 18px;
-    border: 2px solid #e8e8e8;
-    background: #f0f0f0;
-    padding: 0;
-    text-align: center;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: all .3s;
-  }
-  .g-item.got { background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.1); border-color: transparent; }
-  .g-item.locked { padding: 20px 8px; align-items: center; justify-content: center; }
-  .g-item .g-img { width: 100%; }
-  .g-item .g-img img { width: 100%; height: auto; display: block; }
-  .g-item .g-name { 
-    font-family: 'Fredoka One', cursive; 
-    font-size: 14px; 
-    padding: 8px 8px 12px; 
-    line-height: 1.3; 
-    color: #667eea;
-    word-break: break-word;
-  }
-  .g-item .g-q { font-size: 44px; color: #ddd; margin-bottom: 6px; }
-  .celebration { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.8); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
-  .celebration.show { display: flex; }
-  .celeb-box { background: #fff; border-radius: 32px; padding: 28px 24px; text-align: center; max-width: 340px; width: 100%; animation: zoomIn .4s ease; }
-  .celeb-emoji { font-size: 60px; display: block; margin-bottom: 10px; }
-  .celeb-title { font-family: 'Fredoka One', cursive; font-size: 24px; color: #2d2d2d; margin-bottom: 6px; }
-  .celeb-img { width: 100%; max-height: 160px; object-fit: contain; border-radius: 14px; margin: 10px 0; display: none; }
-  .celeb-text { font-size: 14px; color: #888; font-weight: 700; margin-bottom: 18px; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#fff;border-radius:32px;padding:24px 20px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);text-align:center}
+h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:4px}
+.subtitle{font-size:13px;color:#888;margin-bottom:20px;font-weight:700}
+.btn{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:16px;padding:13px 24px;font-family:'Fredoka One',cursive;font-size:19px;cursor:pointer;width:100%;transition:transform .15s;box-shadow:0 4px 16px rgba(102,126,234,.4);margin-top:8px}
+.btn:hover{transform:translateY(-2px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-green{background:linear-gradient(135deg,#2E7D32,#4CAF50);box-shadow:0 4px 16px rgba(46,125,50,.4)}
+.btn-gold{background:linear-gradient(135deg,#F9A825,#FF6F00);box-shadow:0 4px 16px rgba(249,168,37,.4)}
+.btn-star{background:linear-gradient(135deg,#F9A825,#FFB300);box-shadow:0 4px 16px rgba(249,168,37,.4)}
+.btn-shiny{background:linear-gradient(135deg,#FF6F00,#FF8F00);box-shadow:0 4px 16px rgba(255,111,0,.4)}
+.field-label{font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;text-align:left}
+.field-input{width:100%;border:3px solid #e0e4ef;border-radius:14px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:17px;font-weight:700;outline:none;text-align:center;margin-bottom:14px;transition:border-color .2s}
+.field-input:focus{border-color:#667eea}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.rank-badge{display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:20px;font-family:'Fredoka One',cursive;font-size:14px}
+.rank-novice {background:#e8f5e9;color:#2E7D32}
+.rank-student{background:linear-gradient(135deg,#FFF8E1,#FFE082);color:#F57F17}
+.rank-pro    {background:linear-gradient(135deg,#E3F2FD,#90CAF9);color:#1565C0}
+.rank-master {background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff}
+.keys-wallet{display:flex;gap:12px;background:#f5f5f5;border-radius:40px;padding:6px 16px}
+.wallet-slot{display:flex;align-items:center;gap:5px;font-family:'Fredoka One',cursive;font-size:18px}
+.wallet-slot.star{color:#F9A825}
+.wallet-slot.shiny{color:#FF6F00}
+.greeting{font-size:18px;font-weight:900;color:#2d2d2d;margin-bottom:4px}
+.progress-text{font-size:13px;color:#888;font-weight:700;margin-bottom:12px;line-height:1.7}
+.power-name-big{font-family:'Fredoka One',cursive;font-size:26px;display:block;margin:8px 0 2px}
+.keys-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.key-slot{aspect-ratio:1;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;border:3px dashed #e0e4ef;background:#f9f9f9;transition:all .4s ease}
+.key-slot.filled{border:3px solid gold;background:linear-gradient(135deg,#fffde7,#fff9c4);box-shadow:0 4px 12px rgba(255,215,0,.4);animation:popIn .5s ease}
+@keyframes popIn{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+.char-wrap{border-radius:18px;overflow:hidden;margin-bottom:12px;display:none;background:#f5f5f5}
+.char-wrap img{width:100%;height:200px;object-fit:contain;display:block}
+.char-wrap.show{display:block;animation:zoomIn .6s ease}
+@keyframes zoomIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.cooldown-msg{background:#f0f4ff;border-radius:14px;padding:12px 16px;font-size:13px;font-weight:700;color:#667eea;display:none;margin-top:8px;line-height:1.6}
+.cooldown-time{font-family:'Fredoka One',cursive;font-size:22px;display:block;margin-top:4px;color:#4a5568}
+.week-hint{background:#fffde7;border-radius:14px;padding:10px 14px;font-size:12px;font-weight:700;color:#F57F17;display:none;margin-top:8px;text-align:center}
+.collection-bar{margin-top:14px;border-top:2px solid #f0f0f0;padding-top:12px;cursor:pointer}
+.collection-bar:hover .col-title{color:#667eea}
+.col-title{font-family:'Fredoka One',cursive;font-size:15px;color:#888;transition:color .2s}
+.change-name{font-size:11px;color:#ccc;margin-top:10px;cursor:pointer;font-weight:700}
+.change-name:hover{color:#667eea}
+/* Галерея */
+#galleryScreen{display:none}
+.gallery-tabs{display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid #e0e4ef}
+.tab-btn{flex:1;background:none;border:none;padding:10px 4px;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;color:#aaa;cursor:pointer;transition:all .2s;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab-btn.active{color:#667eea;border-bottom-color:#667eea}
+.gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+.g-item{border-radius:18px;border:2px solid #e8e8e8;background:#f0f0f0;padding:0;text-align:center;overflow:hidden;display:flex;flex-direction:column;transition:all .3s;min-height:170px}
+.g-item.got{background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.1);border-color:transparent}
+.g-item.locked{padding:20px 8px;align-items:center;justify-content:center;min-height:170px}
+.g-item .g-img{width:100%}
+.g-item .g-img img{width:100%;height:150px;object-fit:cover;display:block}
+.g-item .g-name{font-family:'Fredoka One',cursive;font-size:17px;padding:8px 8px 12px;line-height:1.2}
+.g-item .g-q{font-size:44px;color:#ddd;margin-bottom:6px}
+.rarity-label{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:20px;margin-top:6px;display:inline-block}
+.rarity-base    {background:#e8f5e9;color:#2E7D32}
+.rarity-rare    {background:#FFF8E1;color:#F9A825}
+.rarity-epic    {background:#FFF3E0;color:#FF6F00}
+.rarity-legendary{background:linear-gradient(135deg,#FF6F00,#F9A825);color:#fff}
+/* Праздник */
+.celebration{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:100;align-items:center;justify-content:center;padding:20px}
+.celebration.show{display:flex}
+.celeb-box{background:#fff;border-radius:32px;padding:28px 24px;text-align:center;max-width:340px;width:100%;animation:zoomIn .4s ease}
+.celeb-emoji{font-size:60px;display:block;margin-bottom:10px}
+.celeb-title{font-family:'Fredoka One',cursive;font-size:24px;color:#2d2d2d;margin-bottom:6px}
+.celeb-img{width:100%;max-height:160px;object-fit:contain;border-radius:14px;margin:10px 0;display:none}
+.celeb-text{font-size:14px;color:#888;font-weight:700;margin-bottom:18px}
 </style>
 </head>
 <body>
 
+<!-- ЭКРАН ВХОДА -->
 <div class="card" id="nameScreen">
   <h1>👣 Активные Стопы</h1>
   <div class="subtitle">Собери все суперсилы!</div>
   <div class="field-label">Твоё имя</div>
-  <input class="field-input" id="nameInput" placeholder="Например: Саша" maxlength="15" oninput="checkBtn()">
+  <input class="field-input" id="nameInput" placeholder="Например: Саша" maxlength="15" oninput="checkBtn()" onchange="checkBtn()">
   <div class="field-label">Придумай ник</div>
-  <input class="field-input" id="nickInput" placeholder="Например: Ракета 🚀" maxlength="20" oninput="checkBtn()">
+  <input class="field-input" id="nickInput" placeholder="Например: Ракета 🚀" maxlength="20" oninput="checkBtn()" onchange="checkBtn()">
   <button class="btn" id="startBtn" onclick="startGame()" disabled>Вперёд! 🚀</button>
 </div>
 
+<!-- ЭКРАН ИГРЫ -->
 <div class="card" id="gameScreen" style="display:none">
   <div class="top-bar">
     <div id="rankBadge" class="rank-badge rank-novice">🌱 НОВИЧОК</div>
     <div class="keys-wallet">
       <div class="wallet-slot star">⭐ <span id="starCount">0</span></div>
-      <div class="wallet-slot star-shiny">🌟 <span id="starShinyCount">0</span></div>
+      <div class="wallet-slot shiny">🌟 <span id="shinyCount">0</span></div>
     </div>
   </div>
   <div class="greeting" id="greeting">Привет!</div>
@@ -187,10 +109,12 @@
   <div class="char-wrap" id="charWrap"><img id="charImg" src="" alt=""></div>
   <button class="btn btn-green" id="claimBtn" onclick="doWorkout()">Я сделал(а) зарядку! 🏃</button>
   <div class="cooldown-msg" id="cooldown"></div>
+  <div class="week-hint" id="weekHint"></div>
   <div class="collection-bar" onclick="showGallery()"><div class="col-title">🏅 Моя коллекция →</div></div>
   <div class="change-name" onclick="changeName()">Это не я → сменить имя</div>
 </div>
 
+<!-- ГАЛЕРЕЯ -->
 <div class="card" id="galleryScreen">
   <h1 style="margin-bottom:12px">🏅 Моя коллекция</h1>
   <div class="gallery-tabs">
@@ -203,6 +127,7 @@
   <button class="btn" onclick="hideGallery()">← Назад</button>
 </div>
 
+<!-- ПРАЗДНИК -->
 <div class="celebration" id="celebration">
   <div class="celeb-box">
     <span class="celeb-emoji" id="celebEmoji">🎉</span>
@@ -214,413 +139,476 @@
 </div>
 
 <script>
+// ═══════════════════════════════════════════════════
+// ПЕРСОНАЖИ — добавляй новых сюда, прогресс сохранится
+// ═══════════════════════════════════════════════════
 const BASE = [
-  { animal:"🐆", power:"Скорость",       name:"Гепард",   img:"gepard.png"    },
-  { animal:"🐦", power:"Лёгкость",       name:"Колибри",  img:"kolibri.png"   },
-  { animal:"🐜", power:"Сила",           name:"Муравей",  img:"muravey.png"   },
-  { animal:"🦩", power:"Баланс",         name:"Фламинго", img:"flamingo.png"  },
-  { animal:"🦥", power:"Восстановление", name:"Ленивец",  img:"lenivec.png"   },
-  { animal:"🐒", power:"Координация",    name:"Обезьяна", img:"obeziana.png"  },
-  { animal:"🐫", power:"Выносливость",   name:"Верблюд",  img:"verblyud.png"  },
-  { animal:"🐱", power:"Гибкость",       name:"Кошка",    img:"koshka.png"    },
+  {animal:"🐆",power:"Скорость",      name:"Гепард",   color:"#E07000",img:"gepard.png"   },
+  {animal:"🐦",power:"Лёгкость",      name:"Колибри",  color:"#00ACC1",img:"kolibri.png"  },
+  {animal:"🐜",power:"Сила",          name:"Муравей",  color:"#CC0000",img:"muravey.png"  },
+  {animal:"🦩",power:"Баланс",        name:"Фламинго", color:"#E91E8C",img:"flamingo.png" },
+  {animal:"🦥",power:"Восстановление",name:"Ленивец",  color:"#2E7D32",img:"lenivec.png"  },
+  {animal:"🐒",power:"Координация",   name:"Обезьяна", color:"#8D6E63",img:"obeziana.png" },
+  {animal:"🐫",power:"Выносливость",  name:"Верблюд",  color:"#D4A373",img:"verblyud.png" },
+  {animal:"🐱",power:"Гибкость",      name:"Кошка",    color:"#FF9800",img:"koshka.png"   },
 ];
 const RARE = [
-  { animal:"🦘", power:"Прыгучесть",   name:"Кенгуру",  img:"kenguru.png"   },
-  { animal:"🐙", power:"Цепкость",     name:"Осьминог", img:"osminog.png"   },
-  { animal:"🦀", power:"Устойчивость", name:"Краб",     img:"krab.png"      },
-  { animal:"🐌", power:"Чуткость",     name:"Улитка",   img:"ulitka.png"    },
+  {animal:"🦘",power:"Прыгучесть",  name:"Кенгуру", color:"#FF5722",img:"kenguru.png" },
+  {animal:"🐙",power:"Цепкость",    name:"Осьминог",color:"#7B1FA2",img:"osminog.png" },
+  {animal:"🦀",power:"Устойчивость",name:"Краб",    color:"#D32F2F",img:"krab.png"    },
+  {animal:"🐌",power:"Чуткость",    name:"Улитка",  color:"#4CAF50",img:"ulitka.png"  },
 ];
 const EPIC = [
-  { animal:"🦄", power:"Суперлёгкость", name:"Единорог", img:"edinorog.png"  },
-  { animal:"🐉", power:"Суперсила",     name:"Дракон",   img:"drakon.png"    },
+  {animal:"🦄",power:"Суперлёгкость",name:"Единорог",color:"#E040FB",img:"edinorog.png"},
+  {animal:"🐉",power:"Суперсила",    name:"Дракон",  color:"#F44336",img:"drakon.png"  },
 ];
-const LEGEND = { animal:"🔥", power:"Возрождение", name:"Феникс", img:"feniks.png" };
+const LEGEND = {animal:"🔥",power:"Возрождение",name:"Феникс",color:"#FF6F00",img:"feniks.png"};
 
+// ═══════════════════════════════════════════════════
+// СОСТОЯНИЕ
+// ═══════════════════════════════════════════════════
 let st = {};
 let playerKey = '';
 
 function freshState() {
   return {
-    charIdx: Math.floor(Math.random() * BASE.length),
+    phase: 'collect',   // 'collect' | 'bonus' | 'wait'
+    charIdx: rndBase([]),
     step: 0,
     lastClaim: null,
     weekCount: 0,
     weekStart: null,
+    weeksPlayed: 0,
     stars: 0,
-    starsShiny: 0,
+    shiny: 0,
     gotBase: [],
     gotRare: [],
     gotEpic: [],
     gotLegend: false,
-    weeksPlayed: 0,
   };
 }
 
-function save() { localStorage.setItem('as_' + playerKey, JSON.stringify(st)); }
-function load() {
-  const raw = localStorage.getItem('as_' + playerKey);
-  if (!raw) return false;
-  try { st = JSON.parse(raw); return true; } catch(e) { return false; }
+function rndBase(got) {
+  const avail = BASE.map((_,i)=>i).filter(i=>!got.includes(i));
+  const pool  = avail.length ? avail : BASE.map((_,i)=>i);
+  return pool[Math.floor(Math.random()*pool.length)];
 }
 
+function save() { localStorage.setItem('as_'+playerKey, JSON.stringify(st)); }
+function load() {
+  const r = localStorage.getItem('as_'+playerKey);
+  if (!r) return false;
+  try { st = JSON.parse(r); return true; } catch(e) { return false; }
+}
+
+// ═══════════════════════════════════════════════════
+// ЗВУКИ
+// ═══════════════════════════════════════════════════
 function sound(type) {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const seq = {
-      start:   [[440,.12],[550,.12],[660,.12]],
-      key:     [[900,0,'tri']],
-      base:    [[523,.18],[659,.18],[784,.18],[1047,.18]],
-      rare:    [[440,.15],[554,.15],[659,.15],[880,.15],[1109,.15]],
-      epic:    [[330,.2],[415,.2],[523,.2],[659,.2],[830,.2],[1047,.2]],
-      legend:  [[262,.25],[330,.25],[392,.25],[523,.25],[659,.25],[784,.25]],
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const SEQ = {
+      start:  [[440,.12],[550,.12],[660,.12]],
+      key:    [[900,0,'tri']],
+      base:   [[523,.18],[659,.18],[784,.18],[1047,.18]],
+      rare:   [[440,.15],[554,.15],[659,.15],[880,.15],[1109,.15]],
+      epic:   [[330,.2],[415,.2],[523,.2],[659,.2],[830,.2],[1047,.2]],
+      legend: [[262,.25],[330,.25],[392,.25],[523,.25],[659,.25],[784,.25]],
     };
-    const p = seq[type];
-    if (!p) return;
-    p.forEach(([f, dt, sh], i) => {
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
+    const p = SEQ[type]; if (!p) return;
+    p.forEach(([f,dt,sh],i) => {
+      const o=ctx.createOscillator(), g=ctx.createGain();
       o.connect(g); g.connect(ctx.destination);
-      o.type = sh || 'sine';
-      o.frequency.setValueAtTime(f, ctx.currentTime + i * (dt||0.18));
-      g.gain.setValueAtTime(0.3, ctx.currentTime + i * (dt||0.18));
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * (dt||0.18) + 0.4);
-      o.start(ctx.currentTime + i * (dt||0.18));
-      o.stop(ctx.currentTime + i * (dt||0.18) + 0.4);
+      o.type = sh||'sine';
+      const t = ctx.currentTime + i*(dt||0.18);
+      o.frequency.setValueAtTime(f,t);
+      g.gain.setValueAtTime(0.3,t);
+      g.gain.exponentialRampToValueAtTime(0.001,t+0.4);
+      o.start(t); o.stop(t+0.4);
     });
-  } catch(e) {}
+  } catch(e){}
 }
 
-function weekStart(date) {
-  const d = new Date(date);
-  const day = d.getDay();
-  d.setDate(d.getDate() - day + (day === 0 ? -6 : 1));
+// ═══════════════════════════════════════════════════
+// ВСПОМОГАТЕЛЬНЫЕ
+// ═══════════════════════════════════════════════════
+function weekTs(date) {
+  const d=new Date(date), day=d.getDay();
+  d.setDate(d.getDate()-day+(day===0?-6:1));
   d.setHours(0,0,0,0);
   return d.getTime();
 }
-
-function decl(n, a, b, c) {
-  const m = n % 10, mm = n % 100;
-  if (m === 1 && mm !== 11) return a;
-  if (m >= 2 && m <= 4 && (mm < 10 || mm >= 20)) return b;
+function decl(n,a,b,c){
+  const m=n%10,mm=n%100;
+  if(m===1&&mm!==11)return a;
+  if(m>=2&&m<=4&&(mm<10||mm>=20))return b;
   return c;
 }
-
-function getRank() {
-  const w = st.weeksPlayed || 0;
-  if (w >= 8) return {label:'👑 МАСТЕР', cls:'rank-master'};
-  if (w >= 6) return {label:'⚡ ПРОФИ', cls:'rank-pro'};
-  if (w >= 3) return {label:'📖 УЧЕНИК', cls:'rank-student'};
-  return {label:'🌱 НОВИЧОК', cls:'rank-novice'};
+function getRank(){
+  const w=st.weeksPlayed||0;
+  if(w>=8) return{label:'👑 МАСТЕР',cls:'rank-master'};
+  if(w>=6) return{label:'⚡ ПРОФИ', cls:'rank-pro'};
+  if(w>=3) return{label:'📖 УЧЕНИК',cls:'rank-student'};
+  return          {label:'🌱 НОВИЧОК',cls:'rank-novice'};
 }
-
-function celebrate(emoji, title, text, img, snd) {
-  document.getElementById('celebEmoji').innerHTML = emoji;
-  document.getElementById('celebTitle').innerHTML = title;
-  document.getElementById('celebText').innerHTML = text;
-  const el = document.getElementById('celebImg');
-  if (img) { el.src = img; el.style.display = 'block'; }
-  else { el.style.display = 'none'; }
+function celebrate(emoji,title,text,img,snd){
+  document.getElementById('celebEmoji').textContent = emoji;
+  document.getElementById('celebTitle').textContent = title;
+  document.getElementById('celebText').textContent  = text;
+  const el=document.getElementById('celebImg');
+  if(img){el.src=img;el.style.display='block';}
+  else el.style.display='none';
   document.getElementById('celebration').classList.add('show');
-  if (snd) sound(snd);
+  if(snd) sound(snd);
 }
-window.closeCeleb = function() { document.getElementById('celebration').classList.remove('show'); render(); };
+window.closeCeleb = function(){ document.getElementById('celebration').classList.remove('show'); render(); };
 
-function render() {
+// ═══════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════
+function render(){
+  // Автоисправление старых сохранений: если step=4, значит персонаж уже открыт
+  if((st.step||0)>=4 && st.phase==='collect'){
+    st.step=0;
+    st.charIdx = rndBase(st.gotBase);
+    st.phase = (st.weekCount||0)>=5 ? 'bonus' : 'collect';
+    save();
+  }
+
   const char = BASE[st.charIdx];
   const rank = getRank();
-  const badge = document.getElementById('rankBadge');
-  badge.className = 'rank-badge ' + rank.cls;
-  badge.textContent = rank.label;
-  document.getElementById('starCount').innerText = st.stars || 0;
-  document.getElementById('starShinyCount').innerText = st.starsShiny || 0;
-  document.getElementById('greeting').innerHTML = 'Привет, ' + (st.name || '') + '!';
+  document.getElementById('rankBadge').className = 'rank-badge '+rank.cls;
+  document.getElementById('rankBadge').textContent = rank.label;
+  document.getElementById('starCount').textContent  = st.stars||0;
+  document.getElementById('shinyCount').textContent = st.shiny||0;
+  document.getElementById('greeting').textContent   = 'Привет, '+(st.name||')!';
 
-  // Показываем прогресс или открытую суперсилу
-  if (st.step < 4) {
-    document.getElementById('keysGrid').style.display = 'grid';
-    document.getElementById('charWrap').classList.remove('show');
-    document.getElementById('progressText').innerHTML = 'До суперсилы: ' + (4 - st.step) + ' ' + decl(4 - st.step, 'зарядка', 'зарядки', 'зарядок');
-    for (let i = 0; i < 4; i++) {
-      const sl = document.getElementById('ks' + i);
-      if (i < st.step) { sl.classList.add('filled'); sl.innerHTML = '🔑'; }
-      else { sl.classList.remove('filled'); sl.innerHTML = ''; }
+  const phase = st.phase||'collect';
+  const wc    = st.weekCount||0;
+  const keysGrid = document.getElementById('keysGrid');
+  const charWrap = document.getElementById('charWrap');
+  const progress = document.getElementById('progressText');
+  const hint     = document.getElementById('weekHint');
+
+  hint.style.display = 'none';
+
+  if(phase==='collect'){
+    keysGrid.style.display='grid';
+    charWrap.classList.remove('show');
+    const rem = 4-st.step;
+    progress.textContent = 'До суперсилы: '+rem+' '+decl(rem,'зарядка','зарядки','зарядок');
+    for(let i=0;i<4;i++){
+      const sl=document.getElementById('ks'+i);
+      if(i<st.step){sl.classList.add('filled');sl.textContent='🔑';}
+      else{sl.classList.remove('filled');sl.textContent='';}
     }
-  } else {
-    document.getElementById('keysGrid').style.display = 'none';
-    document.getElementById('charWrap').classList.add('show');
-    document.getElementById('charImg').src = char.img;
-    document.getElementById('progressText').innerHTML = '<div style="font-family:Fredoka One,cursive;font-size:26px;font-weight:900;color:#667eea;margin:12px 0 6px">' + char.power + '</div><div style="font-size:13px;color:#aaa">суперсила открыта ✨</div>';
-  }
-  checkCooldown();
-}
+    checkCooldown();
+  } else if(phase==='bonus'){
+    keysGrid.style.display='none';
+    charWrap.classList.add('show');
+    document.getElementById('charImg').src=char.img;
+    progress.innerHTML='<span class="power-name-big" style="color:'+char.color+'">'+char.power+'</span><span style="font-size:12px;color:#aaa">суперсила открыта ✨</span>';
 
-function checkCooldown() {
-  const claimBtn = document.getElementById('claimBtn');
-  const coolEl = document.getElementById('cooldown');
-  
-  if (!st.lastClaim) {
-    claimBtn.style.display = 'block';
-    claimBtn.className = 'btn btn-green';
-    claimBtn.innerHTML = 'Я сделал(а) зарядку! 🏃';
-    claimBtn.onclick = doWorkout;
-    coolEl.style.display = 'none';
-    return;
-  }
-  
-  const last = new Date(st.lastClaim);
-  const next = new Date(last.getTime() + 24 * 3600 * 1000);
-  
-  if (new Date() >= next) {
-    claimBtn.style.display = 'block';
-    claimBtn.className = 'btn btn-green';
-    claimBtn.innerHTML = 'Я сделал(а) зарядку! 🏃';
-    claimBtn.onclick = doWorkout;
-    coolEl.style.display = 'none';
-  } else {
-    claimBtn.style.display = 'none';
-    coolEl.style.display = 'block';
-    updateCountdown(next);
-    const iv = setInterval(() => {
-      if (new Date() >= next) { clearInterval(iv); render(); }
-      else updateCountdown(next);
-    }, 30000);
-  }
-}
-
-function updateCountdown(next) {
-  const diff = next - new Date();
-  const hours = Math.floor(diff / 3600000);
-  const minutes = Math.floor((diff % 3600000) / 60000);
-  const timeString = hours > 0 ? `${hours} ч ${minutes} мин` : `${minutes} мин`;
-  
-  const coolEl = document.getElementById('cooldown');
-  if (!coolEl) return;
-  
-  let message = '';
-  if (diff > 12 * 3600000) {
-    message = 'Отличная работа! Приходи завтра 🌙';
-  } else if (diff > 5 * 3600000) {
-    message = `Скоро можно будет сделать новую зарядку! Осталось: ${timeString}`;
-  } else if (diff > 3600000) {
-    message = `Совсем скоро! Осталось: ${timeString}`;
-  } else {
-    message = `Уже почти! Осталось: ${timeString}`;
-  }
-  
-  coolEl.innerHTML = `${message}<span class="cooldown-time">${timeString}</span>`;
-}
-
-function doWorkout() {
-  const now = new Date();
-  
-  if (st.lastClaim && (now - new Date(st.lastClaim)) < 24 * 3600 * 1000) {
-    const next = new Date(new Date(st.lastClaim).getTime() + 24 * 3600 * 1000);
-    document.getElementById('claimBtn').style.display = 'none';
-    document.getElementById('cooldown').style.display = 'block';
-    updateCountdown(next);
-    return;
-  }
-  
-  const nowWeek = weekStart(now);
-  
-  if (!st.weekStart || st.weekStart < nowWeek) {
-    st.weekStart = nowWeek;
-    st.weekCount = 0;
-    if (st.lastClaim) st.weeksPlayed = (st.weeksPlayed || 0) + 1;
-  }
-  
-  st.weekCount++;
-  st.lastClaim = now.toISOString();
-  const wc = st.weekCount;
-  
-  if (wc <= 4) {
-    // 1-4 дни: копим ключи для открытия базового персонажа
-    st.step++;
-    sound('key');
-    
-    if (st.step >= 4) {
-      // Открываем базового персонажа
-      if (!st.gotBase.includes(st.charIdx)) {
-        st.gotBase.push(st.charIdx);
-      }
-      st.lastUnlockWeek = nowWeek;
-      save();
-      sound('base');
-      celebrate('🎉', BASE[st.charIdx].power + ' открыта!', 'Суперсила добавлена в коллекцию!', BASE[st.charIdx].img);
-      
-      // Выбираем следующего базового персонажа
-      const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
-      if (available.length > 0) {
-        st.charIdx = available[Math.floor(Math.random() * available.length)];
-      }
-      st.step = 0;
-      checkLegendary();
-      render();
-      return;
+    if(wc===5||wc===6){
+      hint.style.display='block';
+      hint.textContent='⭐ Зарядки 5-6 дают звезду! Нажимай кнопку';
+      showClaimBtn('btn-star','Я сделал(а) зарядку! (+⭐)',doWorkout);
+    } else if(wc===7){
+      hint.style.display='block';
+      hint.textContent='🌟 7-й день — сияющая звезда!';
+      showClaimBtn('btn-shiny','Я сделал(а) зарядку! (+🌟)',doWorkout);
+    } else if(wc>=8){
+      hint.style.display='block';
+      hint.textContent='Все звёзды недели собраны! Новый персонаж появится на следующей неделе 🗓️';
+      document.getElementById('claimBtn').style.display='none';
+      document.getElementById('cooldown').style.display='none';
     } else {
-      const left = 4 - st.step;
-      celebrate('🔑', 'Ключ ' + st.step + ' из 4!', 'До суперсилы: ещё ' + left + ' ' + decl(left,'зарядка','зарядки','зарядок'));
+      // wc < 5: персонаж только что открыт, следующая зарядка даст звезду
+      hint.style.display='block';
+      hint.textContent='С 5-й зарядки за неделю — ⭐, с 7-й — 🌟!';
+      document.getElementById('claimBtn').style.display='none';
+      document.getElementById('cooldown').style.display='none';
     }
-  } else if (wc === 5 || wc === 6) {
-    // 5-6 день: обычная звезда ⭐
-    st.stars++;
-    save();
-    sound('rare');
-    celebrate('⭐', 'Звезда получена!', 'У тебя ' + st.stars + ' ⭐. Накопи 4 — открой редкого персонажа!');
-  } else if (wc === 7) {
-    // 7 день: сияющая звезда 🌟
-    st.starsShiny++;
-    save();
-    sound('rare');
-    celebrate('🌟', 'Сияющая звезда получена!', 'У тебя ' + st.starsShiny + ' 🌟. Накопи 4 — открой эпического персонажа!');
+    // Кулдаун для бонусных дней
+    if(wc===5||wc===6||wc===7) checkCooldown();
   } else {
-    celebrate('🏃', 'Зарядка засчитана!', 'Новая неделя — новый персонаж! Жди понедельника 🗓️');
+    // wait — следующая неделя
+    keysGrid.style.display='none';
+    charWrap.classList.remove('show');
+    progress.textContent='Жди следующей недели 🗓️';
+    document.getElementById('claimBtn').style.display='none';
+    document.getElementById('cooldown').style.display='none';
   }
-  
-  save();
-  render();
 }
 
-function checkLegendary() {
-  if (!st.gotLegend && st.gotBase.length >= BASE.length && st.gotRare.length >= RARE.length && st.gotEpic.length >= EPIC.length) {
-    st.gotLegend = true;
+function showClaimBtn(cls,text,fn){
+  const btn=document.getElementById('claimBtn');
+  btn.style.display='block';
+  btn.className='btn '+cls;
+  btn.textContent=text;
+  btn.onclick=fn;
+}
+
+function checkCooldown(){
+  const btn=document.getElementById('claimBtn');
+  const cool=document.getElementById('cooldown');
+  if(!st.lastClaim){
+    btn.style.display='block';
+    btn.className='btn btn-green';
+    btn.textContent='Я сделал(а) зарядку! 🏃';
+    btn.onclick=doWorkout;
+    cool.style.display='none';
+    return;
+  }
+  const last=new Date(st.lastClaim);
+  const next=new Date(last.getTime()+24*3600*1000);
+  if(new Date()>=next){
+    btn.style.display='block';
+    btn.className='btn btn-green';
+    btn.textContent='Я сделал(а) зарядку! 🏃';
+    btn.onclick=doWorkout;
+    cool.style.display='none';
+  } else {
+    btn.style.display='none';
+    cool.style.display='block';
+    tick(next);
+    const iv=setInterval(()=>{
+      if(new Date()>=next){clearInterval(iv);render();}
+      else tick(next);
+    },30000);
+  }
+}
+
+function tick(next){
+  const diff=next-new Date();
+  const h=Math.floor(diff/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  const t=h>0?h+' ч '+m+' мин':m+' мин';
+  const msgs=['Отличная работа! Приходи завтра 🌙','Скоро можно! Осталось: '+t,'Почти! Осталось: '+t,'Уже совсем скоро! '+t];
+  const idx=diff>12*3600000?0:diff>5*3600000?1:diff>3600000?2:3;
+  document.getElementById('cooldown').innerHTML=msgs[idx]+'<span class="cooldown-time">'+t+'</span>';
+}
+
+// ═══════════════════════════════════════════════════
+// ЗАРЯДКА
+// ═══════════════════════════════════════════════════
+function doWorkout(){
+  const now=new Date();
+  // Кулдаун 24ч
+  if(st.lastClaim&&(now-new Date(st.lastClaim))<24*3600*1000){
+    const next=new Date(new Date(st.lastClaim).getTime()+24*3600*1000);
+    document.getElementById('claimBtn').style.display='none';
+    document.getElementById('cooldown').style.display='block';
+    tick(next);
+    return;
+  }
+
+  const nowWeek=weekTs(now);
+  // Новая неделя?
+  if(!st.weekStart||st.weekStart<nowWeek){
+    st.weekStart=nowWeek;
+    st.weekCount=0;
+    if(st.lastClaim) st.weeksPlayed=(st.weeksPlayed||0)+1;
+  }
+  st.weekCount++;
+  st.lastClaim=now.toISOString();
+  const wc=st.weekCount;
+
+  if(wc<=4){
+    // ── Собираем ключи ──
+    st.step=(st.step||0)+1;
+    sound('key');
+
+    if(st.step>=4){
+      // Персонаж открыт!
+      if(!st.gotBase.includes(st.charIdx)) st.gotBase.push(st.charIdx);
+      st.phase='bonus';
+      // *** FIX: сбрасываем step ДО save ***
+      const openedChar = BASE[st.charIdx];
+      st.step=0;
+      st.charIdx=rndBase(st.gotBase); // готовим следующего
+      save();
+      checkLegendary();
+      sound('base');
+      celebrate('🎉',openedChar.power+' открыта!','Суперсила добавлена в коллекцию! С 5-й зарядки — ⭐',openedChar.img);
+    } else {
+      save();
+      const left=4-st.step;
+      celebrate('🔑','Ключ '+st.step+' из 4!','До суперсилы: ещё '+left+' '+decl(left,'зарядка','зарядки','зарядок'));
+    }
+
+  } else if(wc===5||wc===6){
+    // ── Звезда ──
+    st.stars=(st.stars||0)+1;
     save();
-    setTimeout(() => celebrate('🔥', 'ЛЕГЕНДА! Феникс получен!', 'Ты собрал(а) все суперсилы! Ты — Легенда!', LEGEND.img, 'legend'), 2000);
+    sound('rare');
+    celebrate('⭐','Звезда получена!','У тебя '+st.stars+' ⭐. Накопи 4 — открой редкого персонажа!');
+
+  } else if(wc===7){
+    // ── Сияющая звезда ──
+    st.shiny=(st.shiny||0)+1;
+    save();
+    sound('rare');
+    celebrate('🌟','Сияющая звезда!','У тебя '+st.shiny+' 🌟. Накопи 4 — открой эпического персонажа!');
+
+  } else {
+    // 8+ день
+    st.phase='wait';
+    save();
+    celebrate('🏃','Зарядка засчитана!','Новая неделя — новый персонаж! Жди понедельника 🗓️');
   }
 }
 
-window.switchTab = function(tab, btn) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+// ═══════════════════════════════════════════════════
+// ЛЕГЕНДАРНЫЙ
+// ═══════════════════════════════════════════════════
+function checkLegendary(){
+  if(!st.gotLegend&&st.gotBase.length>=BASE.length&&st.gotRare.length>=RARE.length&&st.gotEpic.length>=EPIC.length){
+    st.gotLegend=true; save();
+    setTimeout(()=>celebrate('🔥','ЛЕГЕНДА! Феникс получен!','Ты собрал(а) все суперсилы! Ты — Легенда!',LEGEND.img,'legend'),2000);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// ГАЛЕРЕЯ
+// ═══════════════════════════════════════════════════
+window.switchTab=function(tab,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderGallery(tab);
 };
 
-function renderGallery(tab) {
-  const cont = document.getElementById('galleryContent');
-  cont.innerHTML = '';
-  let chars;
-  if (tab === 'base') chars = BASE;
-  if (tab === 'rare') chars = RARE;
-  if (tab === 'epic') chars = EPIC;
-  if (tab === 'legend') chars = [LEGEND];
-  const grid = document.createElement('div'); grid.className = 'gallery-grid';
-  chars.forEach((c, i) => {
-    const got = tab === 'legend' ? st.gotLegend : (tab === 'base' ? st.gotBase.includes(i) : (tab === 'rare' ? st.gotRare.includes(i) : st.gotEpic.includes(i)));
-    const div = document.createElement('div'); div.className = 'g-item' + (got ? ' got' : ' locked');
-    if (got) { div.style.borderColor = '#667eea'; div.style.background = '#EDF2FF'; }
-    const area = document.createElement('div'); area.className = 'g-img';
-    if (got) {
-      const img = document.createElement('img'); img.src = c.img; img.alt = c.power;
-      img.onerror = () => { img.style.display='none'; area.innerHTML='<span style="font-size:40px">'+c.animal+'</span>'; };
+function renderGallery(tab){
+  const cont=document.getElementById('galleryContent');
+  cont.innerHTML='';
+
+  // Подсказка по ключам
+  if(tab==='rare'||tab==='epic'){
+    const info=document.createElement('div');
+    info.style.cssText='background:#f9f9f9;border-radius:14px;padding:10px 14px;margin-bottom:12px;font-size:12px;font-weight:700;color:#666;text-align:left;line-height:1.9';
+    info.innerHTML=(tab==='rare')
+      ?'⭐ 4 звезды → 1 редкий персонаж<br>У тебя: ⭐ '+(st.stars||0)
+      :'🌟 4 сияющих звезды → 1 эпический<br>У тебя: 🌟 '+(st.shiny||0);
+    cont.appendChild(info);
+  }
+
+  const chars=tab==='base'?BASE:tab==='rare'?RARE:tab==='epic'?EPIC:[LEGEND];
+  const grid=document.createElement('div'); grid.className='gallery-grid';
+
+  chars.forEach((c,i)=>{
+    const got=tab==='legend'?st.gotLegend:tab==='base'?st.gotBase.includes(i):tab==='rare'?st.gotRare.includes(i):st.gotEpic.includes(i);
+    const div=document.createElement('div');
+    div.className='g-item '+(got?'got':'locked');
+    if(got){div.style.borderColor=c.color+'88';div.style.background=c.color+'10';}
+
+    const area=document.createElement('div'); area.className='g-img';
+    if(got){
+      const img=document.createElement('img'); img.src=c.img; img.alt=c.power;
+      img.onerror=()=>{img.style.display='none';area.innerHTML='<span style="font-size:48px">'+c.animal+'</span>';};
       area.appendChild(img);
     } else {
-      area.innerHTML = '<span class="g-q">❓</span>';
+      area.innerHTML='<span class="g-q">❓</span>';
     }
     div.appendChild(area);
-    if (got) {
-      const nm = document.createElement('div'); nm.className = 'g-name'; 
-      nm.style.cssText = 'font-family:Fredoka One,cursive;font-size:14px;padding:8px 8px 12px;line-height:1.3;color:#667eea;word-break:break-word';
-      nm.textContent = c.power; 
-      div.appendChild(nm);
+
+    if(got){
+      const nm=document.createElement('div'); nm.className='g-name'; nm.style.color=c.color; nm.textContent=c.power; div.appendChild(nm);
     }
-    if (!got && (tab === 'rare' || tab === 'epic')) {
-      const cost = 4;
-      const can = tab === 'rare' ? (st.stars >= cost) : (st.starsShiny >= cost);
-      if (can) {
-        const btn = document.createElement('button');
-        btn.style.cssText = 'border:none;border-radius:10px;padding:6px 8px;font-family:Nunito,sans-serif;font-weight:800;font-size:11px;cursor:pointer;margin-top:8px;background:#FFF8E1;color:#F9A825';
-        btn.innerHTML = (tab === 'rare' ? '⭐' : '🌟') + ' ' + cost + ' → Открыть!';
-        btn.onclick = (e) => { e.stopPropagation(); spendStars(tab, i, cost); };
+
+    // Кнопка покупки
+    if(!got&&(tab==='rare'||tab==='epic')){
+      const cost=4;
+      const pool=tab==='rare'?st.stars||0:st.shiny||0;
+      const icon=tab==='rare'?'⭐':'🌟';
+      if(pool>=cost){
+        const btn=document.createElement('button');
+        btn.style.cssText='border:none;border-radius:12px;padding:8px 14px;font-family:Nunito,sans-serif;font-weight:800;font-size:12px;cursor:pointer;margin-top:8px;background:'+(tab==='rare'?'#FFF8E1':'#FFF3E0')+';color:'+(tab==='rare'?'#F9A825':'#FF6F00');
+        btn.innerHTML=icon+' '+cost+' → Открыть!';
+        btn.onclick=e=>{e.stopPropagation();buyChar(tab,i,cost);};
         div.appendChild(btn);
       } else {
-        const price = document.createElement('div');
-        price.style.cssText = 'font-size:11px;font-weight:700;color:#bbb;margin-top:6px;text-align:center';
-        price.innerHTML = (tab === 'rare' ? '⭐' : '🌟') + ' ' + cost;
-        div.appendChild(price);
+        const p=document.createElement('div');
+        p.style.cssText='font-size:11px;font-weight:700;color:#bbb;margin-top:6px;text-align:center';
+        p.textContent=icon+' '+cost;
+        div.appendChild(p);
       }
     }
-    if (tab === 'legend' && !got) {
-      const hint = document.createElement('div'); hint.style.cssText = 'font-size:11px;font-weight:700;color:#aaa;margin-top:6px;text-align:center'; hint.innerText = 'Собери всех персонажей!'; div.appendChild(hint);
+
+    if(tab==='legend'&&!got){
+      const h=document.createElement('div'); h.style.cssText='font-size:11px;font-weight:700;color:#aaa;margin-top:6px;text-align:center'; h.textContent='Собери всех персонажей!'; div.appendChild(h);
+    }
+
+    if(!got){
+      const rl=document.createElement('span'); rl.className='rarity-label rarity-'+tab;
+      const labels={base:'базовый',rare:'редкий',epic:'эпический',legend:'легендарный'};
+      rl.textContent=labels[tab]; div.appendChild(rl);
     }
     grid.appendChild(div);
   });
   cont.appendChild(grid);
 }
 
-function spendStars(tab, idx, cost) {
-  if (tab === 'rare') {
-    if (st.stars < cost) return;
-    if (st.gotRare.includes(idx)) return;
-    st.stars -= cost;
-    st.gotRare.push(idx);
-    save();
-    const char = RARE[idx];
-    celebrate('⭐', char.power + ' открыта!', char.name + ' теперь в твоей коллекции!', char.img, 'rare');
-  } else if (tab === 'epic') {
-    if (st.starsShiny < cost) return;
-    if (st.gotEpic.includes(idx)) return;
-    st.starsShiny -= cost;
-    st.gotEpic.push(idx);
-    save();
-    const char = EPIC[idx];
-    celebrate('🌟', char.power + ' открыта!', char.name + ' теперь в твоей коллекции!', char.img, 'epic');
-  }
+function buyChar(tab,idx,cost){
+  const field=tab==='rare'?'stars':'shiny';
+  const coll =tab==='rare'?'gotRare':'gotEpic';
+  const chars=tab==='rare'?RARE:EPIC;
+  if((st[field]||0)<cost) return;
+  if(st[coll].includes(idx)) return;
+  st[field]-=cost;
+  st[coll].push(idx);
+  save();
+  const c=chars[idx];
+  celebrate(tab==='rare'?'⭐':'🌟',c.power+' открыта!',c.name+' теперь в твоей коллекции!',c.img,tab==='rare'?'rare':'epic');
   checkLegendary();
   renderGallery(tab);
 }
 
-window.showGallery = function() {
-  document.getElementById('gameScreen').style.display = 'none';
-  document.getElementById('galleryScreen').style.display = 'block';
+window.showGallery=function(){
+  document.getElementById('gameScreen').style.display='none';
+  document.getElementById('galleryScreen').style.display='block';
   renderGallery('base');
-  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
 };
-window.hideGallery = function() {
-  document.getElementById('galleryScreen').style.display = 'none';
-  document.getElementById('gameScreen').style.display = 'block';
+window.hideGallery=function(){
+  document.getElementById('galleryScreen').style.display='none';
+  document.getElementById('gameScreen').style.display='block';
 };
 
-function checkBtn() {
-  const n = document.getElementById('nameInput').value.trim();
-  const k = document.getElementById('nickInput').value.trim();
-  document.getElementById('startBtn').disabled = !(n && k);
+// ═══════════════════════════════════════════════════
+// ВХОД
+// ═══════════════════════════════════════════════════
+function checkBtn(){
+  const n=document.getElementById('nameInput').value.trim();
+  const k=document.getElementById('nickInput').value.trim();
+  document.getElementById('startBtn').disabled=!(n&&k);
 }
-let _ac = 0;
-const _at = setInterval(() => { checkBtn(); if (++_ac >= 20) clearInterval(_at); }, 200);
+let _ac=0;
+const _at=setInterval(()=>{checkBtn();if(++_ac>=20)clearInterval(_at);},200);
 
-window.startGame = function() {
-  const name = document.getElementById('nameInput').value.trim();
-  const nick = document.getElementById('nickInput').value.trim();
-  if (!name || !nick) return;
-  playerKey = (name + '_' + nick).toLowerCase().replace(/[^a-zа-яё0-9]/gi, '_');
-  localStorage.setItem('as_who', JSON.stringify({name, nick}));
-  if (!load()) st = freshState();
-  st.name = name; st.nick = nick;
+window.startGame=function(){
+  const name=document.getElementById('nameInput').value.trim();
+  const nick=document.getElementById('nickInput').value.trim();
+  if(!name||!nick) return;
+  playerKey=(name+'_'+nick).toLowerCase().replace(/[^a-zа-яё0-9]/gi,'_');
+  localStorage.setItem('as_who',JSON.stringify({name,nick}));
+  if(!load()){st=freshState();}
+  st.name=name; st.nick=nick;
   save();
   sound('start');
-  document.getElementById('nameScreen').style.display = 'none';
-  document.getElementById('gameScreen').style.display = 'block';
+  document.getElementById('nameScreen').style.display='none';
+  document.getElementById('gameScreen').style.display='block';
   render();
 };
-window.changeName = function() {
+window.changeName=function(){
   localStorage.removeItem('as_who');
-  document.getElementById('gameScreen').style.display = 'none';
-  document.getElementById('nameScreen').style.display = 'block';
-  document.getElementById('nameInput').value = '';
-  document.getElementById('nickInput').value = '';
+  document.getElementById('gameScreen').style.display='none';
+  document.getElementById('nameScreen').style.display='block';
+  document.getElementById('nameInput').value='';
+  document.getElementById('nickInput').value='';
   checkBtn();
 };
-const _who = localStorage.getItem('as_who');
-if (_who) {
-  try {
-    const d = JSON.parse(_who);
-    if (d.name && d.nick) {
-      document.getElementById('nameInput').value = d.name;
-      document.getElementById('nickInput').value = d.nick;
-      checkBtn();
-    }
-  } catch(e) {}
-}
+const _who=localStorage.getItem('as_who');
+if(_who){try{const d=JSON.parse(_who);if(d.name&&d.nick){document.getElementById('nameInput').value=d.name;document.getElementById('nickInput').value=d.nick;checkBtn();}}catch(e){}}
 </script>
 </body>
 </html>
