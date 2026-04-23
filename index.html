@@ -454,23 +454,28 @@ function doWorkout() {
     sound('key');
     
     if (st.step >= 4) {
+      // ИСПРАВЛЕНИЕ 1: больше НЕ вызываем save() здесь, чтобы не сохранять step=4
       if (!st.gotBase.includes(st.charIdx)) {
         st.gotBase.push(st.charIdx);
       }
       st.lastUnlockWeek = nowWeek;
+      // ИСПРАВЛЕНИЕ 2: сбрасываем step сразу
+      const nextCharIdx = (() => {
+        const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
+        if (available.length > 0) return available[Math.floor(Math.random() * available.length)];
+        return Math.floor(Math.random() * BASE.length);
+      })();
+      st.charIdx = nextCharIdx;
+      st.step = 0;
+      // сохраняем уже новое состояние
       save();
       sound('base');
       celebrate('🎉', BASE[st.charIdx].power + ' открыта!', 'Суперсила добавлена в коллекцию!', BASE[st.charIdx].img);
-      
-      const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
-      if (available.length > 0) {
-        st.charIdx = available[Math.floor(Math.random() * available.length)];
-      }
-      st.step = 0;
       checkLegendary();
       render();
       return;
     } else {
+      save(); // промежуточные шаги сохраняем
       const left = 4 - st.step;
       celebrate('🔑', 'Ключ ' + st.step + ' из 4!', 'До суперсилы: ещё ' + left + ' ' + decl(left,'зарядка','зарядки','зарядок'));
     }
@@ -488,7 +493,6 @@ function doWorkout() {
     celebrate('🏃', 'Зарядка засчитана!', 'Новая неделя — новый персонаж! Жди понедельника 🗓️');
   }
   
-  save();
   render();
 }
 
