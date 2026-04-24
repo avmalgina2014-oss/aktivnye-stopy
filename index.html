@@ -2,966 +2,674 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>Активные Стопы — Собери суперсилы</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Активные Стопы</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-  }
-
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body {
     font-family: 'Nunito', sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    padding: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 15px;
+    color: #2d2d2d;
   }
-
   .card {
     background: #fff;
-    border-radius: 40px;
+    border-radius: 28px;
     padding: 24px 20px;
-    max-width: 450px;
+    max-width: 400px;
     width: 100%;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
     text-align: center;
-    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
   }
-
-  h1 {
-    font-family: 'Fredoka One', cursive;
-    font-size: 28px;
-    color: #1e293b;
-    margin-bottom: 5px;
-  }
-
-  .subtitle {
-    font-size: 13px;
-    color: #7c8ba0;
-    font-weight: 800;
-    margin-bottom: 20px;
-  }
-
+  h1 { font-family: 'Fredoka One', cursive; font-size: 24px; color: #2d2d2d; margin-bottom: 4px; line-height: 1.2; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 20px; font-weight: 700; }
+  
+  /* Кнопки */
   .btn {
-    background: linear-gradient(135deg, #6366f1, #a855f7);
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
     border: none;
-    width: 100%;
-    padding: 14px;
-    border-radius: 60px;
+    border-radius: 16px;
+    padding: 14px 24px;
     font-family: 'Fredoka One', cursive;
     font-size: 18px;
-    color: white;
     cursor: pointer;
-    transition: all 0.15s;
-    box-shadow: 0 6px 14px rgba(99, 102, 241, 0.3);
-    margin-top: 12px;
+    width: 100%;
+    transition: transform .1s, opacity .2s;
+    box-shadow: 0 6px 20px rgba(102,126,234,.4);
+    margin-top: 10px;
+    touch-action: manipulation;
   }
-
-  .btn:active {
-    transform: scale(0.96);
-  }
-
-  .btn:disabled {
-    opacity: 0.5;
-    transform: none;
-    cursor: not-allowed;
-  }
-
-  .btn-green {
-    background: linear-gradient(135deg, #10b981, #059669);
-    box-shadow: 0 6px 14px rgba(16, 185, 129, 0.3);
-  }
-
-  .btn-star {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    box-shadow: 0 6px 14px rgba(245, 158, 11, 0.3);
-  }
-
-  .btn-shiny {
-    background: linear-gradient(135deg, #f97316, #ea580c);
-    box-shadow: 0 6px 14px rgba(249, 115, 22, 0.3);
-  }
-
-  .field-label {
-    text-align: left;
-    font-size: 12px;
-    font-weight: 800;
-    color: #556;
-    margin-bottom: 6px;
-    letter-spacing: 0.5px;
-  }
-
+  .btn:active { transform: scale(0.96); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; filter: grayscale(1); box-shadow: none; }
+  .btn-green { background: linear-gradient(135deg, #2E7D32, #4CAF50); box-shadow: 0 6px 20px rgba(46,125,50,.4); }
+  
+  /* Поля ввода */
+  .field-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; text-align: left; }
   .field-input {
     width: 100%;
-    border: 2.5px solid #e2e8f0;
-    border-radius: 60px;
-    padding: 12px 16px;
-    font-size: 17px;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 16px;
-    outline: none;
+    border: 2px solid #e0e4ef;
+    border-radius: 12px;
+    padding: 12px;
     font-family: 'Nunito', sans-serif;
-  }
-
-  .field-input:focus {
-    border-color: #8b5cf6;
-  }
-
-  .top-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .rank-badge {
-    background: #f1f5f9;
-    padding: 6px 16px;
-    border-radius: 40px;
-    font-weight: 800;
-    font-size: 13px;
-    font-family: 'Fredoka One', cursive;
-  }
-
-  .rank-novice { background: #dcfce7; color: #166534; }
-  .rank-student { background: #fef9c3; color: #854d0e; }
-  .rank-pro { background: #dbeafe; color: #1e40af; }
-  .rank-master { background: #e9d5ff; color: #6b21a5; }
-
-  .keys-wallet {
-    display: flex;
-    gap: 12px;
-    background: #f8fafc;
-    padding: 5px 20px;
-    border-radius: 60px;
-  }
-
-  .wallet-slot {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'Fredoka One', cursive;
-    font-size: 20px;
-    font-weight: bold;
-  }
-
-  .wallet-slot.star { color: #f59e0b; }
-  .wallet-slot.shiny { color: #ea580c; }
-
-  .greeting {
     font-size: 18px;
-    font-weight: 900;
-    color: #0f172a;
-    margin-bottom: 8px;
+    font-weight: 700;
+    outline: none;
+    text-align: center;
+    margin-bottom: 14px;
+    transition: border-color .2s;
   }
+  .field-input:focus { border-color: #667eea; }
 
-  .progress-text {
-    font-weight: 800;
-    color: #475569;
-    background: #f8fafc;
-    padding: 10px 14px;
-    border-radius: 60px;
+  /* Верхняя панель */
+  .top-bar { 
+    display: flex; 
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px; 
+  }
+  .rank-row { display: flex; justify-content: space-between; align-items: center; }
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+  .rank-novice { background: #e8f5e9; color: #2E7D32; }
+  .rank-student { background: #FFF8E1; color: #F57F17; border: 1px solid #FFE082; }
+  .rank-pro { background: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
+  .rank-master { background: #2d2d2d; color: #FFD700; border: 1px solid #555; }
+  
+  .wallet { 
+    display: flex; 
+    gap: 10px; 
+    background: #f5f5f5; 
+    border-radius: 30px; 
+    padding: 4px 12px; 
     font-size: 14px;
-    margin: 12px 0;
+    font-weight: 800;
   }
+  .w-slot { display: flex; align-items: center; gap: 4px; }
+  .w-star { color: #F9A825; }
+  .w-shiny { color: #FF6F00; }
 
-  .keys-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin: 12px 0;
+  /* Сетка ключей */
+  .keys-grid { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 10px; 
+    margin-bottom: 16px; 
   }
-
   .key-slot {
     aspect-ratio: 1;
-    background: #f8fafc;
-    border: 3px dashed #cbd5e1;
-    border-radius: 24px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 34px;
-    transition: all 0.2s;
-  }
-
-  .key-slot.filled {
-    background: #fffbeb;
-    border: 3px solid #fbbf24;
-    box-shadow: 0 2px 12px rgba(251, 191, 36, 0.3);
-    animation: bounce 0.35s ease;
-  }
-
-  @keyframes bounce {
-    0% { transform: scale(0.7); opacity: 0; }
-    80% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-  }
-
-  .char-wrap {
-    background: #fef9e3;
-    border-radius: 32px;
-    margin: 12px 0;
-    padding: 8px;
-    display: none;
-  }
-
-  .char-wrap.show {
-    display: block;
-    animation: fadeZoom 0.4s;
-  }
-
-  @keyframes fadeZoom {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  .char-wrap img {
-    width: 100%;
-    height: 200px;
-    object-fit: contain;
-    border-radius: 24px;
-  }
-
-  .cooldown-msg {
-    background: #eff6ff;
-    padding: 12px;
-    border-radius: 28px;
-    font-weight: 700;
-    font-size: 13px;
-    margin-top: 10px;
-    display: none;
-    color: #2563eb;
-  }
-
-  .cooldown-time {
-    font-family: 'Fredoka One', cursive;
-    font-size: 22px;
-    display: block;
-    margin-top: 5px;
-  }
-
-  .info-box {
-    background: #fefce8;
-    padding: 10px;
-    border-radius: 28px;
-    font-weight: 700;
-    font-size: 12px;
-    margin-top: 10px;
-    display: none;
-    color: #b45309;
-  }
-
-  .collection-bar {
-    border-top: 2px solid #eef2ff;
-    padding-top: 16px;
-    margin-top: 20px;
-    cursor: pointer;
-    font-weight: 800;
-    color: #4b5563;
-  }
-
-  .change-name {
-    font-size: 11px;
-    color: #94a3b8;
-    margin-top: 14px;
-    cursor: pointer;
-  }
-
-  .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-    margin: 18px 0;
-  }
-
-  .g-item {
-    background: #f8fafc;
-    border-radius: 28px;
-    overflow: hidden;
-    text-align: center;
-    border: 2px solid #e2e8f0;
-    transition: 0.2s;
-    padding-bottom: 12px;
-  }
-
-  .g-item.got {
-    background: white;
-    border-color: #facc15;
-  }
-
-  .g-item img {
-    width: 100%;
-    height: 130px;
-    object-fit: contain;
-  }
-
-  .g-name {
-    font-weight: 900;
-    font-size: 16px;
-    margin: 6px 0 4px;
-    color: #312e81;
-  }
-
-  .g-price {
-    background: #fef9e3;
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 30px;
-    font-weight: 800;
-    font-size: 12px;
-    margin: 6px 0;
-  }
-
-  .g-btn {
-    background: #facc15;
-    border: none;
-    border-radius: 60px;
-    padding: 6px 14px;
-    font-weight: 800;
-    font-size: 12px;
-    margin: 6px auto 0;
-    cursor: pointer;
-    width: 85%;
-  }
-
-  .celebration {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.85);
-    align-items: center;
-    justify-content: center;
-    z-index: 200;
-  }
-
-  .celebration.show {
-    display: flex;
-  }
-
-  .celeb-box {
-    background: white;
-    border-radius: 48px;
-    padding: 24px;
-    text-align: center;
-    max-width: 300px;
-    width: 85%;
-  }
-
-  .celeb-emoji {
-    font-size: 56px;
-  }
-
-  .celeb-title {
     font-size: 24px;
-    font-weight: 900;
-    margin: 8px 0;
+    border: 2px dashed #ddd;
+    background: #fafafa;
+    transition: all .3s ease;
   }
+  .key-slot.filled { 
+    border: 2px solid #FFD700; 
+    background: linear-gradient(135deg, #fffde7, #fff9c4); 
+    box-shadow: 0 4px 10px rgba(255,215,0,.3); 
+    animation: popIn .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes popIn { 0%{transform:scale(0)} 100%{transform:scale(1)} }
 
-  .gallery-tabs {
+  /* Таймер */
+  .cooldown-box { 
+    background: #f0f4ff; 
+    border-radius: 16px; 
+    padding: 16px; 
+    margin-top: 10px;
+    display: none;
+  }
+  .cd-text { font-size: 14px; font-weight: 700; color: #667eea; margin-bottom: 4px; }
+  .cd-time { font-family: 'Fredoka One', cursive; font-size: 22px; color: #2d2d2d; }
+
+  /* Коллекция ссылка */
+  .col-link { 
+    margin-top: 20px; 
+    padding-top: 15px; 
+    border-top: 2px solid #f0f0f0; 
+    cursor: pointer; 
+    font-weight: 800; 
+    color: #888;
+    transition: color .2s;
+  }
+  .col-link:hover { color: #667eea; }
+  
+  .change-name {
+    font-size: 11px; color: #ccc; margin-top: 10px; cursor: pointer; font-weight: 700;
+  }
+  .change-name:hover { color: #667eea; }
+
+  /* Галерея */
+  #galleryScreen { display: none; text-align: left; }
+  .gallery-header { text-align: center; margin-bottom: 20px; }
+  .tabs { display: flex; border-bottom: 2px solid #eee; margin-bottom: 15px; }
+  .tab { 
+    flex: 1; 
+    text-align: center; 
+    padding: 10px 0; 
+    font-weight: 800; 
+    font-size: 12px; 
+    color: #ccc; 
+    cursor: pointer; 
+    border-bottom: 3px solid transparent;
+  }
+  .tab.active { color: #667eea; border-bottom-color: #667eea; }
+  
+  .g-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .g-card { 
+    border: 2px solid #eee; 
+    border-radius: 16px; 
+    padding: 10px; 
+    text-align: center; 
+    background: #fff;
+    position: relative;
+    min-height: 140px; /* Фиксированная высота для выравнивания */
     display: flex;
-    gap: 6px;
-    background: #f1f5f9;
-    border-radius: 60px;
-    padding: 5px;
-    margin-bottom: 20px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
-
-  .tab-btn {
-    flex: 1;
-    background: transparent;
-    border: none;
-    padding: 8px 0;
-    font-weight: 800;
-    border-radius: 40px;
-    font-size: 13px;
-    cursor: pointer;
+  .g-card.locked { background: #f9f9f9; }
+  .g-card.unlocked { border-color: #667eea; background: #f4f7ff; }
+  
+  /* Красный вопрос для базовых */
+  .big-q {
+    font-family: 'Fredoka One', cursive;
+    font-size: 40px;
+    color: #ff5252;
+    display: block;
   }
-
-  .tab-btn.active {
-    background: white;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-    color: #6d28d9;
-  }
-
-  .rarity-label {
-    font-size: 9px;
-    font-weight: 900;
-    padding: 2px 10px;
-    border-radius: 20px;
+  
+  .g-icon { font-size: 32px; margin-bottom: 5px; display: block; }
+  .g-name { font-size: 12px; font-weight: 700; line-height: 1.2; margin-bottom: 5px; height: 28px; display: flex; align-items: center; justify-content: center;}
+  .g-price { 
+    font-size: 11px; 
+    font-weight: 800; 
+    color: #888; 
+    background: #eee; 
+    padding: 4px 8px; 
+    border-radius: 10px; 
     display: inline-block;
-    margin: 4px 0;
   }
-  .rarity-base { background: #dbeafe; color: #1e3a8a; }
-  .rarity-rare { background: #fef3c7; color: #92400e; }
-  .rarity-epic { background: #fce7f3; color: #9d174d; }
-  .rarity-legendary { background: #f3e8ff; color: #6b21a5; }
+  .buy-btn {
+    background: #FFD700; color: #5d4037; border: none; padding: 6px 10px; 
+    border-radius: 8px; font-weight: 800; font-size: 11px; cursor: pointer; margin-top: 5px; width: 100%;
+  }
+
+  /* Модалка успеха */
+  .modal {
+    display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center;
+  }
+  .modal.show { display: flex; animation: fadeIn .2s; }
+  .modal-box { 
+    background: #fff; width: 85%; max-width: 320px; padding: 25px 20px; 
+    border-radius: 24px; text-align: center; animation: slideUp .3s;
+  }
+  .m-emoji { font-size: 50px; display: block; margin-bottom: 10px; }
+  .m-title { font-family: 'Fredoka One'; font-size: 22px; margin-bottom: 8px; color: #2d2d2d; }
+  .m-desc { font-size: 14px; color: #666; margin-bottom: 20px; line-height: 1.4; }
+  
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+
 </style>
 </head>
 <body>
 
-<div class="card" id="nameScreen">
+<!-- Экран входа -->
+<div class="card" id="loginScreen">
   <h1>👣 Активные Стопы</h1>
   <div class="subtitle">Собери все суперсилы!</div>
-  <div class="field-label">Твоё имя</div>
-  <input class="field-input" id="nameInput" placeholder="Например: Саша" maxlength="15">
-  <div class="field-label">Придумай ник</div>
-  <input class="field-input" id="nickInput" placeholder="Ракета 🚀" maxlength="20">
-  <button class="btn" id="startBtn" disabled>Вперёд! 🚀</button>
+  <div class="field-label">Как тебя зовут?</div>
+  <input type="text" class="field-input" id="inpName" placeholder="Имя" maxlength="12">
+  <div class="field-label">Твой никнейм</div>
+  <input type="text" class="field-input" id="inpNick" placeholder="Ник" maxlength="12">
+  <button class="btn" id="startBtn" onclick="initGame()" disabled>Вперёд! 🚀</button>
 </div>
 
+<!-- Экран игры -->
 <div class="card" id="gameScreen" style="display:none">
   <div class="top-bar">
-    <div class="rank-badge rank-novice" id="rankBadge">🌱 НОВИЧОК</div>
-    <div class="keys-wallet">
-      <div class="wallet-slot star">⭐ <span id="starCount">0</span></div>
-      <div class="wallet-slot shiny">🌟 <span id="shinyCount">0</span></div>
+    <div class="rank-row">
+      <div id="rankBadge" class="rank-badge rank-novice">🌱 Новичок</div>
+      <div class="wallet">
+        <div class="w-slot w-star">⭐ <span id="valStar">0</span></div>
+        <div class="w-slot w-shiny">🌟 <span id="valShiny">0</span></div>
+      </div>
     </div>
   </div>
-  <div class="greeting" id="greeting">Привет!</div>
-  <div class="progress-text" id="progressText"></div>
-  <div class="keys-grid" id="keysGrid"></div>
-  <div class="char-wrap" id="charWrap"><img id="charImg" src=""></div>
-  <button class="btn btn-green" id="claimBtn">🏃‍♀️ Я сделал(а) зарядку!</button>
-  <div class="cooldown-msg" id="cooldownMsg"></div>
-  <div class="info-box" id="infoBox"></div>
-  <div class="collection-bar" id="collectionBar">🏅 Моя коллекция →</div>
-  <div class="change-name" id="changeNameBtn">🔄 Сменить имя</div>
+
+  <h2 id="greeting" style="font-size:18px; margin-bottom:10px;">Привет!</h2>
+  <p id="taskText" style="font-size:14px; color:#666; margin-bottom:15px; min-height:40px;"></p>
+
+  <!-- Сетка для ключей (показывается только в дни ключей) -->
+  <div class="keys-grid" id="keysGrid">
+    <div class="key-slot" id="k0"></div>
+    <div class="key-slot" id="k1"></div>
+    <div class="key-slot" id="k2"></div>
+    <div class="key-slot" id="k3"></div>
+  </div>
+
+  <button class="btn btn-green" id="actionBtn" onclick="doDailyTask()">Я сделал(а) зарядку! 🏃</button>
+  
+  <div class="cooldown-box" id="cooldownBox">
+    <div class="cd-text">Следующая зарядка через:</div>
+    <div class="cd-time" id="timerDisplay">00:00:00</div>
+  </div>
+
+  <div class="col-link" onclick="openGallery()">🏅 Моя коллекция →</div>
+  <div class="change-name" onclick="changeName()">Это не я → сменить имя</div>
 </div>
 
-<div class="card" id="galleryScreen" style="display:none">
-  <h1>🏅 Галерея сил</h1>
-  <div class="gallery-tabs" id="galleryTabs"></div>
-  <div id="galleryContent"></div>
-  <button class="btn" id="backToGameBtn">← На главную</button>
+<!-- Экран галереи -->
+<div class="card" id="galleryScreen">
+  <div class="gallery-header">
+    <h1>Коллекция сил</h1>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('base')">Базовые</div>
+    <div class="tab" onclick="switchTab('rare')">Редкие</div>
+    <div class="tab" onclick="switchTab('epic')">Эпик</div>
+    <div class="tab" onclick="switchTab('legend')">Легенда</div>
+  </div>
+  <div id="galleryContent" class="g-grid"></div>
+  <button class="btn" style="margin-top:20px; background:#eee; color:#555; box-shadow:none;" onclick="closeGallery()">← Назад к игре</button>
 </div>
 
-<div class="celebration" id="celebration">
-  <div class="celeb-box">
-    <div class="celeb-emoji" id="celebEmoji">🎉</div>
-    <div class="celeb-title" id="celebTitle"></div>
-    <img class="celeb-img" id="celebImg" style="width:100%; margin:8px 0; display:none;">
-    <div class="celeb-text" id="celebText" style="margin:10px 0;"></div>
-    <button class="btn" id="closeCelebBtn">Класс!</button>
+<!-- Модальное окно награды -->
+<div class="modal" id="rewardModal">
+  <div class="modal-box">
+    <span class="m-emoji" id="mEmoji">🎉</span>
+    <div class="m-title" id="mTitle">Отлично!</div>
+    <div class="m-desc" id="mDesc">Ты получил награду.</div>
+    <button class="btn" onclick="closeModal()">Ура!</button>
   </div>
 </div>
 
 <script>
-  // ======================= ПЕРСОНАЖИ =========================
-  const BASE_CHARS = [
-    { animal:"🐆", power:"Скорость", name:"Гепард", img:"gepard.png" },
-    { animal:"🐦", power:"Лёгкость", name:"Колибри", img:"kolibri.png" },
-    { animal:"🐜", power:"Сила", name:"Муравей", img:"muravey.png" },
-    { animal:"🦩", power:"Баланс", name:"Фламинго", img:"flamingo.png" },
-    { animal:"🦥", power:"Восстановление", name:"Ленивец", img:"lenivec.png" },
-    { animal:"🐒", power:"Координация", name:"Обезьяна", img:"obeziana.png" },
-    { animal:"🐫", power:"Выносливость", name:"Верблюд", img:"verblyud.png" },
-    { animal:"🐱", power:"Гибкость", name:"Кошка", img:"koshka.png" }
-  ];
-  const RARE_CHARS = [
-    { animal:"🦘", power:"Прыгучесть", name:"Кенгуру", img:"kenguru.png" },
-    { animal:"🐙", power:"Цепкость", name:"Осьминог", img:"osminog.png" },
-    { animal:"🦀", power:"Устойчивость", name:"Краб", img:"krab.png" },
-    { animal:"🐌", power:"Чуткость", name:"Улитка", img:"ulitka.png" }
-  ];
-  const EPIC_CHARS = [
-    { animal:"🦄✨", power:"Полёт", name:"Пегас", img:"pegas.png" },
-    { animal:"🐉", power:"Суперсила", name:"Дракон", img:"drakon.png" }
-  ];
-  const LEGEND_CHAR = { animal:"🔥", power:"Возрождение", name:"Феникс", img:"feniks.png" };
+// --- НАСТРОЙКИ СТАРТА ---
+// 0 = начать сначала. 5 = начать с 5 дня (для теста).
+const START_DAY_OVERRIDE = 0; 
 
-  // -----  Дни (скрыты от ребёнка)  1-56 ------
-  const KEY_DAYS = [1,2,3,4,8,9,10,11,15,16,17,18,22,23,24,25,29,30,31,32,36,37,38,39,43,44,45,46,50,51,52,53];
-  const STAR_DAYS = [5,6,12,13,19,20,26,27,33,34,40,41,47,48,54,55];
-  const SHINY_DAYS = [7,14,21,28,35,42,49,56];
+// --- ДАННЫЕ ИГРЫ ---
+const GOLD_DAYS = [1,2,3,4, 8,9,10,11, 15,16,17,18, 22,23,24,25, 29,30,31,32, 36,37,38,39, 43,44,45,46, 50,51,52,53];
+const STAR_DAYS = [5,6, 12,13, 19,20, 26,27, 33,34, 40,41, 47,48, 54,55];
+const SHINY_DAYS = [7, 14, 21, 28, 35, 42, 49, 56];
 
-  function getDayType(dayNum) {
-    if (dayNum > 56) return 'finished';
-    if (KEY_DAYS.includes(dayNum)) return 'key';
-    if (STAR_DAYS.includes(dayNum)) return 'star';
-    if (SHINY_DAYS.includes(dayNum)) return 'shiny';
-    return 'key';
+const BASE_CHARS = [
+  {n:"Гепард", p:"Скорость", i:"🐆"}, {n:"Колибри", p:"Лёгкость", i:"🐦"},
+  {n:"Муравей", p:"Сила", i:"🐜"}, {n:"Фламинго", p:"Баланс", i:"🦩"},
+  {n:"Ленивец", p:"Покой", i:"🦥"}, {n:"Обезьяна", p:"Ловкость", i:"🐒"},
+  {n:"Верблюд", p:"Выносливость", i:"🐫"}, {n:"Кошка", p:"Гибкость", i:"🐱"}
+];
+const RARE_CHARS = [
+  {n:"Кенгуру", p:"Прыжок", i:"🦘", cost:4}, {n:"Осьминог", p:"Хватка", i:"🐙", cost:4},
+  {n:"Краб", p:"Защита", i:"🦀", cost:4}, {n:"Улитка", p:"Мудрость", i:"🐌", cost:4}
+];
+const EPIC_CHARS = [
+  {n:"Единорог", p:"Магия", i:"🦄", cost:4}, {n:"Дракон", p:"Огонь", i:"🐉", cost:4}
+];
+const LEGEND_CHAR = {n:"Феникс", p:"Возрождение", i:"🔥"};
+
+let state = {
+  name: "", nick: "",
+  day: 1, 
+  lastDate: null, 
+  stars: 0, shiny: 0,
+  keysCollected: 0, 
+  unlocked: { base:[], rare:[], epic:[], legend:false },
+};
+
+function initGame() {
+  const name = document.getElementById('inpName').value.trim();
+  const nick = document.getElementById('inpNick').value.trim();
+  if(!name || !nick) return;
+  
+  const saved = localStorage.getItem('as_save_' + nick);
+  if(saved) {
+    state = JSON.parse(saved);
+  } else {
+    state.name = name; state.nick = nick;
+    state.day = START_DAY_OVERRIDE > 0 ? START_DAY_OVERRIDE : 1;
+    state.lastDate = null; 
+    state.keysCollected = 0;
   }
+  
+  saveState();
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'block';
+  renderGame();
+  startTimerLoop();
+}
 
-  function getRank(dayNum) {
-    if (dayNum >= 50) return { label:"👑 МАСТЕР", cls:"rank-master" };
-    if (dayNum >= 36) return { label:"⚡ ПРОФИ", cls:"rank-pro" };
-    if (dayNum >= 15) return { label:"📖 УЧЕНИК", cls:"rank-student" };
-    return { label:"🌱 НОВИЧОК", cls:"rank-novice" };
-  }
+document.querySelectorAll('.field-input').forEach(inp => {
+  inp.addEventListener('input', () => {
+    const n = document.getElementById('inpName').value.trim();
+    const k = document.getElementById('inpNick').value.trim();
+    document.getElementById('startBtn').disabled = !(n && k);
+  });
+});
 
-  // ------ Кулдаун по календарю ---------
-  function isNewDay(lastDate) {
-    if (!lastDate) return true;
-    const last = new Date(lastDate);
-    const now = new Date();
-    return (last.getDate() !== now.getDate() || last.getMonth() !== now.getMonth() || last.getFullYear() !== now.getFullYear());
-  }
+function getRank(day) {
+  if(day >= 50) return {t:"МАСТЕР", c:"rank-master"};
+  if(day >= 36) return {t:"ПРОФИ", c:"rank-pro"};
+  if(day >= 15) return {t:"УЧЕНИК", c:"rank-student"};
+  return {t:"НОВИЧОК", c:"rank-novice"};
+}
 
-  function getTimeToTomorrow() {
-    const now = new Date();
-    const tomorrow = new Date(now);
-    tomorrow.setDate(now.getDate() + 1);
-    tomorrow.setHours(0,0,0,0);
-    const diff = tomorrow - now;
-    const hours = Math.floor(diff / 3600000);
-    const mins = Math.floor((diff % 3600000) / 60000);
-    return { hours, mins };
-  }
+function isKeyDay(d) { return GOLD_DAYS.includes(d); }
+function isStarDay(d) { return STAR_DAYS.includes(d); }
+function isShinyDay(d) { return SHINY_DAYS.includes(d); }
 
-  // ----------- СОСТОЯНИЕ ------------
-  let state = {};
-  let currentPlayerKey = "";
+function renderGame() {
+  const d = state.day;
+  const rank = getRank(d);
+  
+  const badge = document.getElementById('rankBadge');
+  badge.className = `rank-badge ${rank.c}`;
+  // Добавляем иконки к тексту ранга
+  let icon = "";
+  if(rank.t === "НОВИЧОК") icon = "🌱 ";
+  if(rank.t === "УЧЕНИК") icon = "📖 ";
+  if(rank.t === "ПРОФИ") icon = "⚡ ";
+  if(rank.t === "МАСТЕР") icon = "👑 ";
+  
+  badge.innerText = icon + rank.t;
+  
+  document.getElementById('greeting').innerText = `Привет, ${state.name}!`;
+  document.getElementById('valStar').innerText = state.stars;
+  document.getElementById('valShiny').innerText = state.shiny;
 
-  function defaultState(name, nick) {
-    return {
-      name: name, nick: nick,
-      startDate: null,
-      lastWorkoutDate: null,
-      currentKeyStep: 0,
-      stars: 0,
-      shinyStars: 0,
-      collectedBase: [],
-      collectedRare: [],
-      collectedEpic: [],
-      legendUnlocked: false,
-      nextBaseIndex: Math.floor(Math.random() * BASE_CHARS.length)
-    };
-  }
-
-  function saveGame() {
-    if (!currentPlayerKey) return;
-    localStorage.setItem(`active_foot_${currentPlayerKey}`, JSON.stringify(state));
-  }
-
-  function loadGame(key) {
-    const raw = localStorage.getItem(`active_foot_${key}`);
-    if (!raw) return false;
-    try {
-      const data = JSON.parse(raw);
-      state = data;
-      if (!state.collectedBase) state.collectedBase = [];
-      if (!state.collectedRare) state.collectedRare = [];
-      if (!state.collectedEpic) state.collectedEpic = [];
-      if (state.legendUnlocked === undefined) state.legendUnlocked = false;
-      if (state.currentKeyStep === undefined) state.currentKeyStep = 0;
-      if (state.stars === undefined) state.stars = 0;
-      if (state.shinyStars === undefined) state.shinyStars = 0;
-      if (!state.nextBaseIndex && state.nextBaseIndex !== 0) state.nextBaseIndex = Math.floor(Math.random() * BASE_CHARS.length);
-      return true;
-    } catch(e) { return false; }
-  }
-
-  function getCurrentDayNumber() {
-    if (!state.startDate) return 1;
-    const start = new Date(state.startDate);
-    start.setHours(0,0,0,0);
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    let diffDays = Math.floor((today - start) / (1000*60*60*24));
-    let day = diffDays + 1;
-    if (day > 56) day = 56;
-    return day;
-  }
-
-  function canWorkoutToday() {
-    if (!state.lastWorkoutDate) return true;
-    return isNewDay(state.lastWorkoutDate);
-  }
-
-  function openBaseCharacter() {
-    const newIdx = state.nextBaseIndex;
-    if (!state.collectedBase.includes(newIdx)) state.collectedBase.push(newIdx);
-    const free = BASE_CHARS.map((_,i)=>i).filter(i => !state.collectedBase.includes(i));
-    state.nextBaseIndex = free.length ? free[Math.floor(Math.random() * free.length)] : 0;
-    saveGame();
-    const opened = BASE_CHARS[newIdx];
-    celebrate("🎉", opened.power + " открыта!", opened.name + " в коллекции!", opened.img, "base");
-    checkLegend();
-  }
-
-  function checkLegend() {
-    if (!state.legendUnlocked && 
-        state.collectedBase.length === BASE_CHARS.length &&
-        state.collectedRare.length === RARE_CHARS.length &&
-        state.collectedEpic.length === EPIC_CHARS.length) {
-      state.legendUnlocked = true;
-      saveGame();
-      setTimeout(() => {
-        celebrate("🔥", "ЛЕГЕНДАРНЫЙ ФЕНИКС!", "Все суперсилы собраны. Ты — легенда!", LEGEND_CHAR.img, "legend");
-      }, 300);
-    }
-  }
-
-  function playSound(type) {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const sounds = {
-        key: [[880,0.12,'sine']],
-        base: [[523,0.16],[659,0.16],[784,0.16]],
-        rare: [[659,0.13],[880,0.13]],
-        epic: [[523,0.18],[784,0.18],[1047,0.18]],
-        legend: [[262,0.2],[392,0.2],[523,0.2]]
-      };
-      const seq = sounds[type];
-      if(!seq) return;
-      seq.forEach(([f,dur,sh],i)=>{
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.type = sh || 'sine';
-        osc.frequency.value = f;
-        gain.gain.value = 0.2;
-        const start = ctx.currentTime + i * 0.14;
-        osc.start(start);
-        gain.gain.exponentialRampToValueAtTime(0.001, start+0.4);
-        osc.stop(start+0.4);
-      });
-    } catch(e) {}
-  }
-
-  function celebrate(emoji, title, text, img, soundType) {
-    const celebDiv = document.getElementById("celebration");
-    document.getElementById("celebEmoji").innerText = emoji;
-    document.getElementById("celebTitle").innerText = title;
-    document.getElementById("celebText").innerHTML = text;
-    const imgEl = document.getElementById("celebImg");
-    if (img) { imgEl.src = img; imgEl.style.display = "block"; imgEl.onerror = () => imgEl.style.display = "none"; }
-    else imgEl.style.display = "none";
-    celebDiv.classList.add("show");
-    if (soundType) playSound(soundType);
-  }
-
-  function closeCeleb() {
-    document.getElementById("celebration").classList.remove("show");
-    renderUI();
-  }
-
-  async function doWorkout() {
-    if (getCurrentDayNumber() >= 56) {
-      celebrate("🏆", "Игра пройдена!", "Ты собрал(а) все суперсилы!", "", "legend");
-      return;
-    }
-    if (!canWorkoutToday()) {
-      renderUI();
-      return;
-    }
-
-    const todayNum = getCurrentDayNumber();
-    const rewardType = getDayType(todayNum);
-
-    if (!state.startDate) {
-      state.startDate = new Date().toISOString();
-    }
-    state.lastWorkoutDate = new Date().toISOString();
-
-    if (rewardType === 'key') {
-      state.currentKeyStep++;
-      playSound("key");
-      if (state.currentKeyStep >= 4) {
-        openBaseCharacter();
-        state.currentKeyStep = 0;
+  const grid = document.getElementById('keysGrid');
+  const taskText = document.getElementById('taskText');
+  
+  if(isKeyDay(d)) {
+    grid.style.display = 'grid';
+    for(let i=0; i<4; i++) {
+      const slot = document.getElementById('k'+i);
+      if(i < state.keysCollected) {
+        slot.classList.add('filled');
+        slot.innerHTML = '🔑';
       } else {
-        const left = 4 - state.currentKeyStep;
-        celebrate("🔑", `Ключ ${state.currentKeyStep}/4`, `Осталось ${left} зарядк${left===1?"а":"и"} до суперсилы`, null, "key");
+        slot.classList.remove('filled');
+        slot.innerHTML = '';
       }
-    } 
-    else if (rewardType === 'star') {
-      state.stars++;
-      playSound("rare");
-      const need = 4 - ((state.stars % 4) || 4);
-      celebrate("⭐", "Звезда силы!", `Всего ⭐: ${state.stars}. До редкого героя: ${need} ⭐`, null, "rare");
-    } 
-    else if (rewardType === 'shiny') {
-      state.shinyStars++;
-      playSound("epic");
-      const need = 4 - ((state.shinyStars % 4) || 4);
-      celebrate("🌟", "Сияющая звезда!", `Всего 🌟: ${state.shinyStars}. До эпического: ${need} 🌟`, null, "epic");
+    }
+    
+    const keysLeft = 4 - state.keysCollected;
+    if(keysLeft > 0) {
+        taskText.innerText = `Собери ещё ${keysLeft} ключ(а), чтобы открыть Суперсилу!`;
+    } else {
+        taskText.innerText = `Последний рывок! Получи 4-й ключ!`;
     }
 
-    saveGame();
-    renderUI();
+  } else {
+    grid.style.display = 'none';
+    if(isStarDay(d)) taskText.innerText = "Выполни зарядку и получи Звезду ⭐";
+    else if(isShinyDay(d)) taskText.innerText = "Супер-день! Светящаяся звезда 🌟 ждёт тебя!";
+    else taskText.innerText = "Продолжай заниматься, чтобы стать сильнее!";
   }
 
-  function renderUI() {
-    const today = getCurrentDayNumber();
-    const rank = getRank(today);
-    document.getElementById("rankBadge").className = `rank-badge ${rank.cls}`;
-    document.getElementById("rankBadge").innerText = rank.label;
-    document.getElementById("starCount").innerText = state.stars;
-    document.getElementById("shinyCount").innerText = state.shinyStars;
-    document.getElementById("greeting").innerHTML = `Привет, ${state.name || "герой"} ✨`;
+  checkAvailability();
+}
 
-    const finished = today > 56;
-    if (finished) {
-      document.getElementById("progressText").innerHTML = "✨ Все суперсилы собраны. Ты — легенда! ✨";
-      document.getElementById("keysGrid").style.display = "none";
-      document.getElementById("charWrap").classList.remove("show");
-      document.getElementById("claimBtn").style.display = "none";
-      document.getElementById("infoBox").style.display = "block";
-      document.getElementById("infoBox").innerHTML = "🏆 Поздравляем! 56 дней силы позади!";
-      return;
-    }
+function checkAvailability() {
+  const btn = document.getElementById('actionBtn');
+  const cdBox = document.getElementById('cooldownBox');
+  
+  const todayStr = new Date().toDateString();
+  
+  if(state.lastDate === todayStr) {
+    btn.style.display = 'none';
+    cdBox.style.display = 'block';
+  } else {
+    btn.style.display = 'block';
+    cdBox.style.display = 'none';
+  }
+}
 
-    const rewardToday = getDayType(today);
-    const infoBox = document.getElementById("infoBox");
-    const claimBtn = document.getElementById("claimBtn");
-    if (rewardToday === 'star') {
-      infoBox.style.display = "block";
-      infoBox.innerHTML = "⭐ Сегодня за зарядку ты получишь ЗВЕЗДУ! ⭐";
-      claimBtn.className = "btn btn-star";
-      claimBtn.innerHTML = "⭐ Зарядка!";
-    } else if (rewardToday === 'shiny') {
-      infoBox.style.display = "block";
-      infoBox.innerHTML = "🌟 Сегодня за зарядку — СИЯЮЩАЯ ЗВЕЗДА! 🌟";
-      claimBtn.className = "btn btn-shiny";
-      claimBtn.innerHTML = "🌟 Зарядка!";
+function doDailyTask() {
+  const todayStr = new Date().toDateString();
+  if(state.lastDate === todayStr) return; 
+  
+  state.lastDate = todayStr;
+  
+  let rewardText = "";
+  let emoji = "🏃";
+  let title = "Зарядка принята!";
+
+  if(isKeyDay(state.day)) {
+    state.keysCollected++;
+    playSound('pop');
+    
+    if(state.keysCollected >= 4) {
+      const charIndex = state.unlocked.base.length % BASE_CHARS.length;
+      const newChar = BASE_CHARS[charIndex];
+      state.unlocked.base.push(charIndex);
+      
+      emoji = newChar.i;
+      title = "СУПЕРСИЛА!";
+      rewardText = `Ты открыл силу: ${newChar.p} (${newChar.n})!`;
+      playSound('win');
+      
+      state.keysCollected = 0;
     } else {
-      infoBox.style.display = "none";
-      claimBtn.className = "btn btn-green";
-      claimBtn.innerHTML = "🏃‍♀️ Я сделал(а) зарядку!";
+      rewardText = `Ключ ${state.keysCollected} из 4 получен!`;
     }
-
-    const keysGrid = document.getElementById("keysGrid");
-    const charWrap = document.getElementById("charWrap");
-    const charImg = document.getElementById("charImg");
-
-    if (rewardToday === 'key') {
-      keysGrid.style.display = "grid";
-      charWrap.classList.remove("show");
-      keysGrid.innerHTML = "";
-      for (let i = 0; i < 4; i++) {
-        const slot = document.createElement("div");
-        slot.className = "key-slot" + (i < state.currentKeyStep ? " filled" : "");
-        slot.innerText = i < state.currentKeyStep ? "🔑" : "🔲";
-        keysGrid.appendChild(slot);
-      }
-      const left = 4 - state.currentKeyStep;
-      if (left === 0) document.getElementById("progressText").innerHTML = "✨ Забери новую суперсилу!";
-      else document.getElementById("progressText").innerHTML = `🔐 Собери 4 ключа: ${state.currentKeyStep}/4 • Осталось ${left} ${left===1?"зарядка":"зарядки"}`;
-    } 
-    else {
-      keysGrid.style.display = "none";
-      charWrap.classList.remove("show");
-      if (rewardToday === 'star') {
-        const need = 4 - (state.stars % 4 || 4);
-        document.getElementById("progressText").innerHTML = `⭐ У тебя ${state.stars} звезд. До редкой суперсилы: ${need} ⭐`;
-      } else if (rewardToday === 'shiny') {
-        const need = 4 - (state.shinyStars % 4 || 4);
-        document.getElementById("progressText").innerHTML = `🌟 У тебя ${state.shinyStars} сияющих. До эпической: ${need} 🌟`;
-      }
-    }
-
-    const coolDiv = document.getElementById("cooldownMsg");
-    if (!canWorkoutToday()) {
-      claimBtn.style.display = "none";
-      coolDiv.style.display = "block";
-      const { hours, mins } = getTimeToTomorrow();
-      coolDiv.innerHTML = `⏳ Следующая зарядка будет <span class="cooldown-time">через ${hours}ч ${mins}мин</span>`;
-    } else {
-      claimBtn.style.display = "block";
-      coolDiv.style.display = "none";
-    }
+  } 
+  else if(isStarDay(state.day)) {
+    state.stars++;
+    rewardText = `Ты получил звезду! Всего: ${state.stars} ⭐`;
+    emoji = "⭐";
+    playSound('coin');
+  } 
+  else if(isShinyDay(state.day)) {
+    state.shiny++;
+    rewardText = `Сияющая звезда получена! Всего: ${state.shiny} 🌟`;
+    emoji = "🌟";
+    playSound('magic');
   }
 
-  // ГАЛЕРЕЯ
-  function renderGallery(tab) {
-    const container = document.getElementById("galleryContent");
-    container.innerHTML = "";
+  if(state.day < 56) {
+    state.day++;
+  }
 
-    let items = [];
-    if (tab === "base") items = BASE_CHARS;
-    else if (tab === "rare") items = RARE_CHARS;
-    else if (tab === "epic") items = EPIC_CHARS;
-    else items = [LEGEND_CHAR];
+  saveState();
+  renderGame();
+  showModal(emoji, title, rewardText);
+}
 
-    const grid = document.createElement("div");
-    grid.className = "gallery-grid";
+function startTimerLoop() {
+  setInterval(() => {
+    if(state.lastDate === new Date().toDateString()) {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0,0,0,0); 
+      
+      const diff = tomorrow - now;
+      const h = Math.floor(diff / (1000 * 60 * 60));
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      document.getElementById('timerDisplay').innerText = 
+        `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    } else {
+      checkAvailability(); 
+    }
+  }, 1000);
+}
 
-    for (let i = 0; i < items.length; i++) {
-      const ch = items[i];
-      let isOwned = false;
-      if (tab === "base") isOwned = state.collectedBase.includes(i);
-      else if (tab === "rare") isOwned = state.collectedRare.includes(i);
-      else if (tab === "epic") isOwned = state.collectedEpic.includes(i);
-      else isOwned = state.legendUnlocked;
+// --- ГАЛЕРЕЯ ---
+let currentTab = 'base';
 
-      const card = document.createElement("div");
-      card.className = "g-item" + (isOwned ? " got" : "");
+function openGallery() {
+  document.getElementById('gameScreen').style.display = 'none';
+  document.getElementById('galleryScreen').style.display = 'block';
+  renderGallery();
+}
+function closeGallery() {
+  document.getElementById('galleryScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'block';
+}
 
-      const imgDiv = document.createElement("div");
-      if (isOwned && ch.img) {
-        const img = document.createElement("img");
-        img.src = ch.img;
-        img.alt = ch.power;
-        imgDiv.appendChild(img);
-      } else {
-        imgDiv.innerHTML = `<div style="font-size:48px; padding:20px;">❓</div>`;
-      }
-      card.appendChild(imgDiv);
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  renderGallery();
+}
 
-      const nameSpan = document.createElement("div");
-      nameSpan.className = "g-name";
-      nameSpan.innerText = ch.power;
-      card.appendChild(nameSpan);
+function renderGallery() {
+  const container = document.getElementById('galleryContent');
+  container.innerHTML = '';
+  
+  let items = [];
+  if(currentTab === 'base') items = BASE_CHARS.map((c,i) => ({...c, type:'base', idx:i, unlocked: state.unlocked.base.includes(i)}));
+  if(currentTab === 'rare') items = RARE_CHARS.map((c,i) => ({...c, type:'rare', idx:i, unlocked: state.unlocked.rare.includes(i)}));
+  if(currentTab === 'epic') items = EPIC_CHARS.map((c,i) => ({...c, type:'epic', idx:i, unlocked: state.unlocked.epic.includes(i)}));
+  if(currentTab === 'legend') items = [{...LEGEND_CHAR, type:'legend', unlocked: state.unlocked.legend}];
 
-      if (!isOwned && (tab === "rare" || tab === "epic")) {
-        const cost = 4;
-        const current = tab === "rare" ? state.stars : state.shinyStars;
-        const icon = tab === "rare" ? "⭐" : "🌟";
-        const priceDiv = document.createElement("div");
-        priceDiv.className = "g-price";
-        priceDiv.innerText = `${icon} ${current}/${cost}`;
-        card.appendChild(priceDiv);
-
-        if (current >= cost) {
-          const unlockBtn = document.createElement("button");
-          unlockBtn.className = "g-btn";
-          unlockBtn.innerText = `Открыть за ${icon}${cost}`;
-          unlockBtn.onclick = (e) => {
-            e.stopPropagation();
-            if (tab === "rare" && state.stars >= cost && !state.collectedRare.includes(i)) {
-              state.stars -= cost;
-              state.collectedRare.push(i);
-              saveGame();
-              celebrate("⭐", ch.power + " получен!", ch.name + " теперь в коллекции!", ch.img, "rare");
-              renderGallery(tab);
-              renderUI();
-              checkLegend();
-            } else if (tab === "epic" && state.shinyStars >= cost && !state.collectedEpic.includes(i)) {
-              state.shinyStars -= cost;
-              state.collectedEpic.push(i);
-              saveGame();
-              celebrate("🌟", ch.power + " открыт!", ch.name + " в твоей команде!", ch.img, "epic");
-              renderGallery(tab);
-              renderUI();
-              checkLegend();
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = `g-card ${item.unlocked ? 'unlocked' : 'locked'}`;
+    
+    let html = '';
+    
+    if(item.unlocked) {
+        html += `<span class="g-icon">${item.i}</span>`;
+        html += `<div class="g-name">${item.n}</div>`;
+        html += `<div style="color:#2E7D32; font-weight:800; font-size:10px;">ЕСТЬ</div>`;
+    } else {
+        // Логика отображения закрытых
+        if(item.type === 'base') {
+            // Только красный вопрос
+            html += `<span class="big-q">?</span>`;
+        } else if (item.type === 'rare') {
+            html += `<span class="g-icon">❓</span>`;
+            html += `<div class="g-name">???</div>`;
+            html += `<div class="g-price">⭐ ${item.cost}</div>`;
+            if(state.stars >= item.cost) {
+                html += `<button class="buy-btn" onclick="buyItem('rare', ${item.idx})">Купить</button>`;
             }
-          };
-          card.appendChild(unlockBtn);
+        } else if (item.type === 'epic') {
+            html += `<span class="g-icon">❓</span>`;
+            html += `<div class="g-name">???</div>`;
+            html += `<div class="g-price">🌟 ${item.cost}</div>`;
+            if(state.shiny >= item.cost) {
+                html += `<button class="buy-btn" onclick="buyItem('epic', ${item.idx})">Купить</button>`;
+            }
+        } else if (item.type === 'legend') {
+             html += `<span class="g-icon">❓</span>`;
+             html += `<div class="g-name">ЛЕГЕНДА</div>`;
+             html += `<div class="g-price">Собери все суперсилы</div>`;
         }
-      }
-
-      if (!isOwned && tab === "legend") {
-        const hint = document.createElement("div");
-        hint.style.fontSize = "11px";
-        hint.style.margin = "8px";
-        hint.style.color = "#aaa";
-        hint.innerText = "Собери всех героев!";
-        card.appendChild(hint);
-      }
-
-      if (!isOwned && tab !== "legend") {
-        const raritySpan = document.createElement("span");
-        raritySpan.className = `rarity-label rarity-${tab}`;
-        const names = { base:"базовый", rare:"редкий", epic:"эпический" };
-        raritySpan.innerText = names[tab];
-        card.appendChild(raritySpan);
-      }
-      grid.appendChild(card);
     }
-    container.appendChild(grid);
-  }
+    
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+}
 
-  function initGalleryTabs() {
-    const tabsDiv = document.getElementById("galleryTabs");
-    tabsDiv.innerHTML = "";
-    const tabs = ["base","rare","epic","legend"];
-    const titles = ["Базовые","Редкие","Эпические","Легенда"];
-    tabs.forEach((t, idx) => {
-      const btn = document.createElement("button");
-      btn.innerText = titles[idx];
-      btn.className = "tab-btn" + (idx === 0 ? " active" : "");
-      btn.onclick = () => {
-        document.querySelectorAll("#galleryTabs .tab-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        renderGallery(t);
-      };
-      tabsDiv.appendChild(btn);
-    });
-  }
-
-  function showGallery() {
-    document.getElementById("gameScreen").style.display = "none";
-    document.getElementById("galleryScreen").style.display = "block";
-    initGalleryTabs();
-    renderGallery("base");
-  }
-  
-  function hideGallery() {
-    document.getElementById("galleryScreen").style.display = "none";
-    document.getElementById("gameScreen").style.display = "block";
-    renderUI();
-  }
-  
-  function resetProfile() {
-    localStorage.removeItem(`active_foot_${currentPlayerKey}`);
-    document.getElementById("gameScreen").style.display = "none";
-    document.getElementById("nameScreen").style.display = "block";
-    document.getElementById("nameInput").value = "";
-    document.getElementById("nickInput").value = "";
-    document.getElementById("startBtn").disabled = true;
-  }
-
-  // ----- ИНИЦИАЛИЗАЦИЯ КНОПОК -----
-  function checkInputs() {
-    const name = document.getElementById("nameInput").value.trim();
-    const nick = document.getElementById("nickInput").value.trim();
-    document.getElementById("startBtn").disabled = !(name && nick);
-  }
-
-  function startGame() {
-    const name = document.getElementById("nameInput").value.trim();
-    const nick = document.getElementById("nickInput").value.trim();
-    if (!name || !nick) return;
-    currentPlayerKey = btoa(`${name}_${nick}`).slice(0, 24);
-    const loaded = loadGame(currentPlayerKey);
-    if (!loaded) {
-      state = defaultState(name, nick);
-    } else {
-      state.name = name;
-      state.nick = nick;
+function buyItem(type, idx) {
+  if(type === 'rare') {
+    if(state.stars >= 4 && !state.unlocked.rare.includes(idx)) {
+      state.stars -= 4;
+      state.unlocked.rare.push(idx);
+      saveState();
+      showModal(RARE_CHARS[idx].i, "Открыто!", `Ты получил силу: ${RARE_CHARS[idx].p}`);
+      renderGallery();
+      renderGame(); 
     }
-    saveGame();
-    document.getElementById("nameScreen").style.display = "none";
-    document.getElementById("gameScreen").style.display = "block";
-    renderUI();
+  } else if (type === 'epic') {
+    if(state.shiny >= 4 && !state.unlocked.epic.includes(idx)) {
+      state.shiny -= 4;
+      state.unlocked.epic.push(idx);
+      saveState();
+      showModal(EPIC_CHARS[idx].i, "ЭПИК!", `Ты получил силу: ${EPIC_CHARS[idx].p}`);
+      renderGallery();
+      renderGame();
+    }
   }
+}
 
-  // ПРИВЯЗКА СОБЫТИЙ
-  document.getElementById("startBtn").onclick = startGame;
-  document.getElementById("claimBtn").onclick = doWorkout;
-  document.getElementById("collectionBar").onclick = showGallery;
-  document.getElementById("backToGameBtn").onclick = hideGallery;
-  document.getElementById("changeNameBtn").onclick = resetProfile;
-  document.getElementById("closeCelebBtn").onclick = closeCeleb;
-  document.getElementById("nameInput").addEventListener("input", checkInputs);
-  document.getElementById("nickInput").addEventListener("input", checkInputs);
-  
-  // Восстановление имени при загрузке
-  const savedMeta = localStorage.getItem("as_who");
-  if (savedMeta) {
-    try {
-      const old = JSON.parse(savedMeta);
-      if (old.name && old.nick) {
-        document.getElementById("nameInput").value = old.name;
-        document.getElementById("nickInput").value = old.nick;
-        checkInputs();
-      }
-    } catch(e) {}
-  }
-  
-  checkInputs();
-  setInterval(() => { if(document.getElementById("gameScreen").style.display === "block") renderUI(); }, 30000);
+function saveState() {
+  localStorage.setItem('as_save_' + state.nick, JSON.stringify(state));
+  localStorage.setItem('as_lastUser', state.nick);
+}
+
+window.changeName = function() {
+  localStorage.removeItem('as_lastUser');
+  location.reload();
+};
+
+function showModal(emoji, title, desc) {
+  document.getElementById('mEmoji').innerText = emoji;
+  document.getElementById('mTitle').innerText = title;
+  document.getElementById('mDesc').innerText = desc;
+  document.getElementById('rewardModal').classList.add('show');
+}
+window.closeModal = function() {
+  document.getElementById('rewardModal').classList.remove('show');
+}
+
+function playSound(type) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    if(type === 'pop') {
+      osc.frequency.setValueAtTime(600, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+      osc.start(); osc.stop(ctx.currentTime + 0.1);
+    } else if (type === 'coin') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1200, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
+      osc.start(); osc.stop(ctx.currentTime + 0.3);
+    } else if (type === 'win') {
+       [523, 659, 784, 1046].forEach((freq, i) => {
+         const o = ctx.createOscillator();
+         const g = ctx.createGain();
+         o.connect(g); g.connect(ctx.destination);
+         o.frequency.value = freq;
+         g.gain.setValueAtTime(0.1, ctx.currentTime + i*0.1);
+         g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.1 + 0.3);
+         o.start(ctx.currentTime + i*0.1);
+         o.stop(ctx.currentTime + i*0.1 + 0.3);
+       });
+    }
+  } catch(e){}
+}
 </script>
 </body>
 </html>
+    
+    
