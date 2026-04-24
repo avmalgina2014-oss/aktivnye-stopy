@@ -2,622 +2,913 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Активные Стопы</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Активные Стопы — Дни силы</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.card{background:#fff;border-radius:32px;padding:24px 20px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);text-align:center}
-h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:4px}
-.subtitle{font-size:13px;color:#888;margin-bottom:20px;font-weight:700}
-.btn{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:16px;padding:13px 24px;font-family:'Fredoka One',cursive;font-size:19px;cursor:pointer;width:100%;transition:transform .15s;box-shadow:0 4px 16px rgba(102,126,234,.4);margin-top:8px}
-.btn:hover{transform:translateY(-2px)}
-.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
-.btn-green{background:linear-gradient(135deg,#2E7D32,#4CAF50);box-shadow:0 4px 16px rgba(46,125,50,.4)}
-.btn-gold {background:linear-gradient(135deg,#F9A825,#FF6F00);box-shadow:0 4px 16px rgba(249,168,37,.4)}
-.btn-star {background:linear-gradient(135deg,#F9A825,#FFB300);box-shadow:0 4px 16px rgba(249,168,37,.3)}
-.btn-shiny{background:linear-gradient(135deg,#FF6F00,#FF8F00);box-shadow:0 4px 16px rgba(255,111,0,.3)}
-.field-label{font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;text-align:left}
-.field-input{width:100%;border:3px solid #e0e4ef;border-radius:14px;padding:11px 14px;font-family:'Nunito',sans-serif;font-size:17px;font-weight:700;outline:none;text-align:center;margin-bottom:14px;transition:border-color .2s}
-.field-input:focus{border-color:#667eea}
-.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
-.rank-badge{display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:20px;font-family:'Fredoka One',cursive;font-size:14px}
-.rank-novice {background:#e8f5e9;color:#2E7D32}
-.rank-student{background:linear-gradient(135deg,#FFF8E1,#FFE082);color:#F57F17}
-.rank-pro    {background:linear-gradient(135deg,#E3F2FD,#90CAF9);color:#1565C0}
-.rank-master {background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff}
-.keys-wallet{display:flex;gap:12px;background:#f5f5f5;border-radius:40px;padding:6px 16px}
-.wallet-slot{display:flex;align-items:center;gap:5px;font-family:'Fredoka One',cursive;font-size:18px}
-.wallet-slot.star {color:#F9A825}
-.wallet-slot.shiny{color:#FF6F00}
-.greeting{font-size:18px;font-weight:900;color:#2d2d2d;margin-bottom:4px}
-.progress-text{font-size:13px;color:#888;font-weight:700;margin-bottom:12px;line-height:1.7}
-.keys-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
-.key-slot{aspect-ratio:1;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;border:3px dashed #e0e4ef;background:#f9f9f9;transition:all .4s ease}
-.key-slot.filled{border:3px solid gold;background:linear-gradient(135deg,#fffde7,#fff9c4);box-shadow:0 4px 12px rgba(255,215,0,.4);animation:popIn .5s ease}
-@keyframes popIn{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
-.char-wrap{border-radius:18px;overflow:hidden;margin-bottom:12px;display:none;background:#f5f5f5}
-.char-wrap img{width:100%;height:200px;object-fit:contain;display:block}
-.char-wrap.show{display:block;animation:zoomIn .6s ease}
-@keyframes zoomIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
-.cooldown-msg{background:#f0f4ff;border-radius:14px;padding:12px 16px;font-size:13px;font-weight:700;color:#667eea;display:none;margin-top:8px;line-height:1.6}
-.cooldown-time{font-family:'Fredoka One',cursive;font-size:22px;display:block;margin-top:4px;color:#4a5568}
-.info-box{background:#fffde7;border-radius:14px;padding:10px 14px;font-size:12px;font-weight:700;color:#F57F17;margin-top:8px;display:none;text-align:center;line-height:1.6}
-.collection-bar{margin-top:14px;border-top:2px solid #f0f0f0;padding-top:12px;cursor:pointer}
-.collection-bar:hover .col-title{color:#667eea}
-.col-title{font-family:'Fredoka One',cursive;font-size:15px;color:#888;transition:color .2s}
-.change-name{font-size:11px;color:#ccc;margin-top:10px;cursor:pointer;font-weight:700}
-.change-name:hover{color:#667eea}
-#galleryScreen{display:none}
-.gallery-tabs{display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid #e0e4ef}
-.tab-btn{flex:1;background:none;border:none;padding:10px 4px;font-family:'Nunito',sans-serif;font-weight:800;font-size:12px;color:#aaa;cursor:pointer;transition:all .2s;border-bottom:3px solid transparent;margin-bottom:-2px}
-.tab-btn.active{color:#667eea;border-bottom-color:#667eea}
-.gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
-.g-item{border-radius:18px;border:2px solid #e8e8e8;background:#f0f0f0;padding:0;text-align:center;overflow:hidden;display:flex;flex-direction:column;transition:all .3s;min-height:170px}
-.g-item.got{background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.1);border-color:transparent}
-.g-item.locked{padding:20px 8px;align-items:center;justify-content:center;min-height:170px}
-.g-item .g-img{width:100%}
-.g-item .g-img img{width:100%;height:150px;object-fit:cover;display:block}
-.g-item .g-name{font-family:'Fredoka One',cursive;font-size:17px;padding:8px 8px 12px;line-height:1.2}
-.g-item .g-q{font-size:44px;color:#ddd;margin-bottom:6px}
-.rarity-label{font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:20px;margin-top:6px;display:inline-block}
-.rarity-base    {background:#e8f5e9;color:#2E7D32}
-.rarity-rare    {background:#FFF8E1;color:#F9A825}
-.rarity-epic    {background:#FFF3E0;color:#FF6F00}
-.rarity-legendary{background:linear-gradient(135deg,#FF6F00,#F9A825);color:#fff}
-.celebration{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:100;align-items:center;justify-content:center;padding:20px}
-.celebration.show{display:flex}
-.celeb-box{background:#fff;border-radius:32px;padding:28px 24px;text-align:center;max-width:340px;width:100%;animation:zoomIn .4s ease}
-.celeb-emoji{font-size:60px;display:block;margin-bottom:10px}
-.celeb-title{font-family:'Fredoka One',cursive;font-size:24px;color:#2d2d2d;margin-bottom:6px}
-.celeb-img{width:100%;max-height:160px;object-fit:contain;border-radius:14px;margin:10px 0;display:none}
-.celeb-text{font-size:14px;color:#888;font-weight:700;margin-bottom:18px}
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #1e2b6e, #311b5a);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 44px;
+    padding: 24px 20px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 28px;
+    color: #1f2937;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #6c757d;
+    font-weight: 800;
+    margin-bottom: 18px;
+  }
+
+  .btn {
+    background: linear-gradient(135deg, #3b4bae, #7c3aed);
+    color: white;
+    border: none;
+    border-radius: 60px;
+    padding: 14px 20px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 18px;
+    font-weight: normal;
+    cursor: pointer;
+    width: 100%;
+    transition: transform 0.15s ease, box-shadow 0.1s;
+    box-shadow: 0 6px 14px rgba(59, 75, 174, 0.3);
+    margin-top: 10px;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    transform: none;
+    cursor: not-allowed;
+  }
+
+  .btn-green {
+    background: linear-gradient(135deg, #0f6e3f, #2b9348);
+    box-shadow: 0 6px 14px rgba(15, 110, 63, 0.3);
+  }
+
+  .btn-star {
+    background: linear-gradient(135deg, #e6a017, #f4c542);
+    box-shadow: 0 6px 14px rgba(230, 160, 23, 0.4);
+    color: #2d1f00;
+  }
+
+  .btn-shiny {
+    background: linear-gradient(135deg, #f97316, #ffb347);
+    box-shadow: 0 6px 14px rgba(249, 115, 22, 0.4);
+  }
+
+  .field-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #4b5563;
+    text-align: left;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .field-input {
+    width: 100%;
+    border: 2.5px solid #e2e8f0;
+    border-radius: 40px;
+    padding: 12px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 16px;
+    outline: none;
+    transition: border 0.2s;
+  }
+
+  .field-input:focus {
+    border-color: #7c3aed;
+  }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 14px;
+    background: #eef2ff;
+    color: #1e293b;
+  }
+
+  .rank-novice { background: #e0f2fe; color: #155e75; }
+  .rank-student { background: #fff3e3; color: #b45309; }
+  .rank-pro { background: #e0e7ff; color: #3730a3; }
+  .rank-master { background: #f3e8ff; color: #6b21a5; }
+
+  .keys-wallet {
+    display: flex;
+    gap: 14px;
+    background: #f1f5f9;
+    padding: 6px 20px;
+    border-radius: 60px;
+  }
+
+  .wallet-slot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .wallet-slot.star { color: #f59e0b; }
+  .wallet-slot.shiny { color: #ea580c; }
+
+  .greeting {
+    font-size: 18px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 6px;
+  }
+
+  .day-badge {
+    background: #f1f1f1;
+    border-radius: 40px;
+    padding: 6px 12px;
+    font-weight: 800;
+    font-size: 13px;
+    display: inline-block;
+    margin-bottom: 12px;
+    color: #334155;
+  }
+
+  .progress-text {
+    font-weight: 800;
+    color: #334155;
+    margin: 10px 0;
+    font-size: 15px;
+  }
+
+  .keys-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 18px 0;
+  }
+
+  .key-slot {
+    aspect-ratio: 1;
+    background: #f8fafc;
+    border: 3px dashed #cbd5e1;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    transition: all 0.3s ease;
+  }
+
+  .key-slot.filled {
+    border: 3px solid #fbbf24;
+    background: #fffbeb;
+    box-shadow: 0 4px 10px rgba(251, 191, 36, 0.3);
+    animation: bounce 0.4s;
+  }
+
+  @keyframes bounce {
+    0% { transform: scale(0.8); opacity: 0; }
+    80% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+
+  .char-wrap {
+    background: #fef9e3;
+    border-radius: 32px;
+    margin: 15px 0;
+    padding: 8px;
+    display: none;
+  }
+
+  .char-wrap.show {
+    display: block;
+    animation: fadePop 0.5s;
+  }
+
+  @keyframes fadePop {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .char-wrap img {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    border-radius: 24px;
+  }
+
+  .cooldown-msg {
+    background: #eef2ff;
+    padding: 16px;
+    border-radius: 30px;
+    font-weight: 700;
+    margin-top: 12px;
+    font-size: 14px;
+    display: none;
+  }
+
+  .cooldown-time {
+    font-family: 'Fredoka One', cursive;
+    font-size: 22px;
+    display: block;
+    margin-top: 4px;
+  }
+
+  .info-box {
+    background: #fff9e6;
+    padding: 10px 14px;
+    border-radius: 24px;
+    font-weight: 700;
+    font-size: 13px;
+    margin-top: 12px;
+    display: none;
+    color: #b45309;
+  }
+
+  .collection-bar {
+    margin-top: 20px;
+    border-top: 2px solid #eef2ff;
+    padding-top: 16px;
+    cursor: pointer;
+    font-weight: 800;
+    color: #475569;
+  }
+
+  .change-name {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 14px;
+    cursor: pointer;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin: 18px 0;
+  }
+
+  .g-item {
+    background: #f8fafc;
+    border-radius: 28px;
+    overflow: hidden;
+    text-align: center;
+    border: 2px solid #e2e8f0;
+    transition: 0.2s;
+    padding-bottom: 10px;
+  }
+
+  .g-item.got {
+    background: white;
+    border-color: #ffd966;
+  }
+
+  .g-item img {
+    width: 100%;
+    height: 130px;
+    object-fit: contain;
+  }
+
+  .celebration {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+  }
+
+  .celebration.show {
+    display: flex;
+  }
+
+  .celeb-box {
+    background: white;
+    border-radius: 48px;
+    padding: 24px;
+    text-align: center;
+    max-width: 320px;
+    width: 90%;
+  }
+
+  .celeb-emoji {
+    font-size: 58px;
+  }
+
+  .gallery-tabs {
+    display: flex;
+    gap: 4px;
+    background: #f1f5f9;
+    border-radius: 60px;
+    padding: 4px;
+    margin-bottom: 20px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px 0;
+    font-weight: 800;
+    border-radius: 40px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .tab-btn.active {
+    background: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    color: #6d28d9;
+  }
+
+  .rarity-label {
+    font-size: 9px;
+    font-weight: 900;
+    padding: 2px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin: 8px 0 4px;
+  }
+
+  .rarity-base { background: #dbeafe; color: #1e40af; }
+  .rarity-rare { background: #fef3c7; color: #b45309; }
+  .rarity-epic { background: #ffe4e6; color: #be123c; }
+  .rarity-legendary { background: #f3e8ff; color: #7e22ce; }
 </style>
 </head>
 <body>
 
 <div class="card" id="nameScreen">
   <h1>👣 Активные Стопы</h1>
-  <div class="subtitle">Собери все суперсилы!</div>
+  <div class="subtitle">56 дней силы ✨</div>
   <div class="field-label">Твоё имя</div>
-  <input class="field-input" id="nameInput" placeholder="Например: Саша" maxlength="15" oninput="checkBtn()" onchange="checkBtn()">
-  <div class="field-label">Придумай ник</div>
-  <input class="field-input" id="nickInput" placeholder="Например: Ракета 🚀" maxlength="20" oninput="checkBtn()" onchange="checkBtn()">
-  <button class="btn" id="startBtn" onclick="startGame()" disabled>Вперёд! 🚀</button>
+  <input class="field-input" id="nameInput" placeholder="Например: София" maxlength="15">
+  <div class="field-label">Твой ник</div>
+  <input class="field-input" id="nickInput" placeholder="Молния 🚀" maxlength="20">
+  <button class="btn" id="startBtn" onclick="startGame()" disabled>Вперёд! 🎯</button>
 </div>
 
 <div class="card" id="gameScreen" style="display:none">
   <div class="top-bar">
-    <div id="rankBadge" class="rank-badge rank-novice">🌱 НОВИЧОК</div>
+    <div class="rank-badge" id="rankBadge">🌱 НОВИЧОК</div>
     <div class="keys-wallet">
       <div class="wallet-slot star">⭐ <span id="starCount">0</span></div>
       <div class="wallet-slot shiny">🌟 <span id="shinyCount">0</span></div>
     </div>
   </div>
   <div class="greeting" id="greeting">Привет!</div>
+  <div class="day-badge" id="dayDisplay">ДЕНЬ 1 / 56</div>
   <div class="progress-text" id="progressText"></div>
-  <div class="keys-grid" id="keysGrid">
-    <div class="key-slot" id="ks0"></div><div class="key-slot" id="ks1"></div>
-    <div class="key-slot" id="ks2"></div><div class="key-slot" id="ks3"></div>
-  </div>
-  <div class="char-wrap" id="charWrap"><img id="charImg" src="" alt=""></div>
-  <button class="btn btn-green" id="claimBtn" onclick="doWorkout()">Я сделал(а) зарядку! 🏃</button>
-  <div class="cooldown-msg" id="cooldown"></div>
+  <div class="keys-grid" id="keysGrid"></div>
+  <div class="char-wrap" id="charWrap"><img id="charImg" src=""></div>
+  <button class="btn btn-green" id="claimBtn" onclick="doWorkout()">🏃‍♀️ Я сделал(а) зарядку!</button>
+  <div class="cooldown-msg" id="cooldownMsg"></div>
   <div class="info-box" id="infoBox"></div>
-  <div class="collection-bar" onclick="showGallery()"><div class="col-title">🏅 Моя коллекция →</div></div>
-  <div class="change-name" onclick="changeName()">Это не я → сменить имя</div>
+  <div class="collection-bar" onclick="showGallery()">🏅 Моя коллекция →</div>
+  <div class="change-name" onclick="resetProfile()">🔄 Сменить героя</div>
 </div>
 
-<div class="card" id="galleryScreen">
-  <h1 style="margin-bottom:12px">🏅 Моя коллекция</h1>
-  <div class="gallery-tabs">
-    <button class="tab-btn active" onclick="switchTab('base',this)">Базовые</button>
-    <button class="tab-btn" onclick="switchTab('rare',this)">Редкие</button>
-    <button class="tab-btn" onclick="switchTab('epic',this)">Эпические</button>
-    <button class="tab-btn" onclick="switchTab('legend',this)">Легенда</button>
-  </div>
+<div class="card" id="galleryScreen" style="display:none">
+  <h1 style="margin-bottom:12px">🌟 Все герои</h1>
+  <div class="gallery-tabs" id="galleryTabs"></div>
   <div id="galleryContent"></div>
   <button class="btn" onclick="hideGallery()">← Назад</button>
 </div>
 
-<div class="celebration" id="celebration">
-  <div class="celeb-box">
-    <span class="celeb-emoji" id="celebEmoji">🎉</span>
-    <div class="celeb-title" id="celebTitle"></div>
-    <img class="celeb-img" id="celebImg" src="" alt="">
-    <div class="celeb-text" id="celebText"></div>
-    <button class="btn" onclick="closeCeleb()">Ура! 🎉</button>
+<div class="celebration" id="celebration" onclick="closeCeleb()">
+  <div class="celeb-box" onclick="event.stopPropagation()">
+    <div class="celeb-emoji" id="celebEmoji">🎉</div>
+    <div class="celeb-title" id="celebTitle" style="font-weight:900; font-size:22px;"></div>
+    <img class="celeb-img" id="celebImg" style="width:100%; margin:10px 0; display:none;">
+    <div class="celeb-text" id="celebText" style="margin:12px 0;"></div>
+    <button class="btn" onclick="closeCeleb()">Отлично! 🎉</button>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════
-// ПЕРСОНАЖИ — добавляй новых сюда, прогресс сохранится
-// ═══════════════════════════════════════════════════
-const BASE = [
-  {animal:"🐆",power:"Скорость",      name:"Гепард",   color:"#E07000",img:"gepard.png"   },
-  {animal:"🐦",power:"Лёгкость",      name:"Колибри",  color:"#00ACC1",img:"kolibri.png"  },
-  {animal:"🐜",power:"Сила",          name:"Муравей",  color:"#CC0000",img:"muravey.png"  },
-  {animal:"🦩",power:"Баланс",        name:"Фламинго", color:"#E91E8C",img:"flamingo.png" },
-  {animal:"🦥",power:"Восстановление",name:"Ленивец",  color:"#2E7D32",img:"lenivec.png"  },
-  {animal:"🐒",power:"Координация",   name:"Обезьяна", color:"#8D6E63",img:"obeziana.png" },
-  {animal:"🐫",power:"Выносливость",  name:"Верблюд",  color:"#D4A373",img:"verblyud.png" },
-  {animal:"🐱",power:"Гибкость",      name:"Кошка",    color:"#FF9800",img:"koshka.png"   },
-];
-const RARE = [
-  {animal:"🦘",power:"Прыгучесть",  name:"Кенгуру", color:"#FF5722",img:"kenguru.png"},
-  {animal:"🐙",power:"Цепкость",    name:"Осьминог",color:"#7B1FA2",img:"osminog.png"},
-  {animal:"🦀",power:"Устойчивость",name:"Краб",    color:"#D32F2F",img:"krab.png"   },
-  {animal:"🐌",power:"Чуткость",    name:"Улитка",  color:"#4CAF50",img:"ulitka.png" },
-];
-const EPIC = [
-  {animal:"🦄",power:"Суперлёгкость",name:"Единорог",color:"#E040FB",img:"edinorog.png"},
-  {animal:"🐉",power:"Суперсила",    name:"Дракон",  color:"#F44336",img:"drakon.png" },
-];
-const LEGEND = {animal:"🔥",power:"Возрождение",name:"Феникс",color:"#FF6F00",img:"feniks.png"};
+  // ======================= ПЕРСОНАЖИ =========================
+  const BASE_CHARS = [
+    { animal:"🐆", power:"Скорость", name:"Гепард", img:"gepard.png" },
+    { animal:"🐦", power:"Лёгкость", name:"Колибри", img:"kolibri.png" },
+    { animal:"🐜", power:"Сила", name:"Муравей", img:"muravey.png" },
+    { animal:"🦩", power:"Баланс", name:"Фламинго", img:"flamingo.png" },
+    { animal:"🦥", power:"Восстановление", name:"Ленивец", img:"lenivec.png" },
+    { animal:"🐒", power:"Координация", name:"Обезьяна", img:"obeziana.png" },
+    { animal:"🐫", power:"Выносливость", name:"Верблюд", img:"verblyud.png" },
+    { animal:"🐱", power:"Гибкость", name:"Кошка", img:"koshka.png" },
+  ];
+  const RARE_CHARS = [
+    { animal:"🦘", power:"Прыгучесть", name:"Кенгуру", img:"kenguru.png" },
+    { animal:"🐙", power:"Цепкость", name:"Осьминог", img:"osminog.png" },
+    { animal:"🦀", power:"Устойчивость", name:"Краб", img:"krab.png" },
+    { animal:"🐌", power:"Чуткость", name:"Улитка", img:"ulitka.png" },
+  ];
+  const EPIC_CHARS = [
+    { animal:"🦄", power:"Суперлёгкость", name:"Единорог", img:"edinorog.png" },
+    { animal:"🐉", power:"Суперсила", name:"Дракон", img:"drakon.png" },
+  ];
+  const LEGEND_CHAR = { animal:"🔥", power:"Возрождение", name:"Феникс", img:"feniks.png" };
 
-// ═══════════════════════════════════════════════════
-// Схема дней (фиксированная по всей игре)
-// ═══════════════════════════════════════════════════
-// Золотые ключи (собираем персонажей): дни 1-4, 8-11, 15-18, 22-25, 29-32, 36-39, 43-46, 50-53
-// Обычные звёзды ⭐: дни 5-6, 12-13, 19-20, 26-27, 33-34, 40-41, 47-48, 54-55
-// Сияющие звёзды 🌟: дни 7, 14, 21, 28, 35, 42, 49, 56
-function getDayType(totalDay) {
-  if (totalDay < 1 || totalDay > 56) return 'extra';
-  const pos = ((totalDay - 1) % 7) + 1; // позиция внутри недели: 1-7
-  if (pos >= 1 && pos <= 4) return 'key';   // дни 1-4 каждой недели
-  if (pos === 5 || pos === 6) return 'star'; // дни 5-6
-  if (pos === 7) return 'shiny';             // день 7
-  return 'extra';
-}
+  function getDayType(dayNumber) {
+    if (dayNumber < 1 || dayNumber > 56) return 'finished';
+    const weekPos = ((dayNumber - 1) % 7) + 1;
+    if (weekPos >= 1 && weekPos <= 4) return 'key';
+    if (weekPos === 5 || weekPos === 6) return 'star';
+    if (weekPos === 7) return 'shiny';
+    return 'none';
+  }
 
-// ═══════════════════════════════════════════════════
-// СОСТОЯНИЕ
-// ═══════════════════════════════════════════════════
-let st = {};
-let playerKey = '';
+  let state = {};
+  let currentPlayerKey = "";
 
-function freshState() {
-  return {
-    totalDays: 0,      // всего дней с начала игры
-    step: 0,           // ключей собрано (0-3, при 4 → открываем)
-    charIdx: rndAvail([]),
-    lastClaim: null,
-    stars: 0,
-    shiny: 0,
-    gotBase: [],
-    gotRare: [],
-    gotEpic: [],
-    gotLegend: false,
-    // для ранга
-    weeksPlayed: 0,
-    weekStart: null,
-    weekCount: 0,
-  };
-}
-
-function rndAvail(got) {
-  const pool = BASE.map((_,i)=>i).filter(i=>!got.includes(i));
-  return (pool.length ? pool : BASE.map((_,i)=>i))[Math.floor(Math.random()*(pool.length||BASE.length))];
-}
-
-function save() { localStorage.setItem('as_'+playerKey, JSON.stringify(st)); }
-function load() {
-  const r = localStorage.getItem('as_'+playerKey);
-  if (!r) return false;
-  try {
-    st = JSON.parse(r);
-    // ── Автофикс старых сохранений где step=4 зависало ──
-    if ((st.step||0) >= 4) {
-      st.step = 0;
-      if (!st.charIdx_next) {
-        st.charIdx = rndAvail(st.gotBase||[]);
-      }
-      save();
-    }
-    // Убедимся что totalDays есть
-    if (!st.totalDays) st.totalDays = 0;
-    return true;
-  } catch(e) { return false; }
-}
-
-// ═══════════════════════════════════════════════════
-// ЗВУКИ
-// ═══════════════════════════════════════════════════
-function sound(type) {
-  try {
-    const ctx = new (window.AudioContext||window.webkitAudioContext)();
-    const SEQ = {
-      start:  [[440,.12],[550,.12],[660,.12]],
-      key:    [[900,0,'tri']],
-      base:   [[523,.18],[659,.18],[784,.18],[1047,.18]],
-      rare:   [[440,.15],[554,.15],[659,.15],[880,.15],[1109,.15]],
-      epic:   [[330,.2],[415,.2],[523,.2],[659,.2],[830,.2],[1047,.2]],
-      legend: [[262,.25],[330,.25],[392,.25],[523,.25],[659,.25],[784,.25]],
+  function defaultState(name = "", nick = "") {
+    return {
+      name: name,
+      nick: nick,
+      totalDays: 0,
+      stars: 0,
+      shinyStars: 0,
+      currentKeyStep: 0,
+      currentBaseIndex: Math.floor(Math.random() * BASE_CHARS.length),
+      collectedBase: [],
+      collectedRare: [],
+      collectedEpic: [],
+      hasLegend: false,
+      lastClaimDate: null,
     };
-    const p = SEQ[type]; if (!p) return;
-    p.forEach(([f,dt,sh],i) => {
-      const o=ctx.createOscillator(), g=ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.type=sh||'sine';
-      const t=ctx.currentTime+i*(dt||0.18);
-      o.frequency.setValueAtTime(f,t);
-      g.gain.setValueAtTime(0.3,t);
-      g.gain.exponentialRampToValueAtTime(0.001,t+0.4);
-      o.start(t); o.stop(t+0.4);
-    });
-  } catch(e){}
-}
+  }
 
-// ═══════════════════════════════════════════════════
-// ВСПОМОГАТЕЛЬНЫЕ
-// ═══════════════════════════════════════════════════
-function decl(n,a,b,c){
-  const m=n%10,mm=n%100;
-  if(m===1&&mm!==11)return a;
-  if(m>=2&&m<=4&&(mm<10||mm>=20))return b;
-  return c;
-}
-function getRank(){
-  const w=st.weeksPlayed||0;
-  if(w>=8) return{label:'👑 МАСТЕР', cls:'rank-master'};
-  if(w>=6) return{label:'⚡ ПРОФИ',  cls:'rank-pro'};
-  if(w>=3) return{label:'📖 УЧЕНИК', cls:'rank-student'};
-  return         {label:'🌱 НОВИЧОК',cls:'rank-novice'};
-}
-function celebrate(emoji,title,text,img,snd){
-  document.getElementById('celebEmoji').textContent = emoji;
-  document.getElementById('celebTitle').textContent = title;
-  document.getElementById('celebText').textContent  = text;
-  const el=document.getElementById('celebImg');
-  if(img){el.src=img;el.style.display='block';}else el.style.display='none';
-  document.getElementById('celebration').classList.add('show');
-  if(snd) sound(snd);
-}
-window.closeCeleb = function(){ document.getElementById('celebration').classList.remove('show'); render(); };
+  function saveState() {
+    if (!currentPlayerKey) return;
+    localStorage.setItem(`active_stop_${currentPlayerKey}`, JSON.stringify(state));
+  }
 
-// ═══════════════════════════════════════════════════
-// RENDER
-// ═══════════════════════════════════════════════════
-function render(){
-  const char = BASE[st.charIdx];
-  const rank = getRank();
-  document.getElementById('rankBadge').className='rank-badge '+rank.cls;
-  document.getElementById('rankBadge').textContent=rank.label;
-  document.getElementById('starCount').textContent =st.stars||0;
-  document.getElementById('shinyCount').textContent=st.shiny||0;
-  document.getElementById('greeting').textContent  ='Привет, '+(st.name||'')+('!');
+  function loadState(key) {
+    const raw = localStorage.getItem(`active_stop_${key}`);
+    if (!raw) return false;
+    try {
+      const data = JSON.parse(raw);
+      state = data;
+      if (!state.collectedBase) state.collectedBase = [];
+      if (!state.collectedRare) state.collectedRare = [];
+      if (!state.collectedEpic) state.collectedEpic = [];
+      if (state.hasLegend === undefined) state.hasLegend = false;
+      if (state.currentKeyStep === undefined) state.currentKeyStep = 0;
+      if (!state.currentBaseIndex && state.currentBaseIndex !== 0) state.currentBaseIndex = Math.floor(Math.random() * BASE_CHARS.length);
+      return true;
+    } catch(e) { return false; }
+  }
 
-  const nextDay = (st.totalDays||0) + 1;
-  const dayType = nextDay <= 56 ? getDayType(nextDay) : 'extra';
+  function adoptFresh(name, nick) {
+    state = defaultState(name, nick);
+    saveState();
+  }
 
-  const keysGrid = document.getElementById('keysGrid');
-  const charWrap = document.getElementById('charWrap');
-  const progress = document.getElementById('progressText');
-  const infoBox  = document.getElementById('infoBox');
-  infoBox.style.display = 'none';
+  function canClaimToday() {
+    if (!state.lastClaimDate) return true;
+    const last = new Date(state.lastClaimDate);
+    const now = new Date();
+    const diffHours = (now - last) / (1000 * 60 * 60);
+    return diffHours >= 24;
+  }
 
-  // Показываем текущего открытого персонажа если он есть
-  // и следующий день — звёздный или уже ждём следующую неделю
-  const showOpenChar = st.gotBase.length > 0 && (dayType === 'star' || dayType === 'shiny' || dayType === 'extra') && st.step === 0;
+  function getRemainingTimeText() {
+    if (!state.lastClaimDate) return null;
+    const last = new Date(state.lastClaimDate);
+    const next = new Date(last.getTime() + 24 * 3600 * 1000);
+    const diff = next - new Date();
+    if (diff <= 0) return null;
+    const hours = Math.floor(diff / 3600000);
+    const mins = Math.floor((diff % 3600000) / 60000);
+    return `${hours} ч ${mins} мин`;
+  }
 
-  if (showOpenChar) {
-    // Последний открытый персонаж (для показа)
-    const lastIdx = st.gotBase[st.gotBase.length - 1];
-    const lastChar = BASE[lastIdx];
-    keysGrid.style.display = 'none';
-    charWrap.classList.add('show');
-    document.getElementById('charImg').src = lastChar.img;
-    progress.innerHTML = '<span style="font-family:Fredoka One,cursive;font-size:24px;color:'+lastChar.color+'">'+lastChar.power+'</span><br><span style="font-size:12px;color:#aaa">суперсила открыта ✨</span>';
-    if (dayType === 'star') {
-      infoBox.style.display='block';
-      infoBox.textContent='⭐ Сегодня за зарядку — звезда! (день '+nextDay+')';
-    } else if (dayType === 'shiny') {
-      infoBox.style.display='block';
-      infoBox.textContent='🌟 Сегодня за зарядку — сияющая звезда! (день '+nextDay+')';
-    } else {
-      infoBox.style.display='block';
-      infoBox.textContent = nextDay > 56 ? '🏆 Все 56 дней пройдены! Ты легенда!' : '🗓️ Следующая неделя скоро';
+  function nextUnlockedBaseIndex() {
+    const allIndices = BASE_CHARS.map((_, i) => i);
+    const free = allIndices.filter(i => !state.collectedBase.includes(i));
+    if (free.length === 0) return allIndices[0];
+    return free[Math.floor(Math.random() * free.length)];
+  }
+
+  function addBaseCharacter() {
+    const newIdx = nextUnlockedBaseIndex();
+    if (!state.collectedBase.includes(newIdx)) state.collectedBase.push(newIdx);
+    state.currentBaseIndex = newIdx;
+  }
+
+  function updateRankWeeks() {
+    const weeks = Math.floor(state.totalDays / 7);
+    let badge = "🌱 НОВИЧОК", cls = "rank-novice";
+    if (weeks >= 8) { badge = "👑 МАСТЕР"; cls = "rank-master"; }
+    else if (weeks >= 6) { badge = "⚡ ПРОФИ"; cls = "rank-pro"; }
+    else if (weeks >= 3) { badge = "📖 УЧЕНИК"; cls = "rank-student"; }
+    const el = document.getElementById("rankBadge");
+    if (el) { el.textContent = badge; el.className = `rank-badge ${cls}`; }
+  }
+
+  function showCelebration(emoji, title, text, imgSrc, soundType) {
+    const box = document.getElementById("celebration");
+    document.getElementById("celebEmoji").innerText = emoji;
+    document.getElementById("celebTitle").innerText = title;
+    document.getElementById("celebText").innerText = text;
+    const imgEl = document.getElementById("celebImg");
+    if (imgSrc) {
+      imgEl.src = imgSrc;
+      imgEl.style.display = "block";
+    } else imgEl.style.display = "none";
+    box.classList.add("show");
+    if (soundType) playSound(soundType);
+  }
+
+  function playSound(type) {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const notes = { key: [[880,0.1,'sine']], base: [[523,0.2],[659,0.2],[784,0.2]], rare: [[659,0.15],[880,0.15]], epic: [[523,0.2],[784,0.2],[1047,0.2]], legend: [[392,0.2],[523,0.2],[659,0.2],[784,0.2]] };
+      const seq = notes[type];
+      if(!seq) return;
+      seq.forEach(([f, dur], idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.frequency.value = f;
+        gain.gain.value = 0.2;
+        const start = ctx.currentTime + idx * 0.15;
+        osc.start(start);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.4);
+        osc.stop(start + 0.4);
+      });
+    } catch(e) {}
+  }
+
+  async function doWorkout() {
+    const btn = document.getElementById("claimBtn");
+    if (!canClaimToday()) {
+      const remain = getRemainingTimeText();
+      document.getElementById("cooldownMsg").style.display = "block";
+      document.getElementById("cooldownMsg").innerHTML = `🌀 Отдыхай! Следующая зарядка через <span class="cooldown-time">${remain}</span>`;
+      return;
     }
-  } else {
-    // Собираем ключи
-    keysGrid.style.display='grid';
-    charWrap.classList.remove('show');
-    const rem = 4 - (st.step||0);
-    progress.textContent='До суперсилы: '+rem+' '+decl(rem,'зарядка','зарядки','зарядок');
-    for(let i=0;i<4;i++){
-      const sl=document.getElementById('ks'+i);
-      if(i<(st.step||0)){sl.classList.add('filled');sl.textContent='🔑';}
-      else{sl.classList.remove('filled');sl.textContent='';}
+    if (state.totalDays >= 56) {
+      showCelebration("🏆", "Ты легенда!", "Все 56 дней пройдены! Ты настоящий герой!", "", "legend");
+      return;
     }
-  }
-
-  checkCooldown(dayType, nextDay);
-}
-
-// ═══════════════════════════════════════════════════
-// КУЛДАУН
-// ═══════════════════════════════════════════════════
-function checkCooldown(dayType, nextDay){
-  const btn  = document.getElementById('claimBtn');
-  const cool = document.getElementById('cooldown');
-
-  if (!st.lastClaim){
-    showBtn(btn,'Я сделал(а) зарядку! 🏃','btn-green');
-    cool.style.display='none';
-    return;
-  }
-  const last = new Date(st.lastClaim);
-  const next = new Date(last.getTime()+24*3600*1000);
-  if (new Date() >= next){
-    // Кулдаун прошёл
-    if (nextDay > 56) {
-      btn.style.display='none';
-      cool.style.display='block';
-      cool.innerHTML='🏆 Все 56 дней игры завершены! Ты — Легенда!';
-    } else if (dayType==='star'){
-      showBtn(btn,'Я сделал(а) зарядку! (+⭐)','btn-star');
-      cool.style.display='none';
-    } else if (dayType==='shiny'){
-      showBtn(btn,'Я сделал(а) зарядку! (+🌟)','btn-shiny');
-      cool.style.display='none';
-    } else {
-      showBtn(btn,'Я сделал(а) зарядку! 🏃','btn-green');
-      cool.style.display='none';
-    }
-  } else {
-    btn.style.display='none';
-    cool.style.display='block';
-    tick(next);
-    const iv=setInterval(()=>{ if(new Date()>=next){clearInterval(iv);render();}else tick(next); },30000);
-  }
-}
-
-function showBtn(btn,text,cls){
-  btn.style.display='block';
-  btn.className='btn '+cls;
-  btn.textContent=text;
-  btn.onclick=doWorkout;
-}
-
-function tick(next){
-  const diff=next-new Date();
-  const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000);
-  const t=h>0?h+' ч '+m+' мин':m+' мин';
-  const msg=diff>12*3600000?'Отличная работа! Приходи завтра 🌙':diff>3600000?'Скоро! Осталось: '+t:'Уже совсем скоро! '+t;
-  document.getElementById('cooldown').innerHTML=msg+'<span class="cooldown-time">'+t+'</span>';
-}
-
-// ═══════════════════════════════════════════════════
-// ЗАРЯДКА — главная функция
-// ═══════════════════════════════════════════════════
-function doWorkout(){
-  const now = new Date();
-
-  // Кулдаун 24ч
-  if (st.lastClaim && (now - new Date(st.lastClaim)) < 24*3600*1000){
-    const next=new Date(new Date(st.lastClaim).getTime()+24*3600*1000);
-    document.getElementById('claimBtn').style.display='none';
-    document.getElementById('cooldown').style.display='block';
-    tick(next);
-    return;
-  }
-
-  // Инкрементируем день
-  st.totalDays = (st.totalDays||0) + 1;
-  st.lastClaim = now.toISOString();
-
-  // Обновляем ранг по неделям
-  const nowWeek = weekTs(now);
-  if (!st.weekStart || st.weekStart < nowWeek) {
-    st.weekStart = nowWeek;
-    st.weekCount = 0;
-    if (st.totalDays > 1) st.weeksPlayed = (st.weeksPlayed||0) + 1;
-  }
-  st.weekCount++;
-
-  const dayType = getDayType(st.totalDays);
-
-  if (dayType === 'key') {
-    // ── Золотой ключ → собираем персонажа ──
-    st.step = (st.step||0) + 1;
-    sound('key');
-
-    if (st.step >= 4) {
-      // ★★★ FIX: сначала сбрасываем step и выбираем следующего, ПОТОМ save ★★★
-      const openedIdx  = st.charIdx;
-      const openedChar = BASE[openedIdx];
-      if (!st.gotBase.includes(openedIdx)) st.gotBase.push(openedIdx);
-      st.step   = 0;                        // сброс ДО сохранения
-      st.charIdx = rndAvail(st.gotBase);    // новый персонаж ДО сохранения
-      save();                               // сохраняем чистое состояние
-      checkLegendary();
-      sound('base');
-      celebrate('🎉', openedChar.power+' открыта!',
-        'Суперсила добавлена в коллекцию! С 5-го дня недели — ⭐',
-        openedChar.img);
-    } else {
-      save();
-      const left = 4 - st.step;
-      celebrate('🔑','Ключ '+st.step+' из 4!',
-        'До суперсилы: ещё '+left+' '+decl(left,'зарядка','зарядки','зарядок'));
-    }
-
-  } else if (dayType === 'star') {
-    // ── Обычная звезда ──
-    st.stars = (st.stars||0) + 1;
-    save();
-    sound('rare');
-    celebrate('⭐','Звезда получена!',
-      'У тебя '+st.stars+' ⭐. Накопи 4 — открой редкого персонажа!');
-
-  } else if (dayType === 'shiny') {
-    // ── Сияющая звезда ──
-    st.shiny = (st.shiny||0) + 1;
-    save();
-    sound('rare');
-    celebrate('🌟','Сияющая звезда!',
-      'У тебя '+st.shiny+' 🌟. Накопи 4 — открой эпического персонажа!');
-
-  } else {
-    // Больше 56 дней
-    save();
-    celebrate('🏆','Ты прошёл(а) всю игру!','Все 56 дней пройдены! Ты настоящий чемпион! 🏅');
-  }
-}
-
-function weekTs(date){
-  const d=new Date(date), day=d.getDay();
-  d.setDate(d.getDate()-day+(day===0?-6:1));
-  d.setHours(0,0,0,0);
-  return d.getTime();
-}
-
-// ═══════════════════════════════════════════════════
-// ЛЕГЕНДАРНЫЙ
-// ═══════════════════════════════════════════════════
-function checkLegendary(){
-  if(!st.gotLegend && st.gotBase.length>=BASE.length && st.gotRare.length>=RARE.length && st.gotEpic.length>=EPIC.length){
-    st.gotLegend=true; save();
-    setTimeout(()=>celebrate('🔥','ЛЕГЕНДА! Феникс получен!','Ты собрал(а) все суперсилы! Ты — Легенда!',LEGEND.img,'legend'),2000);
-  }
-}
-
-// ═══════════════════════════════════════════════════
-// ГАЛЕРЕЯ
-// ═══════════════════════════════════════════════════
-window.switchTab = function(tab,btn){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderGallery(tab);
-};
-
-function renderGallery(tab){
-  const cont=document.getElementById('galleryContent');
-  cont.innerHTML='';
-
-  if(tab==='rare'||tab==='epic'){
-    const info=document.createElement('div');
-    info.style.cssText='background:#f9f9f9;border-radius:14px;padding:10px 14px;margin-bottom:12px;font-size:12px;font-weight:700;color:#666;line-height:1.9';
-    info.innerHTML=tab==='rare'
-      ?'⭐ 4 звезды → 1 редкий персонаж<br>У тебя: ⭐ '+(st.stars||0)
-      :'🌟 4 сияющих → 1 эпический<br>У тебя: 🌟 '+(st.shiny||0);
-    cont.appendChild(info);
-  }
-
-  const chars=tab==='base'?BASE:tab==='rare'?RARE:tab==='epic'?EPIC:[LEGEND];
-  const grid=document.createElement('div'); grid.className='gallery-grid';
-
-  chars.forEach((c,i)=>{
-    const got=tab==='legend'?st.gotLegend:tab==='base'?st.gotBase.includes(i):tab==='rare'?st.gotRare.includes(i):st.gotEpic.includes(i);
-    const div=document.createElement('div');
-    div.className='g-item '+(got?'got':'locked');
-    if(got){div.style.borderColor=c.color+'88';div.style.background=c.color+'10';}
-
-    const area=document.createElement('div'); area.className='g-img';
-    if(got){
-      const img=document.createElement('img'); img.src=c.img; img.alt=c.power;
-      img.onerror=()=>{img.style.display='none';area.innerHTML='<span style="font-size:48px">'+c.animal+'</span>';};
-      area.appendChild(img);
-    } else {
-      area.innerHTML='<span class="g-q">❓</span>';
-    }
-    div.appendChild(area);
-
-    if(got){
-      const nm=document.createElement('div'); nm.className='g-name'; nm.style.color=c.color; nm.textContent=c.power; div.appendChild(nm);
-    }
-
-    if(!got&&(tab==='rare'||tab==='epic')){
-      const cost=4, pool=tab==='rare'?st.stars||0:st.shiny||0, icon=tab==='rare'?'⭐':'🌟';
-      if(pool>=cost){
-        const btn=document.createElement('button');
-        btn.style.cssText='border:none;border-radius:12px;padding:8px 14px;font-family:Nunito,sans-serif;font-weight:800;font-size:12px;cursor:pointer;margin-top:8px;background:'+(tab==='rare'?'#FFF8E1':'#FFF3E0')+';color:'+(tab==='rare'?'#F9A825':'#FF6F00');
-        btn.innerHTML=icon+' '+cost+' → Открыть!';
-        btn.onclick=e=>{e.stopPropagation();buyChar(tab,i);};
-        div.appendChild(btn);
+    
+    state.totalDays++;
+    state.lastClaimDate = new Date().toISOString();
+    const todayType = getDayType(state.totalDays);
+    const dayNum = state.totalDays;
+    
+    if (todayType === 'key') {
+      state.currentKeyStep++;
+      playSound("key");
+      if (state.currentKeyStep >= 4) {
+        // открываем базового персонажа
+        addBaseCharacter();
+        const openedChar = BASE_CHARS[state.currentBaseIndex];
+        showCelebration("🔓", openedChar.power + " открыта!", openedChar.name + " в твоей команде!", openedChar.img, "base");
+        state.currentKeyStep = 0;
+        checkLegendaryCollect();
       } else {
-        const p=document.createElement('div');
-        p.style.cssText='font-size:11px;font-weight:700;color:#bbb;margin-top:6px;text-align:center';
-        p.textContent=icon+' '+cost;
-        div.appendChild(p);
+        showCelebration("🔑", `Ключ ${state.currentKeyStep} / 4`, `Осталось ${4-state.currentKeyStep} зарядок до суперсилы!`, null, "key");
+      }
+    } 
+    else if (todayType === 'star') {
+      state.stars++;
+      playSound("rare");
+      showCelebration("⭐", "Звезда силы!", `У тебя ${state.stars} ⭐. 4 звезды = редкий герой!`, null, "rare");
+    } 
+    else if (todayType === 'shiny') {
+      state.shinyStars++;
+      playSound("epic");
+      showCelebration("🌟", "Сияющая звезда!", `У тебя ${state.shinyStars} 🌟. 4 сияющих = эпический герой!`, null, "epic");
+    }
+    
+    saveState();
+    renderGameUI();
+    updateCooldownDisplay();
+  }
+  
+  function checkLegendaryCollect() {
+    const allBase = state.collectedBase.length === BASE_CHARS.length;
+    const allRare = state.collectedRare.length === RARE_CHARS.length;
+    const allEpic = state.collectedEpic.length === EPIC_CHARS.length;
+    if (!state.hasLegend && allBase && allRare && allEpic) {
+      state.hasLegend = true;
+      saveState();
+      setTimeout(() => {
+        showCelebration("🔥🌿", "ФЕНИКС ВОЗРОЖДЕНИЕ", "Ты собрал всех героев! Легендарная сила!", LEGEND_CHAR.img, "legend");
+      }, 500);
+    }
+  }
+  
+  function renderGameUI() {
+    if (!document.getElementById("gameScreen") || document.getElementById("gameScreen").style.display !== "block") return;
+    document.getElementById("greeting").innerHTML = `Привет, ${state.name || "Герой"} ✨`;
+    document.getElementById("starCount").innerText = state.stars;
+    document.getElementById("shinyCount").innerText = state.shinyStars;
+    const dayNum = state.totalDays + 1;
+    const displayDay = dayNum > 56 ? 56 : dayNum;
+    document.getElementById("dayDisplay").innerHTML = `📅 ДЕНЬ ${displayDay} / 56`;
+    updateRankWeeks();
+    
+    const todayType = (state.totalDays >= 56) ? 'finished' : getDayType(state.totalDays + 1);
+    const infoBox = document.getElementById("infoBox");
+    if (state.totalDays >= 56) {
+      infoBox.style.display = "block";
+      infoBox.innerHTML = "🏁 Ты прошёл 56 дней! Ты чемпион!";
+      document.getElementById("claimBtn").style.display = "none";
+      return;
+    } else {
+      document.getElementById("claimBtn").style.display = "block";
+      if (todayType === 'star') {
+        document.getElementById("claimBtn").className = "btn btn-star";
+        document.getElementById("claimBtn").innerHTML = "⭐ Зарядка + звезда!";
+        infoBox.style.display = "block";
+        infoBox.innerHTML = "⭐ Сегодня даст звёздочку!";
+      } else if (todayType === 'shiny') {
+        document.getElementById("claimBtn").className = "btn btn-shiny";
+        document.getElementById("claimBtn").innerHTML = "🌟 Зарядка + сияющая звезда!";
+        infoBox.style.display = "block";
+        infoBox.innerHTML = "🌟 Сегодня сияющая звезда!";
+      } else if (todayType === 'key') {
+        document.getElementById("claimBtn").className = "btn btn-green";
+        document.getElementById("claimBtn").innerHTML = "🏃‍♀️ Зарядка → золотой ключ!";
+        infoBox.style.display = "none";
+      } else {
+        document.getElementById("claimBtn").className = "btn btn-green";
+        document.getElementById("claimBtn").innerHTML = "🏃‍♀️ Я сделал(а) зарядку!";
       }
     }
-    if(tab==='legend'&&!got){
-      const h=document.createElement('div'); h.style.cssText='font-size:11px;font-weight:700;color:#aaa;margin-top:6px;text-align:center'; h.textContent='Собери всех персонажей!'; div.appendChild(h);
+    
+    // ключевая сетка или отображение персонажа
+    const keysGrid = document.getElementById("keysGrid");
+    const charWrap = document.getElementById("charWrap");
+    const charImg = document.getElementById("charImg");
+    
+    const upcomingDayType = getDayType(state.totalDays + 1);
+    const isKeyWeek = (upcomingDayType === 'key');
+    const showCharacterInsteadOfKeys = (!isKeyWeek && state.collectedBase.length > 0) || (state.totalDays % 7 >= 4 && state.totalDays % 7 !== 0);
+    
+    if (!isKeyWeek && state.collectedBase.length > 0) {
+      keysGrid.style.display = "none";
+      charWrap.classList.add("show");
+      const lastBase = state.collectedBase[state.collectedBase.length-1];
+      const lastChar = BASE_CHARS[lastBase];
+      charImg.src = lastChar.img;
+      document.getElementById("progressText").innerHTML = `✨ ${lastChar.power} — твоя суперсила готова!`;
+    } 
+    else if (isKeyWeek) {
+      charWrap.classList.remove("show");
+      keysGrid.style.display = "grid";
+      keysGrid.innerHTML = "";
+      const step = state.currentKeyStep;
+      for(let i=0;i<4;i++){
+        const slot = document.createElement("div");
+        slot.className = "key-slot" + (i < step ? " filled" : "");
+        slot.innerText = i < step ? "🔑" : "⚜️";
+        keysGrid.appendChild(slot);
+      }
+      const left = 4 - step;
+      document.getElementById("progressText").innerHTML = `🔐 Осталось ${left} ${left===1?"зарядка":(left<5?"зарядки":"зарядок")} до новой суперсилы!`;
+    } else {
+      keysGrid.style.display = "none";
+      charWrap.classList.remove("show");
+      document.getElementById("progressText").innerHTML = "🎯 Продолжай завтра!";
     }
-    if(!got){
-      const rl=document.createElement('span'); rl.className='rarity-label rarity-'+tab;
-      const labels={base:'базовый',rare:'редкий',epic:'эпический',legend:'легендарный'};
-      rl.textContent=labels[tab]; div.appendChild(rl);
+  }
+  
+  function updateCooldownDisplay() {
+    const coolDiv = document.getElementById("cooldownMsg");
+    if (!canClaimToday() && state.totalDays < 56) {
+      const remain = getRemainingTimeText();
+      coolDiv.style.display = "block";
+      coolDiv.innerHTML = `⏳ Следующая тренировка через <span class="cooldown-time">${remain}</span>`;
+    } else {
+      coolDiv.style.display = "none";
     }
-    grid.appendChild(div);
-  });
-  cont.appendChild(grid);
-}
-
-function buyChar(tab,idx){
-  const field=tab==='rare'?'stars':'shiny';
-  const coll =tab==='rare'?'gotRare':'gotEpic';
-  const chars=tab==='rare'?RARE:EPIC;
-  if((st[field]||0)<4) return;
-  if(st[coll].includes(idx)) return;
-  st[field]-=4;
-  st[coll].push(idx);
-  save();
-  const c=chars[idx];
-  celebrate(tab==='rare'?'⭐':'🌟',c.power+' открыта!',c.name+' теперь в коллекции!',c.img,tab==='rare'?'rare':'epic');
-  checkLegendary();
-  renderGallery(tab);
-}
-
-window.showGallery = function(){
-  document.getElementById('gameScreen').style.display='none';
-  document.getElementById('galleryScreen').style.display='block';
-  renderGallery('base');
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===0));
-};
-window.hideGallery = function(){
-  document.getElementById('galleryScreen').style.display='none';
-  document.getElementById('gameScreen').style.display='block';
-};
-
-// ═══════════════════════════════════════════════════
-// ВХОД
-// ═══════════════════════════════════════════════════
-function checkBtn(){
-  const n=document.getElementById('nameInput').value.trim();
-  const k=document.getElementById('nickInput').value.trim();
-  document.getElementById('startBtn').disabled=!(n&&k);
-}
-let _ac=0;
-const _at=setInterval(()=>{checkBtn();if(++_ac>=20)clearInterval(_at);},200);
-
-window.startGame = function(){
-  const name=document.getElementById('nameInput').value.trim();
-  const nick=document.getElementById('nickInput').value.trim();
-  if(!name||!nick) return;
-  playerKey=(name+'_'+nick).toLowerCase().replace(/[^a-zа-яё0-9]/gi,'_');
-  localStorage.setItem('as_who',JSON.stringify({name,nick}));
-  if(!load()){ st=freshState(); }
-  st.name=name; st.nick=nick;
-  save();
-  sound('start');
-  document.getElementById('nameScreen').style.display='none';
-  document.getElementById('gameScreen').style.display='block';
-  render();
-};
-window.changeName = function(){
-  localStorage.removeItem('as_who');
-  document.getElementById('gameScreen').style.display='none';
-  document.getElementById('nameScreen').style.display='block';
-  document.getElementById('nameInput').value='';
-  document.getElementById('nickInput').value='';
-  checkBtn();
-};
-const _who=localStorage.getItem('as_who');
-if(_who){try{const d=JSON.parse(_who);if(d.name&&d.nick){document.getElementById('nameInput').value=d.name;document.getElementById('nickInput').value=d.nick;checkBtn();}}catch(e){}}
+  }
+  
+  function renderGallery(tab) {
+    const container = document.getElementById("galleryContent");
+    let list = [];
+    let type = tab;
+    if (tab === "base") list = BASE_CHARS;
+    else if (tab === "rare") list = RARE_CHARS;
+    else if (tab === "epic") list = EPIC_CHARS;
+    else list = [LEGEND_CHAR];
+    container.innerHTML = "";
+    const grid = document.createElement("div");
+    grid.className = "gallery-grid";
+    for (let i = 0; i < list.length; i++) {
+      const ch = list[i];
+      let isOwned = false;
+      if (tab === "base") isOwned = state.collectedBase.includes(i);
+      else if (tab === "rare") isOwned = state.collectedRare.includes(i);
+      else if (tab === "epic") isOwned = state.collectedEpic.includes(i);
+      else isOwned = state.hasLegend;
+      
+      const div = document.createElement("div");
+      div.className = "g-item " + (isOwned ? "got" : "");
+      const imgDiv = document.createElement("div");
+      if (isOwned) {
+        const img = document.createElement("img");
+        img.src = ch.img;
+        img.alt = ch.power;
+        imgDiv.appendChild(img);
+      } else {
+        imgDiv.innerHTML = '<div style="font-size:48px; padding:20px;">❓</div>';
+      }
+      div.appendChild(imgDiv);
+      const nameSpan = document.createElement("div");
+      nameSpan.innerText = ch.power;
+      nameSpan.style.fontWeight = "bold";
+      nameSpan.style.padding = "6px";
+      div.appendChild(nameSpan);
+      
+      if (!isOwned && (tab === "rare" || tab === "epic")) {
+        const needed = 4;
+        const current = tab === "rare" ? state.stars : state.shinyStars;
+        if (current >= needed) {
+          const btn = document.createElement("button");
+          btn.innerText = `✨ Открыть (${needed})`;
+          btn.style.margin = "8px";
+          btn.style.borderRadius = "40px";
+          btn.style.padding = "6px 12px";
+          btn.style.border = "none";
+          btn.style.background = "#facc15";
+          btn.style.fontWeight = "bold";
+          btn.onclick = (e) => {
+            e.stopPropagation();
+            if (tab === "rare" && state.stars >= 4 && !state.collectedRare.includes(i)) {
+              state.stars -= 4;
+              state.collectedRare.push(i);
+              saveState();
+              showCelebration("⭐", ch.power, `${ch.name} в коллекции!`, ch.img, "rare");
+              renderGallery(tab);
+              renderGameUI();
+              checkLegendaryCollect();
+            } else if (tab === "epic" && state.shinyStars >= 4 && !state.collectedEpic.includes(i)) {
+              state.shinyStars -= 4;
+              state.collectedEpic.push(i);
+              saveState();
+              showCelebration("🌟", ch.power, `${ch.name} пополнил арсенал!`, ch.img, "epic");
+              renderGallery(tab);
+              renderGameUI();
+              checkLegendaryCollect();
+            }
+          };
+          div.appendChild(btn);
+        } else {
+          const need = document.createElement("div");
+          need.innerText = `⭐ ${current}/${needed}`;
+          need.style.fontSize = "12px";
+          need.style.margin = "6px";
+          div.appendChild(need);
+        }
+      }
+      grid.appendChild(div);
+    }
+    container.appendChild(grid);
+  }
+  
+  function initGalleryTabs() {
+    const tabsDiv = document.getElementById("galleryTabs");
+    tabsDiv.innerHTML = "";
+    const tabs = ["base","rare","epic","legend"];
+    const names = ["Базовые","Редкие","Эпические","Легенда"];
+    tabs.forEach((t, idx) => {
+      const btn = document.createElement("button");
+      btn.innerText = names[idx];
+      btn.className = "tab-btn" + (idx===0 ? " active" : "");
+      btn.onclick = () => {
+        document.querySelectorAll("#galleryTabs .tab-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderGallery(t);
+      };
+      tabsDiv.appendChild(btn);
+    });
+  }
+  
+  function showGallery() {
+    document.getElementById("gameScreen").style.display = "none";
+    document.getElementById("galleryScreen").style.display = "block";
+    initGalleryTabs();
+    renderGallery("base");
+  }
+  
+  function hideGallery() {
+    document.getElementById("galleryScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "block";
+    renderGameUI();
+    updateCooldownDisplay();
+  }
+  
+  function resetProfile() {
+    localStorage.removeItem(`active_stop_${currentPlayerKey}`);
+    document.getElementById("gameScreen").style.display = "none";
+    document.getElementById("nameScreen").style.display = "block";
+    document.getElementById("nameInput").value = "";
+    document.getElementById("nickInput").value = "";
+    document.getElementById("startBtn").disabled = true;
+  }
+  
+  function startGame() {
+    const name = document.getElementById("nameInput").value.trim();
+    const nick = document.getElementById("nickInput").value.trim();
+    if (!name || !nick) return;
+    currentPlayerKey = btoa(`${name}_${nick}`).slice(0, 24);
+    const loaded = loadState(currentPlayerKey);
+    if (!loaded) {
+      adoptFresh(name, nick);
+    } else {
+      state.name = name;
+      state.nick = nick;
+      saveState();
+    }
+    document.getElementById("nameScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "block";
+    renderGameUI();
+    updateCooldownDisplay();
+    setInterval(() => { updateCooldownDisplay(); renderGameUI(); }, 30000);
+  }
+  
+  function closeCeleb() { document.getElementById("celebration").classList.remove("show");}
+  
+  window.startGame = startGame;
+  window.doWorkout = doWorkout;
+  window.showGallery = showGallery;
+  window.hideGallery = hideGallery;
+  window.resetProfile = resetProfile;
+  window.closeCeleb = closeCeleb;
+  
+  function checkInputs() {
+    const name = document.getElementById("nameInput").value.trim();
+    const nick = document.getElementById("nickInput").value.trim();
+    document.getElementById("startBtn").disabled = !(name && nick);
+  }
+  document.getElementById("nameInput").addEventListener("input", checkInputs);
+  document.getElementById("nickInput").addEventListener("input", checkInputs);
+  checkInputs();
+  
+  const savedWho = localStorage.getItem("as_who") || "";
+  if(savedWho) {
+    try {
+      const old = JSON.parse(savedWho);
+      if(old.name && old.nick) {
+        document.getElementById("nameInput").value = old.name;
+        document.getElementById("nickInput").value = old.nick;
+        checkInputs();
+      }
+    } catch(e) {}
+  }
 </script>
 </body>
 </html>
