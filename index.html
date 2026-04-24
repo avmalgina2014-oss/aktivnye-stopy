@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Активные Стопы</title>
+<title>Активные Стопы — Собери суперсилы</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -15,7 +15,6 @@ h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:
 .btn:hover{transform:translateY(-2px)}
 .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 .btn-green{background:linear-gradient(135deg,#2E7D32,#4CAF50);box-shadow:0 4px 16px rgba(46,125,50,.4)}
-.btn-gold {background:linear-gradient(135deg,#F9A825,#FF6F00);box-shadow:0 4px 16px rgba(249,168,37,.4)}
 .btn-star {background:linear-gradient(135deg,#F9A825,#FFB300);box-shadow:0 4px 16px rgba(249,168,37,.3)}
 .btn-shiny{background:linear-gradient(135deg,#FF6F00,#FF8F00);box-shadow:0 4px 16px rgba(255,111,0,.3)}
 .field-label{font-size:12px;font-weight:800;color:#888;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;text-align:left}
@@ -97,7 +96,7 @@ h1{font-family:'Fredoka One',cursive;font-size:26px;color:#2d2d2d;margin-bottom:
     </div>
   </div>
   <div class="greeting" id="greeting">Привет!</div>
-  <div class="day-badge" id="dayBadge">День 1</div>
+  <div class="day-badge" id="dayBadge">День 1 / 56</div>
   <div class="progress-text" id="progressText"></div>
   <div class="keys-grid" id="keysGrid"></div>
   <div class="char-wrap" id="charWrap"><img id="charImg" src="" alt=""></div>
@@ -157,16 +156,24 @@ const EPIC = [
 const LEGEND = {animal:"🔥",power:"Возрождение",name:"Феникс",color:"#FF6F00",img:"feniks.png"};
 
 // ═══════════════════════════════════════════════════
-// ЛОГИКА ДНЕЙ (56 дней: 1-56)
-// 1-4 → ключи, 5-6 → звезда ⭐, 7 → сияющая 🌟
+// ПРАВИЛЬНАЯ ЛОГИКА ДНЕЙ
+// Дни 1-4,8-11,15-18,22-25,29-32,36-39,43-46,50-53 → ключи (окошка)
+// Дни 5-6,12-13,19-20,26-27,33-34,40-41,47-48,54-55 → звезда ⭐
+// Дни 7,14,21,28,35,42,49,56 → сияющая звезда 🌟
 // ═══════════════════════════════════════════════════
 function getDayType(dayNum) {
-  if (dayNum < 1 || dayNum > 56) return 'extra';
-  const pos = ((dayNum - 1) % 7) + 1;
-  if (pos >= 1 && pos <= 4) return 'key';
-  if (pos === 5 || pos === 6) return 'star';
-  if (pos === 7) return 'shiny';
-  return 'extra';
+  if(dayNum < 1 || dayNum > 56) return 'finished';
+  
+  const posInWeek = ((dayNum - 1) % 7) + 1;
+  
+  // 1-4 дни → ключи
+  if(posInWeek >= 1 && posInWeek <= 4) return 'key';
+  // 5-6 дни → звезда
+  if(posInWeek === 5 || posInWeek === 6) return 'star';
+  // 7 день → сияющая звезда
+  if(posInWeek === 7) return 'shiny';
+  
+  return 'finished';
 }
 
 let state = {};
@@ -176,8 +183,8 @@ function freshState(name, nick) {
   return {
     name: name,
     nick: nick,
-    totalDays: 0,
-    keyStep: 0,
+    currentDay: 0,        // сколько дней ПРОЙДЕНО (0 = ни одного)
+    keyStep: 0,           // сколько ключей собрано в текущей НЕДЕЛЕ (0-4)
     currentBaseIdx: Math.floor(Math.random() * BASE.length),
     stars: 0,
     shinyStars: 0,
@@ -186,26 +193,25 @@ function freshState(name, nick) {
     gotEpic: [],
     gotLegend: false,
     lastClaim: null,
-    weeksPlayed: 0,
   };
 }
 
 function save() { if(playerKey) localStorage.setItem('as_'+playerKey, JSON.stringify(state)); }
 function load() {
   const raw = localStorage.getItem('as_'+playerKey);
-  if (!raw) return false;
+  if(!raw) return false;
   try {
     const data = JSON.parse(raw);
     state = data;
-    if (!state.gotBase) state.gotBase = [];
-    if (!state.gotRare) state.gotRare = [];
-    if (!state.gotEpic) state.gotEpic = [];
-    if (state.gotLegend === undefined) state.gotLegend = false;
-    if (state.keyStep === undefined) state.keyStep = 0;
-    if (state.stars === undefined) state.stars = 0;
-    if (state.shinyStars === undefined) state.shinyStars = 0;
-    if (state.currentBaseIdx === undefined || state.currentBaseIdx === null) state.currentBaseIdx = 0;
-    if (state.totalDays === undefined) state.totalDays = 0;
+    if(!state.gotBase) state.gotBase = [];
+    if(!state.gotRare) state.gotRare = [];
+    if(!state.gotEpic) state.gotEpic = [];
+    if(state.gotLegend === undefined) state.gotLegend = false;
+    if(state.keyStep === undefined) state.keyStep = 0;
+    if(state.stars === undefined) state.stars = 0;
+    if(state.shinyStars === undefined) state.shinyStars = 0;
+    if(state.currentDay === undefined) state.currentDay = 0;
+    if(state.currentBaseIdx === undefined) state.currentBaseIdx = 0;
     return true;
   } catch(e) { return false; }
 }
@@ -217,7 +223,7 @@ function randomAvailableBase() {
 }
 
 function getRank() {
-  const weeks = Math.floor(state.totalDays / 7);
+  const weeks = Math.floor(state.currentDay / 7);
   if(weeks >= 8) return {label:'👑 МАСТЕР', cls:'rank-master'};
   if(weeks >= 6) return {label:'⚡ ПРОФИ', cls:'rank-pro'};
   if(weeks >= 3) return {label:'📖 УЧЕНИК', cls:'rank-student'};
@@ -283,51 +289,51 @@ function render() {
   document.getElementById('shinyCount').textContent = state.shinyStars;
   document.getElementById('greeting').textContent = 'Привет, '+(state.name||'')+'!';
   
-  const nextDayNum = state.totalDays + 1;
-  const isFinished = state.totalDays >= 56;
-  document.getElementById('dayBadge').textContent = isFinished ? '🏆 ВСЕ ДНИ ПРОЙДЕНЫ!' : `День ${nextDayNum} / 56`;
-  
-  const keysGrid = document.getElementById('keysGrid');
-  const charWrap = document.getElementById('charWrap');
-  const progressDiv = document.getElementById('progressText');
-  const infoBox = document.getElementById('infoBox');
+  const nextDayNum = state.currentDay + 1;
+  const isFinished = state.currentDay >= 56;
   
   if(isFinished) {
-    keysGrid.style.display = 'none';
-    charWrap.classList.remove('show');
-    progressDiv.innerHTML = '✨ Все суперсилы собраны. Ты — легенда! ✨';
-    infoBox.style.display = 'block';
-    infoBox.innerHTML = '🏆 Ты прошёл(а) все 56 дней! Поздравляем! 🏆';
+    document.getElementById('dayBadge').textContent = '🏆 ИГРА ЗАВЕРШЕНА!';
+    document.getElementById('keysGrid').style.display = 'none';
+    document.getElementById('charWrap').classList.remove('show');
+    document.getElementById('progressText').innerHTML = '✨ Все суперсилы собраны. Ты — легенда! ✨';
+    document.getElementById('infoBox').style.display = 'block';
+    document.getElementById('infoBox').innerHTML = '🏆 Ты прошёл(а) все 56 дней! Поздравляем! 🏆';
     document.getElementById('claimBtn').style.display = 'none';
+    document.getElementById('cooldown').style.display = 'none';
     return;
   }
   
+  document.getElementById('dayBadge').textContent = `День ${nextDayNum} / 56`;
   const dayType = getDayType(nextDayNum);
   
-  // Показываем информацию о сегодняшней награде
+  // Настройка кнопки и infoBox в зависимости от типа дня
   if(dayType === 'star') {
-    infoBox.style.display = 'block';
-    infoBox.innerHTML = '⭐ Сегодня за зарядку ты получишь ЗВЕЗДУ! ⭐';
+    document.getElementById('infoBox').style.display = 'block';
+    document.getElementById('infoBox').innerHTML = '⭐ Сегодня за зарядку — ЗВЕЗДА! ⭐';
     document.getElementById('claimBtn').className = 'btn btn-star';
     document.getElementById('claimBtn').innerHTML = 'Я сделал(а) зарядку! (+⭐)';
   } else if(dayType === 'shiny') {
-    infoBox.style.display = 'block';
-    infoBox.innerHTML = '🌟 Сегодня за зарядку — СИЯЮЩАЯ ЗВЕЗДА! 🌟';
+    document.getElementById('infoBox').style.display = 'block';
+    document.getElementById('infoBox').innerHTML = '🌟 Сегодня за зарядку — СИЯЮЩАЯ ЗВЕЗДА! 🌟';
     document.getElementById('claimBtn').className = 'btn btn-shiny';
     document.getElementById('claimBtn').innerHTML = 'Я сделал(а) зарядку! (+🌟)';
   } else if(dayType === 'key') {
-    infoBox.style.display = 'none';
+    document.getElementById('infoBox').style.display = 'none';
     document.getElementById('claimBtn').className = 'btn btn-green';
     document.getElementById('claimBtn').innerHTML = 'Я сделал(а) зарядку! 🏃';
   } else {
-    infoBox.style.display = 'block';
-    infoBox.innerHTML = '🎉 Ты молодец! Продолжай в том же духе!';
+    document.getElementById('infoBox').style.display = 'none';
     document.getElementById('claimBtn').className = 'btn btn-green';
     document.getElementById('claimBtn').innerHTML = 'Я сделал(а) зарядку! 🏃';
   }
   
-  // Если набираем ключи
-  if(dayType === 'key' && state.keyStep < 4) {
+  const keysGrid = document.getElementById('keysGrid');
+  const charWrap = document.getElementById('charWrap');
+  
+  // ВАЖНО: на звёздных днях (star/shiny) НЕ ПОКАЗЫВАЕМ НИ ОКОШЕК, НИ ПЕРСОНАЖА
+  if(dayType === 'key') {
+    // КЛЮЧЕВЫЕ ДНИ — показываем окошки
     keysGrid.style.display = 'grid';
     charWrap.classList.remove('show');
     keysGrid.innerHTML = '';
@@ -338,20 +344,19 @@ function render() {
       keysGrid.appendChild(slot);
     }
     const left = 4 - state.keyStep;
-    progressDiv.innerHTML = `🔐 Собери 4 ключа: ${state.keyStep}/4 • Осталось ${left} ${left===1?'зарядка':'зарядки'}`;
+    document.getElementById('progressText').innerHTML = `🔐 Собери 4 ключа: ${state.keyStep}/4 • Осталось ${left} ${left===1?'зарядка':'зарядки'} до новой суперсилы!`;
   } 
-  else if(state.gotBase.length > 0) {
-    // Показываем последнего открытого персонажа
-    keysGrid.style.display = 'none';
-    charWrap.classList.add('show');
-    const lastChar = BASE[state.gotBase[state.gotBase.length-1]];
-    document.getElementById('charImg').src = lastChar.img;
-    progressDiv.innerHTML = `✨ Суперсила: ${lastChar.power} ✨<br><span style="font-size:12px">${lastChar.name} в твоей команде!</span>`;
-  } 
-  else {
+  else if(dayType === 'star' || dayType === 'shiny') {
+    // ЗВЁЗДНЫЕ ДНИ — нет окошек, нет персонажа, только кнопка
     keysGrid.style.display = 'none';
     charWrap.classList.remove('show');
-    progressDiv.innerHTML = '🏃‍♀️ Начни неделю с зарядки — собирай ключи!';
+    document.getElementById('progressText').innerHTML = '⭐ Собирай звёзды! В галерее можно обменять 4 звезды на редкого героя, 4 сияющих — на эпического!';
+  }
+  else {
+    // Запасной вариант
+    keysGrid.style.display = 'none';
+    charWrap.classList.remove('show');
+    document.getElementById('progressText').innerHTML = '🏃‍♀️ Продолжай заниматься каждый день!';
   }
   
   updateCooldown();
@@ -361,7 +366,7 @@ function updateCooldown() {
   const btn = document.getElementById('claimBtn');
   const coolDiv = document.getElementById('cooldown');
   
-  if(state.totalDays >= 56) {
+  if(state.currentDay >= 56) {
     btn.style.display = 'none';
     coolDiv.style.display = 'none';
     return;
@@ -389,7 +394,7 @@ function updateCooldown() {
 }
 
 async function doWorkout() {
-  if(state.totalDays >= 56) {
+  if(state.currentDay >= 56) {
     celebrate('🏆', 'Поздравляем!', 'Все 56 дней пройдены! Ты легенда!', null, 'legend');
     return;
   }
@@ -403,42 +408,45 @@ async function doWorkout() {
     }
   }
   
-  state.totalDays++;
+  // Увеличиваем день
+  state.currentDay++;
   state.lastClaim = new Date().toISOString();
-  const dayType = getDayType(state.totalDays);
+  
+  const dayType = getDayType(state.currentDay);
   
   if(dayType === 'key') {
+    // КЛЮЧЕВОЙ ДЕНЬ
     state.keyStep++;
     playSound('key');
+    
     if(state.keyStep >= 4) {
-      // Открываем персонажа
+      // Открываем БАЗОВОГО персонажа (суперсилу)
       const openedIdx = state.currentBaseIdx;
       const openedChar = BASE[openedIdx];
       if(!state.gotBase.includes(openedIdx)) state.gotBase.push(openedIdx);
       state.keyStep = 0;
       state.currentBaseIdx = randomAvailableBase();
       save();
-      celebrate('🎉', openedChar.power+' открыта!', openedChar.name+' в коллекции!', openedChar.img, 'base');
+      celebrate('🎉', openedChar.power+' открыта!', openedChar.name+' — новая суперсила в коллекции!', openedChar.img, 'base');
       checkLegendary();
     } else {
       save();
-      celebrate('🔑', `Ключ ${state.keyStep}/4`, `Ещё ${4-state.keyStep} зарядки до суперсилы!`, null, 'key');
+      celebrate('🔑', `Ключ ${state.keyStep}/4`, `Ещё ${4-state.keyStep} зарядки до новой суперсилы!`, null, 'key');
     }
   } 
   else if(dayType === 'star') {
+    // ЗВЕЗДА
     state.stars++;
     save();
     celebrate('⭐', 'Звезда получена!', `У тебя ${state.stars} ⭐. 4 звезды = редкий герой!`, null, 'rare');
   } 
   else if(dayType === 'shiny') {
+    // СИЯЮЩАЯ ЗВЕЗДА
     state.shinyStars++;
     save();
     celebrate('🌟', 'Сияющая звезда!', `У тебя ${state.shinyStars} 🌟. 4 сияющих = эпический герой!`, null, 'epic');
   }
   
-  // Обновляем недели для ранга
-  state.weeksPlayed = Math.floor(state.totalDays / 7);
-  save();
   render();
 }
 
@@ -570,6 +578,9 @@ window.startGame = function() {
   const nick = document.getElementById('nickInput').value.trim();
   if(!name || !nick) return;
   playerKey = (name+'_'+nick).toLowerCase().replace(/[^a-zа-яё0-9]/gi, '_');
+  
+  // Сохраняем для автозаполнения
+  localStorage.setItem('as_who', JSON.stringify({name,nick}));
   
   if(!load()) {
     state = freshState(name, nick);
