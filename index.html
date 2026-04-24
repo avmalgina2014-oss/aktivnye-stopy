@@ -2,72 +2,872 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Активные Стопы</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Активные Стопы — скользящая неделя</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Segoe UI', system-ui, -apple-system, 'Nunito', sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     padding: 20px;
   }
   .card {
-    background: #fff;
-    border-radius: 32px;
+    background: white;
+    border-radius: 48px;
     padding: 24px 20px;
-    max-width: 420px;
+    max-width: 450px;
     width: 100%;
-    box-shadow: 0 20px 60px rgba(0,0,0,.2);
     text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
   }
-  h1 { font-family: 'Fredoka One', cursive; font-size: 26px; color: #2d2d2d; margin-bottom: 4px; }
-  .subtitle { font-size: 13px; color: #888; margin-bottom: 20px; font-weight: 700; }
-  .btn {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    border: none;
-    border-radius: 16px;
-    padding: 13px 24px;
+  h1 {
     font-family: 'Fredoka One', cursive;
-    font-size: 19px;
+    font-size: 28px;
+    color: #1e293b;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: #7c8ba0;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  .btn {
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    border: none;
+    width: 100%;
+    padding: 14px;
+    border-radius: 60px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 18px;
+    color: white;
     cursor: pointer;
-    width: 100%;
-    transition: transform .15s;
-    box-shadow: 0 4px 16px rgba(102,126,234,.4);
-    margin-top: 8px;
+    transition: transform 0.1s;
+    margin-top: 12px;
   }
-  .btn:hover { transform: translateY(-2px); }
-  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-
-  .field-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; text-align: left; }
-  .field-input {
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
+  .btn-green { background: linear-gradient(135deg, #10b981, #059669); }
+  .btn-star { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .btn-shiny { background: linear-gradient(135deg, #f97316, #ea580c); }
+  .field-label { text-align: left; font-size: 12px; font-weight: 600; color: #556; margin-bottom: 6px; }
+  input {
     width: 100%;
-    border: 3px solid #e0e4ef;
-    border-radius: 14px;
-    padding: 11px 14px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 17px;
-    font-weight: 700;
-    outline: none;
+    padding: 12px;
+    margin-bottom: 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 60px;
+    font-size: 16px;
+    font-weight: 500;
     text-align: center;
-    margin-bottom: 14px;
-    transition: border-color .2s;
+    outline: none;
   }
-  .field-input:focus { border-color: #667eea; }
-
+  input:focus { border-color: #8b5cf6; }
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .rank-badge {
+    background: #f1f5f9;
+    padding: 6px 16px;
+    border-radius: 40px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+  .rank-novice { background: #dcfce7; color: #166534; }
+  .rank-student { background: #fef9c3; color: #854d0e; }
+  .rank-pro { background: #dbeafe; color: #1e40af; }
+  .rank-master { background: #e9d5ff; color: #6b21a5; }
+  .keys-wallet {
+    display: flex;
+    gap: 12px;
+    background: #f8fafc;
+    padding: 5px 20px;
+    border-radius: 60px;
+  }
+  .wallet-slot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .wallet-slot.star { color: #f59e0b; }
+  .wallet-slot.shiny { color: #ea580c; }
+  .greeting {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  .progress-text {
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 60px;
+    font-size: 14px;
+    font-weight: 500;
+    margin: 12px 0;
+  }
+  .keys-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 15px 0;
+  }
+  .key-slot {
+    aspect-ratio: 1;
+    background: #f8fafc;
+    border: 3px dashed #cbd5e1;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    transition: all 0.2s;
+  }
+  .key-slot.filled {
+    background: #fffbeb;
+    border: 3px solid #fbbf24;
+    animation: bounce 0.3s ease;
+  }
+  @keyframes bounce {
+    0% { transform: scale(0.7); }
+    80% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+  .char-wrap {
+    background: #fef9e3;
+    border-radius: 32px;
+    margin: 12px 0;
+    padding: 8px;
+    display: none;
+  }
+  .char-wrap.show { display: block; animation: fadeZoom 0.4s; }
+  .char-wrap img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    border-radius: 24px;
+  }
+  @keyframes fadeZoom {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .cooldown-msg {
+    background: #eff6ff;
+    padding: 12px;
+    border-radius: 28px;
+    font-size: 13px;
+    margin-top: 10px;
+    display: none;
+    color: #2563eb;
+    font-weight: 500;
+  }
+  .cooldown-time {
+    font-size: 22px;
+    font-weight: bold;
+    display: block;
+    margin-top: 5px;
+  }
+  .info-box {
+    background: #fefce8;
+    padding: 10px;
+    border-radius: 28px;
+    font-size: 12px;
+    margin-top: 10px;
+    display: none;
+    color: #b45309;
+    font-weight: 500;
+  }
+  .collection-bar {
+    border-top: 2px solid #eef2ff;
+    padding-top: 16px;
+    margin-top: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #4b5563;
+  }
+  .change-name {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 12px;
+    cursor: pointer;
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 18px 0;
+  }
+  .g-item {
+    background: #f8fafc;
+    border-radius: 24px;
+    overflow: hidden;
+    text-align: center;
+    border: 2px solid #e2e8f0;
+    padding-bottom: 12px;
+  }
+  .g-item.got {
+    background: white;
+    border-color: #facc15;
+  }
+  .g-item img {
+    width: 100%;
+    height: 120px;
+    object-fit: contain;
+  }
+  .g-name {
+    font-weight: bold;
+    font-size: 14px;
+    margin: 6px 0;
+  }
+  .g-price {
+    background: #fef9e3;
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 30px;
+    font-size: 12px;
+    margin: 6px 0;
+    font-weight: 600;
+  }
+  .g-btn {
+    background: #facc15;
+    border: none;
+    border-radius: 60px;
+    padding: 6px 14px;
+    font-weight: bold;
+    font-size: 12px;
+    margin: 6px auto;
+    cursor: pointer;
+    width: 85%;
+  }
+  .g-btn:active { transform: scale(0.96); }
+  .celebration {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+  }
+  .celebration.show { display: flex; }
+  .celeb-box {
+    background: white;
+    border-radius: 48px;
+    padding: 24px;
+    text-align: center;
+    max-width: 300px;
+    width: 85%;
+  }
+  .celeb-emoji { font-size: 56px; }
+  .celeb-title { font-size: 24px; font-weight: bold; margin: 8px 0; }
+  .celeb-img { width: 100%; max-height: 140px; object-fit: contain; margin: 10px 0; display: none; }
+  .celeb-text { margin: 10px 0; font-size: 14px; color: #555; }
+  .gallery-tabs {
+    display: flex;
+    gap: 6px;
+    background: #f1f5f9;
+    border-radius: 60px;
+    padding: 5px;
+    margin-bottom: 20px;
+  }
+  .tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 8px 0;
+    font-weight: bold;
+    border-radius: 40px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .tab-btn.active {
+    background: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    color: #6d28d9;
+  }
+  .rarity-label {
+    font-size: 9px;
+    font-weight: bold;
+    padding: 2px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin: 4px 0;
+  }
+  .rarity-base { background: #dbeafe; color: #1e3a8a; }
+  .rarity-rare { background: #fef3c7; color: #92400e; }
+  .rarity-epic { background: #fce7f3; color: #9d174d; }
 </style>
 </head>
 <body>
 
-<div class="card" id="nameScreen">
-...
-<!-- [ОСТАЛЬНАЯ HTML-СТРУКТУРА ОСТАЁТСЯ БЕЗ ИЗМЕНЕНИЙ] -->
-...
+<!-- ЭКРАН ВХОДА -->
+<div class="card" id="enterScreen">
+  <h1>👣 Активные Стопы</h1>
+  <div class="subtitle">Собери все суперсилы!</div>
+  <div class="field-label">Твоё имя</div>
+  <input type="text" id="playerName" placeholder="Саша" maxlength="15">
+  <div class="field-label">Твой ник</div>
+  <input type="text" id="playerNick" placeholder="Ракета 🚀" maxlength="20">
+  <button class="btn" id="startBtn" disabled>Вперёд! 🚀</button>
+</div>
+
+<!-- ОСНОВНОЙ ЭКРАН -->
+<div class="card" id="gameScreen" style="display:none">
+  <div class="top-bar">
+    <span class="rank-badge rank-novice" id="rankBadge">🌱 НОВИЧОК</span>
+    <div class="keys-wallet">
+      <div class="wallet-slot star">⭐ <span id="starCount">0</span></div>
+      <div class="wallet-slot shiny">🌟 <span id="shinyCount">0</span></div>
+    </div>
+  </div>
+  <div class="greeting" id="greeting">Привет!</div>
+  <div class="progress-text" id="progressText"></div>
+  <div class="keys-grid" id="keysGrid">
+    <div class="key-slot" id="k0"></div><div class="key-slot" id="k1"></div>
+    <div class="key-slot" id="k2"></div><div class="key-slot" id="k3"></div>
+  </div>
+  <div class="char-wrap" id="charWrap"><img id="charImg" src=""></div>
+  <button class="btn btn-green" id="workoutBtn">🏃‍♀️ Я сделал(а) зарядку!</button>
+  <div class="cooldown-msg" id="cooldownMsg"></div>
+  <div class="info-box" id="infoBox"></div>
+  <div class="collection-bar" id="galleryBtn">🏅 Моя коллекция →</div>
+  <div class="change-name" id="resetBtn">Сменить имя</div>
+</div>
+
+<!-- ГАЛЕРЕЯ -->
+<div class="card" id="galleryScreen" style="display:none">
+  <h2>🏅 Моя коллекция</h2>
+  <div class="gallery-tabs" id="galleryTabs"></div>
+  <div id="galleryContent"></div>
+  <button class="btn" id="backBtn">← На главную</button>
+</div>
+
+<!-- ПОЗДРАВЛЕНИЕ -->
+<div class="celebration" id="celebration">
+  <div class="celeb-box">
+    <div class="celeb-emoji" id="celebEmoji">🎉</div>
+    <div class="celeb-title" id="celebTitle"></div>
+    <img class="celeb-img" id="celebImg" src="">
+    <div class="celeb-text" id="celebText"></div>
+    <button class="btn" id="closeCeleb">Ура!</button>
+  </div>
+</div>
+
+<script>
+// ======================= ПЕРСОНАЖИ =========================
+const BASE = [
+  { name:"Гепард", power:"Скорость", emoji:"🐆", img:"gepard.png" },
+  { name:"Колибри", power:"Лёгкость", emoji:"🐦", img:"kolibri.png" },
+  { name:"Муравей", power:"Сила", emoji:"🐜", img:"muravey.png" },
+  { name:"Фламинго", power:"Баланс", emoji:"🦩", img:"flamingo.png" },
+  { name:"Ленивец", power:"Восстановление", emoji:"🦥", img:"lenivec.png" },
+  { name:"Обезьяна", power:"Координация", emoji:"🐒", img:"obeziana.png" },
+  { name:"Верблюд", power:"Выносливость", emoji:"🐫", img:"verblyud.png" },
+  { name:"Кошка", power:"Гибкость", emoji:"🐱", img:"koshka.png" }
+];
+const RARE = [
+  { name:"Кенгуру", power:"Прыгучесть", emoji:"🦘", img:"kenguru.png" },
+  { name:"Осьминог", power:"Цепкость", emoji:"🐙", img:"osminog.png" },
+  { name:"Краб", power:"Устойчивость", emoji:"🦀", img:"krab.png" },
+  { name:"Улитка", power:"Чуткость", emoji:"🐌", img:"ulitka.png" }
+];
+const EPIC = [
+  { name:"Пегас", power:"Полёт", emoji:"🦄✨", img:"pegas.png" },
+  { name:"Дракон", power:"Суперсила", emoji:"🐉", img:"drakon.png" }
+];
+const LEGEND = { name:"Феникс", power:"Возрождение", emoji:"🔥", img:"feniks.png" };
+
+// ======================= ЛОГИКА СКОЛЬЗЯЩЕГО ОКНА =========================
+function getWorkoutsInLast7Days(history) {
+  if (!history || history.length === 0) return 0;
+  const now = new Date();
+  const sevenDaysAgo = new Date(now);
+  sevenDaysAgo.setDate(now.getDate() - 6);
+  sevenDaysAgo.setHours(0, 0, 0, 0);
+  let count = 0;
+  for (let dateStr of history) {
+    let d = new Date(dateStr);
+    d.setHours(0, 0, 0, 0);
+    if (d >= sevenDaysAgo && d <= now) count++;
+  }
+  return count;
+}
+
+function getRewardType(workoutCount) {
+  if (workoutCount === 4) return 'key';
+  if (workoutCount === 5 || workoutCount === 6) return 'star';
+  if (workoutCount === 7) return 'shiny';
+  return null;
+}
+
+function getRank(totalWorkouts) {
+  if (totalWorkouts >= 50) return { label:"👑 МАСТЕР", cls:"rank-master" };
+  if (totalWorkouts >= 36) return { label:"⚡ ПРОФИ", cls:"rank-pro" };
+  if (totalWorkouts >= 15) return { label:"📖 УЧЕНИК", cls:"rank-student" };
+  return { label:"🌱 НОВИЧОК", cls:"rank-novice" };
+}
+
+function canWorkoutToday(lastDate) {
+  if (!lastDate) return true;
+  let last = new Date(lastDate);
+  let now = new Date();
+  return last.getDate() !== now.getDate() ||
+         last.getMonth() !== now.getMonth() ||
+         last.getFullYear() !== now.getFullYear();
+}
+
+function getTimeToNextDay() {
+  let now = new Date();
+  let tomorrow = new Date(now);
+  tomorrow.setDate(now.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+  let diff = tomorrow - now;
+  return { hours: Math.floor(diff / 3600000), minutes: Math.floor((diff % 3600000) / 60000) };
+}
+
+// ======================= СОСТОЯНИЕ =========================
+let game = {
+  name: "", nick: "",
+  workoutHistory: [],
+  currentKeyStep: 0,
+  stars: 0, shinyStars: 0,
+  gotBase: [], gotRare: [], gotEpic: [], gotLegend: false,
+  nextBaseIndex: 0,
+  lastWorkoutDate: null
+};
+
+let playerId = "";
+
+function saveGame() {
+  if (playerId) localStorage.setItem("as_sliding_" + playerId, JSON.stringify(game));
+}
+
+function loadGame() {
+  let raw = localStorage.getItem("as_sliding_" + playerId);
+  if (!raw) {
+    let oldRaw = localStorage.getItem("as_final_" + playerId);
+    if (oldRaw) {
+      try {
+        let old = JSON.parse(oldRaw);
+        if (old.totalStrikes) {
+          game.workoutHistory = [];
+          let startDate = old.lastWorkoutDate ? new Date(old.lastWorkoutDate) : new Date();
+          for (let i = 0; i < old.totalStrikes; i++) {
+            let d = new Date(startDate);
+            d.setDate(startDate.getDate() - (old.totalStrikes - i));
+            game.workoutHistory.push(d.toISOString());
+          }
+          game.currentKeyStep = old.currentKeyStep || 0;
+          game.stars = old.stars || 0;
+          game.shinyStars = old.shinyStars || 0;
+          game.gotBase = old.gotBase || [];
+          game.gotRare = old.gotRare || [];
+          game.gotEpic = old.gotEpic || [];
+          game.gotLegend = old.gotLegend || false;
+          game.nextBaseIndex = old.nextBaseIndex || Math.floor(Math.random() * BASE.length);
+          game.lastWorkoutDate = old.lastWorkoutDate;
+          saveGame();
+          return true;
+        }
+      } catch(e) {}
+    }
+    return false;
+  }
+  try {
+    let data = JSON.parse(raw);
+    game = data;
+    if (!game.gotBase) game.gotBase = [];
+    if (!game.gotRare) game.gotRare = [];
+    if (!game.gotEpic) game.gotEpic = [];
+    if (!game.workoutHistory) game.workoutHistory = [];
+    if (game.gotLegend === undefined) game.gotLegend = false;
+    if (game.currentKeyStep === undefined) game.currentKeyStep = 0;
+    if (game.nextBaseIndex === undefined || (game.nextBaseIndex === 0 && game.gotBase.length === 0)) {
+      game.nextBaseIndex = Math.floor(Math.random() * BASE.length);
+    }
+    return true;
+  } catch(e) { return false; }
+}
+
+function getRandomBaseIndex() {
+  let free = BASE.map((_, i) => i).filter(i => !game.gotBase.includes(i));
+  if (free.length === 0) return 0;
+  return free[Math.floor(Math.random() * free.length)];
+}
+
+function openBaseCharacter() {
+  let idx = game.nextBaseIndex;
+  if (!game.gotBase.includes(idx)) game.gotBase.push(idx);
+  game.nextBaseIndex = getRandomBaseIndex();
+  saveGame();
+  let char = BASE[idx];
+  showCelebration("🎉", char.power + " открыта!", char.name + " в коллекции!", char.img);
+  checkLegendary();
+}
+
+function checkLegendary() {
+  if (!game.gotLegend && 
+      game.gotBase.length === BASE.length &&
+      game.gotRare.length === RARE.length &&
+      game.gotEpic.length === EPIC.length) {
+    game.gotLegend = true;
+    saveGame();
+    setTimeout(() => showCelebration("🔥", "ЛЕГЕНДА!", "Все суперсилы собраны! Ты — легенда!", LEGEND.img), 500);
+  }
+}
+
+function showCelebration(emoji, title, text, img) {
+  document.getElementById("celebEmoji").innerHTML = emoji;
+  document.getElementById("celebTitle").innerHTML = title;
+  document.getElementById("celebText").innerHTML = text;
+  let imgEl = document.getElementById("celebImg");
+  if (img) { imgEl.src = img; imgEl.style.display = "block"; imgEl.onerror = () => imgEl.style.display = "none"; }
+  else imgEl.style.display = "none";
+  document.getElementById("celebration").classList.add("show");
+}
+
+function closeCeleb() {
+  document.getElementById("celebration").classList.remove("show");
+  renderGame();
+}
+
+// ======================= ОСНОВНАЯ ФУНКЦИЯ - ЗАРЯДКА =========================
+function doWorkout() {
+  if (!canWorkoutToday(game.lastWorkoutDate)) {
+    renderGame();
+    return;
+  }
+
+  let today = new Date().toISOString();
+  game.workoutHistory.push(today);
+  game.lastWorkoutDate = today;
+  if (game.workoutHistory.length > 30) game.workoutHistory = game.workoutHistory.slice(-30);
+  
+  let workoutsLast7 = getWorkoutsInLast7Days(game.workoutHistory);
+  let rewardType = getRewardType(workoutsLast7);
+  let isBaseCompleted = game.gotBase.length === BASE.length;
+  
+  if (rewardType === 'key' && !isBaseCompleted) {
+    game.currentKeyStep++;
+    if (game.currentKeyStep >= 4) {
+      openBaseCharacter();
+      game.currentKeyStep = 0;
+    }
+    saveGame();
+    let left = 4 - game.currentKeyStep;
+    if (game.currentKeyStep > 0 && game.currentKeyStep < 4) {
+      showCelebration("🔑", "Ключ " + game.currentKeyStep + "/4", "Осталось " + left + " зарядк" + (left===1?"а":"и"), "");
+    }
+  }
+  else if (rewardType === 'star') {
+    game.stars++;
+    saveGame();
+    let need = 4 - (game.stars % 4 || 4);
+    showCelebration("⭐", "Звезда получена!", "Всего: " + game.stars + " ⭐. До редкого: " + need + " ⭐", "");
+  }
+  else if (rewardType === 'shiny') {
+    game.shinyStars++;
+    saveGame();
+    let need = 4 - (game.shinyStars % 4 || 4);
+    showCelebration("🌟", "Сияющая звезда!", "Всего: " + game.shinyStars + " 🌟. До эпического: " + need + " 🌟", "");
+  }
+  else if (rewardType === 'key' && isBaseCompleted) {
+    saveGame();
+    showCelebration("💪", "Молодец!", "Так держать!", "");
+  }
+  
+  renderGame();
+}
+
+// ======================= ОТРИСОВКА =========================
+function renderGame() {
+  let totalWorkouts = game.workoutHistory.length;
+  let rank = getRank(totalWorkouts);
+  document.getElementById("rankBadge").className = "rank-badge " + rank.cls;
+  document.getElementById("rankBadge").innerHTML = rank.label;
+  document.getElementById("starCount").innerHTML = game.stars;
+  document.getElementById("shinyCount").innerHTML = game.shinyStars;
+  document.getElementById("greeting").innerHTML = "Привет, " + (game.name || "") + "!";
+  
+  let isBaseCompleted = game.gotBase.length === BASE.length;
+  let workoutsLast7 = getWorkoutsInLast7Days(game.workoutHistory);
+  let rewardType = getRewardType(workoutsLast7);
+  let showKeys = (rewardType === 'key' && !isBaseCompleted);
+  
+  let btn = document.getElementById("workoutBtn");
+  let info = document.getElementById("infoBox");
+  let charWrap = document.getElementById("charWrap");
+  let charImg = document.getElementById("charImg");
+  let keysGrid = document.getElementById("keysGrid");
+  
+  // ========== УПРАВЛЕНИЕ КАРТИНКОЙ ПЕРСОНАЖА / ТЕКСТОМ ==========
+  let motivText = document.getElementById("motivationText");
+  
+  if (isBaseCompleted) {
+    // ВСЕ БАЗОВЫЕ СОБРАНЫ → СКРЫВАЕМ КАРТИНКУ, ПОКАЗЫВАЕМ МОТИВИРУЮЩИЙ ТЕКСТ
+    charWrap.classList.remove("show");
+    charImg.style.display = "none";
+    
+    if (!motivText) {
+      let newDiv = document.createElement("div");
+      newDiv.id = "motivationText";
+      newDiv.className = "progress-text";
+      newDiv.style.background = "#e8f5e9";
+      newDiv.style.color = "#2e7d32";
+      newDiv.style.padding = "15px";
+      newDiv.style.borderRadius = "28px";
+      newDiv.style.margin = "12px 0";
+      newDiv.innerHTML = "🏆 Ты собрал(а) всех базовых героев! 🏆<br>🔥 Теперь просто продолжай заниматься, чтобы открыть редких и эпических! 🔥";
+      charWrap.parentNode.insertBefore(newDiv, charWrap.nextSibling);
+    }
+  } else {
+    // БАЗОВЫЕ НЕ ВСЕ СОБРАНЫ → ПОКАЗЫВАЕМ ТЕКУЩЕГО ПЕРСОНАЖА
+    if (game.gotBase.length > 0) {
+      let lastBase = BASE[game.gotBase[game.gotBase.length - 1]];
+      if (lastBase) {
+        charImg.src = lastBase.img;
+        charWrap.classList.add("show");
+        charImg.style.display = "block";
+      }
+    } else {
+      charWrap.classList.remove("show");
+    }
+    if (motivText) motivText.remove();
+  }
+  
+  if (rewardType === 'star') {
+    info.style.display = "block";
+    info.innerHTML = "⭐ Сегодня ты получишь ЗВЕЗДУ! ⭐";
+    btn.className = "btn btn-star";
+    btn.innerHTML = "⭐ Я сделал(а) зарядку!";
+  } else if (rewardType === 'shiny') {
+    info.style.display = "block";
+    info.innerHTML = "🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟";
+    btn.className = "btn btn-shiny";
+    btn.innerHTML = "🌟 Я сделал(а) зарядку!";
+  } else {
+    info.style.display = "none";
+    btn.className = "btn btn-green";
+    btn.innerHTML = "🏃‍♀️ Я сделал(а) зарядку!";
+  }
+  
+  if (showKeys) {
+    keysGrid.style.display = "grid";
+    for (let i=0; i<4; i++) {
+      let slot = document.getElementById("k"+i);
+      if (i < game.currentKeyStep) {
+        slot.classList.add("filled");
+        slot.innerHTML = "🔑";
+      } else {
+        slot.classList.remove("filled");
+        slot.innerHTML = "";
+      }
+    }
+    let left = 4 - game.currentKeyStep;
+    if (left === 0) {
+      document.getElementById("progressText").innerHTML = "✨ Сегодня откроется новая суперсила! ✨";
+    } else {
+      document.getElementById("progressText").innerHTML = "🔑 Собери 4 ключа: " + game.currentKeyStep + "/4 • Осталось " + left + " зарядк" + (left===1?"а":"и");
+    }
+  } else {
+    keysGrid.style.display = "none";
+    if (rewardType === 'star') {
+      let need = 4 - (game.stars % 4 || 4);
+      document.getElementById("progressText").innerHTML = "⭐ У тебя " + game.stars + " звёзд. До редкого: " + need + " ⭐";
+    } else if (rewardType === 'shiny') {
+      let need = 4 - (game.shinyStars % 4 || 4);
+      document.getElementById("progressText").innerHTML = "🌟 У тебя " + game.shinyStars + " сияющих. До эпического: " + need + " 🌟";
+    } else if (isBaseCompleted && rewardType === 'key') {
+      document.getElementById("progressText").innerHTML = "💪 Молодец! Так держать!";
+    } else {
+      document.getElementById("progressText").innerHTML = "🏃‍♀️ Продолжай в том же духе!";
+    }
+  }
+  
+  let coolDiv = document.getElementById("cooldownMsg");
+  if (!canWorkoutToday(game.lastWorkoutDate)) {
+    btn.style.display = "none";
+    coolDiv.style.display = "block";
+    let { hours, minutes } = getTimeToNextDay();
+    coolDiv.innerHTML = "⏳ Следующая зарядка <span class='cooldown-time'>через " + hours + "ч " + minutes + "мин</span>";
+  } else {
+    btn.style.display = "block";
+    coolDiv.style.display = "none";
+  }
+}
+
+// ======================= ГАЛЕРЕЯ =========================
+let currentTab = "base";
+
+function renderGallery() {
+  let items = [], collected = [];
+  if (currentTab === "base") { items = BASE; collected = game.gotBase; }
+  else if (currentTab === "rare") { items = RARE; collected = game.gotRare; }
+  else if (currentTab === "epic") { items = EPIC; collected = game.gotEpic; }
+  else { items = [LEGEND]; collected = game.gotLegend ? [0] : []; }
+  
+  let html = '<div class="gallery-grid">';
+  for (let i=0; i<items.length; i++) {
+    let c = items[i];
+    let owned = (currentTab === "legend") ? game.gotLegend : collected.includes(i);
+    html += '<div class="g-item ' + (owned ? "got" : "") + '">';
+    if (owned) {
+      html += '<img src="' + c.img + '" onerror="this.style.display=\'none\';this.parentElement.innerHTML=\''+c.emoji+'<br>'+c.power+'\'">';
+      html += '<div class="g-name">' + c.power + '</div>';
+    } else {
+      html += '<div style="font-size:40px; padding:20px;">❓</div>';
+      if (currentTab === "rare" || currentTab === "epic") {
+        let cost = 4;
+        let have = currentTab === "rare" ? game.stars : game.shinyStars;
+        let icon = currentTab === "rare" ? "⭐" : "🌟";
+        html += '<div class="g-price">' + icon + ' ' + have + '/' + cost + '</div>';
+        if (have >= cost) {
+          html += '<button class="g-btn" onclick="unlockCharacter(' + i + ')">Открыть за ' + icon + cost + '</button>';
+        }
+      } else if (currentTab === "legend") {
+        html += '<div style="font-size:11px; margin:8px; color:#aaa">Собери всех героев!</div>';
+      }
+    }
+    if (!owned && currentTab !== "legend") {
+      let label = currentTab === "base" ? "базовый" : (currentTab === "rare" ? "редкий" : "эпический");
+      html += '<div class="rarity-label rarity-' + currentTab + '">' + label + '</div>';
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  document.getElementById("galleryContent").innerHTML = html;
+}
+
+window.unlockCharacter = function(idx) {
+  if (currentTab === "rare" && game.stars >= 4 && !game.gotRare.includes(idx)) {
+    game.stars -= 4;
+    game.gotRare.push(idx);
+    saveGame();
+    showCelebration("⭐", RARE[idx].power + " открыта!", RARE[idx].name + " в коллекции!", RARE[idx].img);
+    renderGallery();
+    renderGame();
+    checkLegendary();
+  } else if (currentTab === "epic" && game.shinyStars >= 4 && !game.gotEpic.includes(idx)) {
+    game.shinyStars -= 4;
+    game.gotEpic.push(idx);
+    saveGame();
+    showCelebration("🌟", EPIC[idx].power + " открыт!", EPIC[idx].name + " в коллекции!", EPIC[idx].img);
+    renderGallery();
+    renderGame();
+    checkLegendary();
+  }
+};
+
+function initGalleryTabs() {
+  let tabsDiv = document.getElementById("galleryTabs");
+  tabsDiv.innerHTML = "";
+  let tabs = ["base","rare","epic","legend"];
+  let titles = ["Базовые","Редкие","Эпические","Легенда"];
+  tabs.forEach((t, idx) => {
+    let btn = document.createElement("button");
+    btn.innerText = titles[idx];
+    btn.className = "tab-btn" + (idx === 0 ? " active" : "");
+    btn.onclick = () => {
+      document.querySelectorAll("#galleryTabs .tab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentTab = t;
+      renderGallery();
+    };
+    tabsDiv.appendChild(btn);
+  });
+}
+
+function showGallery() {
+  document.getElementById("gameScreen").style.display = "none";
+  document.getElementById("galleryScreen").style.display = "block";
+  initGalleryTabs();
+  renderGallery();
+}
+
+function hideGallery() {
+  document.getElementById("galleryScreen").style.display = "none";
+  document.getElementById("gameScreen").style.display = "block";
+  renderGame();
+}
+
+// ======================= СТАРТ И СБРОС =========================
+function checkInputs() {
+  let name = document.getElementById("playerName").value.trim();
+  let nick = document.getElementById("playerNick").value.trim();
+  document.getElementById("startBtn").disabled = !(name && nick);
+}
+
+function startGame() {
+  let name = document.getElementById("playerName").value.trim();
+  let nick = document.getElementById("playerNick").value.trim();
+  if (!name || !nick) return;
+  playerId = (name + "_" + nick).toLowerCase().replace(/[^a-zа-яё0-9_]/gi, '_');
+  localStorage.setItem("as_who", JSON.stringify({name, nick}));
+  if (!loadGame()) {
+    game = {
+      name: name, nick: nick,
+      workoutHistory: [],
+      currentKeyStep: 0,
+      stars: 0, shinyStars: 0,
+      gotBase: [], gotRare: [], gotEpic: [], gotLegend: false,
+      nextBaseIndex: Math.floor(Math.random() * BASE.length),
+      lastWorkoutDate: null
+    };
+  } else {
+    game.name = name;
+    game.nick = nick;
+  }
+  saveGame();
+  document.getElementById("enterScreen").style.display = "none";
+  document.getElementById("gameScreen").style.display = "block";
+  renderGame();
+}
+
+function resetGame() {
+  localStorage.removeItem("as_sliding_" + playerId);
+  document.getElementById("gameScreen").style.display = "none";
+  document.getElementById("enterScreen").style.display = "block";
+  document.getElementById("playerName").value = "";
+  document.getElementById("playerNick").value = "";
+  checkInputs();
+}
+
+// ПРИВЯЗКА КНОПОК
+document.getElementById("startBtn").onclick = startGame;
+document.getElementById("workoutBtn").onclick = doWorkout;
+document.getElementById("galleryBtn").onclick = showGallery;
+document.getElementById("backBtn").onclick = hideGallery;
+document.getElementById("resetBtn").onclick = resetGame;
+document.getElementById("closeCeleb").onclick = closeCeleb;
+document.getElementById("playerName").oninput = checkInputs;
+document.getElementById("playerNick").oninput = checkInputs;
+
+let savedWho = localStorage.getItem("as_who");
+if (savedWho) {
+  try {
+    let d = JSON.parse(savedWho);
+    if (d.name && d.nick) {
+      document.getElementById("playerName").value = d.name;
+      document.getElementById("playerNick").value = d.nick;
+      checkInputs();
+    }
+  } catch(e) {}
+}
+checkInputs();
+</script>
 </body>
 </html>
- 
