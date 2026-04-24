@@ -2,11 +2,11 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Активные Стопы — Собери суперсилы</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Активные Стопы</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body {
     font-family: 'Nunito', sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -14,458 +14,400 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 15px;
+    color: #2d2d2d;
   }
   .card {
     background: #fff;
-    border-radius: 32px;
+    border-radius: 28px;
     padding: 24px 20px;
-    max-width: 420px;
+    max-width: 400px;
     width: 100%;
-    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
     text-align: center;
+    position: relative;
+    overflow: hidden;
   }
-  h1 { font-family: 'Fredoka One', cursive; font-size: 26px; color: #2d2d2d; margin-bottom: 4px; }
+  h1 { font-family: 'Fredoka One', cursive; font-size: 24px; color: #2d2d2d; margin-bottom: 4px; line-height: 1.2; }
   .subtitle { font-size: 13px; color: #888; margin-bottom: 20px; font-weight: 700; }
+  
+  /* Кнопки */
   .btn {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: #fff;
     border: none;
     border-radius: 16px;
-    padding: 13px 24px;
+    padding: 14px 24px;
     font-family: 'Fredoka One', cursive;
-    font-size: 19px;
+    font-size: 18px;
     cursor: pointer;
     width: 100%;
-    transition: transform .15s;
-    box-shadow: 0 4px 16px rgba(102,126,234,.4);
-    margin-top: 8px;
+    transition: transform .1s, opacity .2s;
+    box-shadow: 0 6px 20px rgba(102,126,234,.4);
+    margin-top: 10px;
+    touch-action: manipulation;
   }
-  .btn:active { transform: scale(0.97); }
-  .btn:hover { transform: translateY(-2px); }
-  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-  .btn-green { background: linear-gradient(135deg, #2E7D32, #4CAF50); box-shadow: 0 4px 16px rgba(46,125,50,.4); }
-  .btn-star { background: linear-gradient(135deg, #F9A825, #FFB300); box-shadow: 0 4px 16px rgba(249,168,37,.3); }
-  .btn-shiny { background: linear-gradient(135deg, #FF6F00, #FF8F00); box-shadow: 0 4px 16px rgba(255,111,0,.3); }
-  .field-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; text-align: left; }
+  .btn:active { transform: scale(0.96); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; filter: grayscale(1); box-shadow: none; }
+  .btn-green { background: linear-gradient(135deg, #2E7D32, #4CAF50); box-shadow: 0 6px 20px rgba(46,125,50,.4); }
+  
+  /* Поля ввода */
+  .field-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; text-align: left; }
   .field-input {
     width: 100%;
-    border: 3px solid #e0e4ef;
-    border-radius: 14px;
-    padding: 11px 14px;
+    border: 2px solid #e0e4ef;
+    border-radius: 12px;
+    padding: 12px;
     font-family: 'Nunito', sans-serif;
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 700;
     outline: none;
     text-align: center;
     margin-bottom: 14px;
+    transition: border-color .2s;
   }
   .field-input:focus { border-color: #667eea; }
-  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+
+  /* Верхняя панель */
+  .top-bar { 
+    display: flex; 
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px; 
+  }
+  .rank-row { display: flex; justify-content: space-between; align-items: center; }
   .rank-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 5px 14px;
+    padding: 6px 12px;
     border-radius: 20px;
     font-family: 'Fredoka One', cursive;
-    font-size: 14px;
+    font-size: 12px;
+    text-transform: uppercase;
   }
   .rank-novice { background: #e8f5e9; color: #2E7D32; }
-  .rank-student { background: #FFF8E1; color: #F57F17; }
-  .rank-pro { background: #E3F2FD; color: #1565C0; }
-  .rank-master { background: #1a1a2e; color: #fff; }
-  .keys-wallet { display: flex; gap: 12px; background: #f5f5f5; border-radius: 40px; padding: 6px 16px; }
-  .wallet-slot { display: flex; align-items: center; gap: 6px; font-family: 'Fredoka One', cursive; font-size: 18px; }
-  .wallet-slot.star { color: #F9A825; }
-  .wallet-slot.shiny { color: #FF6F00; }
-  .greeting { font-size: 18px; font-weight: 900; color: #2d2d2d; margin-bottom: 4px; }
-  .progress-text { font-size: 13px; color: #888; font-weight: 700; margin-bottom: 12px; line-height: 1.7; }
-  .keys-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+  .rank-student { background: #FFF8E1; color: #F57F17; border: 1px solid #FFE082; }
+  .rank-pro { background: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
+  .rank-master { background: #2d2d2d; color: #FFD700; border: 1px solid #555; }
+  
+  .wallet { 
+    display: flex; 
+    gap: 10px; 
+    background: #f5f5f5; 
+    border-radius: 30px; 
+    padding: 4px 12px; 
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .w-slot { display: flex; align-items: center; gap: 4px; }
+  .w-star { color: #F9A825; }
+  .w-shiny { color: #FF6F00; }
+
+  /* Сетка ключей */
+  .keys-grid { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 10px; 
+    margin-bottom: 16px; 
+  }
   .key-slot {
     aspect-ratio: 1;
-    border-radius: 14px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 26px;
-    border: 3px dashed #e0e4ef;
-    background: #f9f9f9;
-    transition: all .4s ease;
+    font-size: 24px;
+    border: 2px dashed #ddd;
+    background: #fafafa;
+    transition: all .3s ease;
   }
-  .key-slot.filled { border: 3px solid gold; background: #fffde7; box-shadow: 0 4px 12px rgba(255,215,0,.4); animation: popIn .5s ease; }
-  @keyframes popIn { 0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)} }
-  .char-wrap { border-radius: 18px; overflow: hidden; margin-bottom: 12px; display: none; background: #f5f5f5; }
-  .char-wrap img { width: 100%; height: 200px; object-fit: contain; display: block; }
-  .char-wrap.show { display: block; animation: zoomIn .6s ease; }
-  @keyframes zoomIn { from{transform:scale(.5);opacity:0} to{transform:scale(1);opacity:1} }
-  .cooldown-msg { background: #f0f4ff; border-radius: 14px; padding: 12px; font-size: 13px; font-weight: 700; color: #667eea; display: none; margin-top: 8px; }
-  .cooldown-time { font-family: 'Fredoka One', cursive; font-size: 20px; display: block; margin-top: 4px; }
-  .info-box { background: #fffde7; border-radius: 14px; padding: 10px; font-size: 12px; font-weight: 700; color: #F57F17; margin-top: 8px; display: none; }
-  .collection-bar { margin-top: 14px; border-top: 2px solid #f0f0f0; padding-top: 12px; cursor: pointer; }
-  .collection-bar:hover .col-title { color: #667eea; }
-  .col-title { font-family: 'Fredoka One', cursive; font-size: 15px; color: #888; transition: color .2s; }
-  .change-name { font-size: 11px; color: #ccc; margin-top: 10px; cursor: pointer; font-weight: 700; }
-  .change-name:hover { color: #667eea; }
-  #galleryScreen { display: none; }
-  .gallery-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid #e0e4ef; }
-  .tab-btn {
-    flex: 1;
-    background: none;
-    border: none;
-    padding: 10px 4px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    font-size: 12px;
-    color: #aaa;
-    cursor: pointer;
+  .key-slot.filled { 
+    border: 2px solid #FFD700; 
+    background: linear-gradient(135deg, #fffde7, #fff9c4); 
+    box-shadow: 0 4px 10px rgba(255,215,0,.3); 
+    animation: popIn .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes popIn { 0%{transform:scale(0)} 100%{transform:scale(1)} }
+
+  /* Таймер */
+  .cooldown-box { 
+    background: #f0f4ff; 
+    border-radius: 16px; 
+    padding: 16px; 
+    margin-top: 10px;
+    display: none;
+  }
+  .cd-text { font-size: 14px; font-weight: 700; color: #667eea; margin-bottom: 4px; }
+  .cd-time { font-family: 'Fredoka One', cursive; font-size: 22px; color: #2d2d2d; }
+
+  /* Коллекция ссылка */
+  .col-link { 
+    margin-top: 20px; 
+    padding-top: 15px; 
+    border-top: 2px solid #f0f0f0; 
+    cursor: pointer; 
+    font-weight: 800; 
+    color: #888;
+    transition: color .2s;
+  }
+  .col-link:hover { color: #667eea; }
+
+  /* Галерея */
+  #galleryScreen { display: none; text-align: left; }
+  .gallery-header { text-align: center; margin-bottom: 20px; }
+  .tabs { display: flex; border-bottom: 2px solid #eee; margin-bottom: 15px; }
+  .tab { 
+    flex: 1; 
+    text-align: center; 
+    padding: 10px 0; 
+    font-weight: 800; 
+    font-size: 12px; 
+    color: #ccc; 
+    cursor: pointer; 
     border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
   }
-  .tab-btn.active { color: #667eea; border-bottom-color: #667eea; }
-  .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 14px; }
-  .g-item {
-    border-radius: 18px;
-    border: 2px solid #e8e8e8;
-    background: #f0f0f0;
-    overflow: hidden;
-    text-align: center;
+  .tab.active { color: #667eea; border-bottom-color: #667eea; }
+  
+  .g-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .g-card { 
+    border: 2px solid #eee; 
+    border-radius: 16px; 
+    padding: 10px; 
+    text-align: center; 
+    background: #fff;
+    position: relative;
+    min-height: 130px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
-  .g-item.got { background: #fff; border-color: #ffd700; }
-  .g-item.locked { padding: 20px 8px; align-items: center; justify-content: center; }
-  .g-item .g-img { width: 100%; }
-  .g-item .g-img img { width: 100%; height: 130px; object-fit: contain; display: block; }
-  .g-item .g-name { font-family: 'Fredoka One', cursive; font-size: 14px; padding: 8px; color: #667eea; }
-  .g-item .g-q { font-size: 44px; color: #ddd; }
-  .rarity-label { font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 20px; display: inline-block; margin: 6px; }
-  .rarity-base { background: #e8f5e9; color: #2E7D32; }
-  .rarity-rare { background: #FFF8E1; color: #F9A825; }
-  .rarity-epic { background: #FFF3E0; color: #FF6F00; }
-  .rarity-legendary { background: linear-gradient(135deg, #FF6F00, #F9A825); color: #fff; }
-  .celebration { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.8); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
-  .celebration.show { display: flex; }
-  .celeb-box { background: #fff; border-radius: 32px; padding: 28px 24px; text-align: center; max-width: 340px; width: 100%; animation: zoomIn .4s ease; }
-  .celeb-emoji { font-size: 60px; display: block; margin-bottom: 10px; }
-  .celeb-title { font-family: 'Fredoka One', cursive; font-size: 24px; color: #2d2d2d; margin-bottom: 6px; }
-  .celeb-img { width: 100%; max-height: 160px; object-fit: contain; border-radius: 14px; margin: 10px 0; display: none; }
-  .celeb-text { font-size: 14px; color: #888; font-weight: 700; margin-bottom: 18px; }
+  .g-card.locked { background: #f9f9f9; }
+  .g-card.unlocked { border-color: #667eea; background: #f4f7ff; }
+  
+  /* Красный вопрос для базовых */
+  .big-q {
+    font-family: 'Fredoka One', cursive;
+    font-size: 40px;
+    color: #ff5252;
+    display: block;
+  }
+  
+  .g-icon { font-size: 32px; margin-bottom: 5px; display: block; }
+  .g-name { font-size: 12px; font-weight: 700; line-height: 1.2; margin-bottom: 5px; height: 28px; display: flex; align-items: center; justify-content: center;}
+  .g-price { 
+    font-size: 11px; 
+    font-weight: 800; 
+    color: #888; 
+    background: #eee; 
+    padding: 4px 8px; 
+    border-radius: 10px; 
+    display: inline-block;
+  }
+  .buy-btn {
+    background: #FFD700; color: #5d4037; border: none; padding: 6px 10px; 
+    border-radius: 8px; font-weight: 800; font-size: 11px; cursor: pointer; margin-top: 5px; width: 100%;
+  }
+
+  /* Модалка успеха */
+  .modal {
+    display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center;
+  }
+  .modal.show { display: flex; animation: fadeIn .2s; }
+  .modal-box { 
+    background: #fff; width: 85%; max-width: 320px; padding: 25px 20px; 
+    border-radius: 24px; text-align: center; animation: slideUp .3s;
+  }
+  .m-emoji { font-size: 50px; display: block; margin-bottom: 10px; }
+  .m-title { font-family: 'Fredoka One'; font-size: 22px; margin-bottom: 8px; color: #2d2d2d; }
+  .m-desc { font-size: 14px; color: #666; margin-bottom: 20px; line-height: 1.4; }
+  
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+
+  .reset-link { font-size: 10px; color: #ccc; margin-top: 15px; text-decoration: underline; cursor: pointer; }
 </style>
 </head>
 <body>
 
-<div class="card" id="nameScreen">
+<!-- Экран входа -->
+<div class="card" id="loginScreen">
   <h1>👣 Активные Стопы</h1>
   <div class="subtitle">Собери все суперсилы!</div>
-  <div class="field-label">Твоё имя</div>
-  <input class="field-input" id="nameInput" placeholder="Например: Саша" maxlength="15">
-  <div class="field-label">Придумай ник</div>
-  <input class="field-input" id="nickInput" placeholder="Например: Ракета 🚀" maxlength="20">
-  <button class="btn" id="startBtn" onclick="startGame()" disabled>Вперёд! 🚀</button>
+  <div class="field-label">Как тебя зовут?</div>
+  <input type="text" class="field-input" id="inpName" placeholder="Имя" maxlength="12">
+  <div class="field-label">Твой никнейм</div>
+  <input type="text" class="field-input" id="inpNick" placeholder="Ник" maxlength="12">
+  <button class="btn" id="startBtn" onclick="initGame()" disabled>Вперёд! 🚀</button>
 </div>
 
+<!-- Экран игры -->
 <div class="card" id="gameScreen" style="display:none">
   <div class="top-bar">
-    <div id="rankBadge" class="rank-badge rank-novice">🌱 НОВИЧОК</div>
-    <div class="keys-wallet">
-      <div class="wallet-slot star">⭐ <span id="starCount">0</span></div>
-      <div class="wallet-slot shiny">🌟 <span id="shinyCount">0</span></div>
+    <div class="rank-row">
+      <div id="rankBadge" class="rank-badge rank-novice">Новичок</div>
+      <div class="wallet">
+        <div class="w-slot w-star">⭐ <span id="valStar">0</span></div>
+        <div class="w-slot w-shiny">🌟 <span id="valShiny">0</span></div>
+      </div>
     </div>
   </div>
-  <div class="greeting" id="greeting">Привет!</div>
-  <div class="progress-text" id="progressText"></div>
+
+  <h2 id="greeting" style="font-size:18px; margin-bottom:10px;">Привет!</h2>
+  <p id="taskText" style="font-size:14px; color:#666; margin-bottom:15px; min-height:40px;"></p>
+
+  <!-- Сетка для ключей (показывается только в дни ключей) -->
   <div class="keys-grid" id="keysGrid">
-    <div class="key-slot" id="ks0"></div><div class="key-slot" id="ks1"></div>
-    <div class="key-slot" id="ks2"></div><div class="key-slot" id="ks3"></div>
+    <div class="key-slot" id="k0"></div>
+    <div class="key-slot" id="k1"></div>
+    <div class="key-slot" id="k2"></div>
+    <div class="key-slot" id="k3"></div>
   </div>
-  <div class="char-wrap" id="charWrap"><img id="charImg" src="" alt=""></div>
-  <button class="btn btn-green" id="claimBtn" onclick="doWorkout()">🏃‍♀️ Я сделал(а) зарядку!</button>
-  <div class="cooldown-msg" id="cooldown"></div>
-  <div class="info-box" id="infoBox"></div>
-  <div class="collection-bar" onclick="showGallery()"><div class="col-title">🏅 Моя коллекция →</div></div>
-  <div class="change-name" onclick="changeName()">Это не я → сменить имя</div>
+
+  <button class="btn btn-green" id="actionBtn" onclick="doDailyTask()">Я сделал(а) зарядку! 🏃</button>
+  
+  <div class="cooldown-box" id="cooldownBox">
+    <div class="cd-text">Следующая зарядка через:</div>
+    <div class="cd-time" id="timerDisplay">00:00:00</div>
+  </div>
+
+  <div class="col-link" onclick="openGallery()">🏅 Моя коллекция →</div>
+  <div class="reset-link" onclick="hardReset()">Сбросить прогресс</div>
 </div>
 
+<!-- Экран галереи -->
 <div class="card" id="galleryScreen">
-  <h1>🏅 Моя коллекция</h1>
-  <div class="gallery-tabs">
-    <button class="tab-btn active" onclick="switchTab('base',this)">Базовые</button>
-    <button class="tab-btn" onclick="switchTab('rare',this)">Редкие</button>
-    <button class="tab-btn" onclick="switchTab('epic',this)">Эпические</button>
-    <button class="tab-btn" onclick="switchTab('legend',this)">Легенда</button>
+  <div class="gallery-header">
+    <h1>Коллекция сил</h1>
   </div>
-  <div id="galleryContent"></div>
-  <button class="btn" onclick="hideGallery()">← Назад</button>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('base')">Базовые</div>
+    <div class="tab" onclick="switchTab('rare')">Редкие</div>
+    <div class="tab" onclick="switchTab('epic')">Эпик</div>
+    <div class="tab" onclick="switchTab('legend')">Легенда</div>
+  </div>
+  <div id="galleryContent" class="g-grid"></div>
+  <button class="btn" style="margin-top:20px; background:#eee; color:#555; box-shadow:none;" onclick="closeGallery()">← Назад к игре</button>
 </div>
 
-<div class="celebration" id="celebration">
-  <div class="celeb-box">
-    <div class="celeb-emoji" id="celebEmoji">🎉</div>
-    <div class="celeb-title" id="celebTitle"></div>
-    <img class="celeb-img" id="celebImg" src="">
-    <div class="celeb-text" id="celebText"></div>
-    <button class="btn" onclick="closeCeleb()">Ура! 🎉</button>
+<!-- Модальное окно награды -->
+<div class="modal" id="rewardModal">
+  <div class="modal-box">
+    <span class="m-emoji" id="mEmoji">🎉</span>
+    <div class="m-title" id="mTitle">Отлично!</div>
+    <div class="m-desc" id="mDesc">Ты получил награду.</div>
+    <button class="btn" onclick="closeModal()">Ура!</button>
   </div>
 </div>
 
 <script>
-// ██████████████████████████████████████████████████████████████████████████
-// ПЕРСОНАЖИ
-// ██████████████████████████████████████████████████████████████████████████
-const BASE = [
-  {animal:"🐆",power:"Скорость",name:"Гепард",img:"gepard.png"},
-  {animal:"🐦",power:"Лёгкость",name:"Колибри",img:"kolibri.png"},
-  {animal:"🐜",power:"Сила",name:"Муравей",img:"muravey.png"},
-  {animal:"🦩",power:"Баланс",name:"Фламинго",img:"flamingo.png"},
-  {animal:"🦥",power:"Восстановление",name:"Ленивец",img:"lenivec.png"},
-  {animal:"🐒",power:"Координация",name:"Обезьяна",img:"obeziana.png"},
-  {animal:"🐫",power:"Выносливость",name:"Верблюд",img:"verblyud.png"},
-  {animal:"🐱",power:"Гибкость",name:"Кошка",img:"koshka.png"}
+// --- НАСТРОЙКИ СТАРТА ---
+// Если нужно начать с конкретного дня (например, с 5), поставьте число здесь.
+// Если 0, игра начнется с 1 дня.
+const START_DAY_OVERRIDE = 5; 
+
+// --- ДАННЫЕ ИГРЫ ---
+const GOLD_DAYS = [1,2,3,4, 8,9,10,11, 15,16,17,18, 22,23,24,25, 29,30,31,32, 36,37,38,39, 43,44,45,46, 50,51,52,53];
+const STAR_DAYS = [5,6, 12,13, 19,20, 26,27, 33,34, 40,41, 47,48, 54,55];
+const SHINY_DAYS = [7, 14, 21, 28, 35, 42, 49, 56];
+
+const BASE_CHARS = [
+  {n:"Гепард", p:"Скорость", i:"🐆"}, {n:"Колибри", p:"Лёгкость", i:"🐦"},
+  {n:"Муравей", p:"Сила", i:"🐜"}, {n:"Фламинго", p:"Баланс", i:"🦩"},
+  {n:"Ленивец", p:"Покой", i:"🦥"}, {n:"Обезьяна", p:"Ловкость", i:"🐒"},
+  {n:"Верблюд", p:"Выносливость", i:"🐫"}, {n:"Кошка", p:"Гибкость", i:"🐱"}
 ];
-const RARE = [
-  {animal:"🦘",power:"Прыгучесть",name:"Кенгуру",img:"kenguru.png"},
-  {animal:"🐙",power:"Цепкость",name:"Осьминог",img:"osminog.png"},
-  {animal:"🦀",power:"Устойчивость",name:"Краб",img:"krab.png"},
-  {animal:"🐌",power:"Чуткость",name:"Улитка",img:"ulitka.png"}
+const RARE_CHARS = [
+  {n:"Кенгуру", p:"Прыжок", i:"🦘", cost:4}, {n:"Осьминог", p:"Хватка", i:"🐙", cost:4},
+  {n:"Краб", p:"Защита", i:"🦀", cost:4}, {n:"Улитка", p:"Мудрость", i:"🐌", cost:4}
 ];
-const EPIC = [
-  {animal:"🦄✨",power:"Полёт",name:"Пегас",img:"pegas.png"},
-  {animal:"🐉",power:"Суперсила",name:"Дракон",img:"drakon.png"}
+const EPIC_CHARS = [
+  {n:"Единорог", p:"Магия", i:"🦄", cost:4}, {n:"Дракон", p:"Огонь", i:"🐉", cost:4}
 ];
-const LEGEND = {animal:"🔥",power:"Возрождение",name:"Феникс",img:"feniks.png"};
+const LEGEND_CHAR = {n:"Феникс", p:"Возрождение", i:"🔥"};
 
-// ██████████████████████████████████████████████████████████████████████████
-// ЛОГИКА ДНЕЙ (привязана к ДАТЕ, а не к счётчику!)
-// День 1 = 24 апреля 2026 (если нужен конкретный старт)
-// ██████████████████████████████████████████████████████████████████████████
+let state = {
+  name: "", nick: "",
+  day: 1, 
+  lastDate: null, 
+  stars: 0, shiny: 0,
+  keysCollected: 0, 
+  unlocked: { base:[], rare:[], epic:[], legend:false },
+};
 
-// ⚠️ ЕСЛИ ХОЧЕШЬ НАЧАТЬ С КОНКРЕТНОГО ДНЯ — ИЗМЕНИ ЭТУ СТРОКУ
-// Например: const FORCED_START_DATE = new Date(2026, 3, 28); // 28 апреля (день 5)
-// Если оставить null — игра будет считать от даты первой зарядки
-const FORCED_START_DATE = null;  // ← СЮДА МОЖНО ВСТАВИТЬ ДАТУ СТАРТА
-
-// Получить номер дня (1-56) на основе истории зарядок
-function getCurrentDayNumber() {
-  // Если есть принудительная дата старта
-  if (FORCED_START_DATE && !state.firstWorkoutDate) {
-    state.firstWorkoutDate = FORCED_START_DATE.toISOString();
-    state.lastWorkoutDate = FORCED_START_DATE.toISOString();
-    // Симулируем прогресс для этого дня
-    save();
-  }
+function initGame() {
+  const name = document.getElementById('inpName').value.trim();
+  const nick = document.getElementById('inpNick').value.trim();
+  if(!name || !nick) return;
   
-  // Если ещё ни разу не занимались — день 1
-  if (!state.firstWorkoutDate) {
-    return 1;
-  }
-  
-  const firstDate = new Date(state.firstWorkoutDate);
-  const today = new Date();
-  
-  // Обрезаем время до начала дня
-  firstDate.setHours(0, 0, 0, 0);
-  const todayStart = new Date(today);
-  todayStart.setHours(0, 0, 0, 0);
-  
-  // Вычисляем количество пройденных дней
-  const diffDays = Math.floor((todayStart - firstDate) / (1000 * 60 * 60 * 24));
-  let dayNum = diffDays + 1;
-  
-  // Не больше 56
-  if (dayNum > 56) dayNum = 56;
-  return dayNum;
-}
-
-// Можно ли сегодня сделать зарядку? (новый день)
-function canWorkoutToday() {
-  if (!state.lastWorkoutDate) return true;
-  const last = new Date(state.lastWorkoutDate);
-  const today = new Date();
-  return last.getDate() !== today.getDate() || 
-         last.getMonth() !== today.getMonth() || 
-         last.getFullYear() !== today.getFullYear();
-}
-
-// Какой тип награды сегодня (key/star/shiny)
-function getTodayRewardType() {
-  const dayNum = getCurrentDayNumber();
-  if (dayNum > 56) return 'finished';
-  
-  // КЛЮЧЕВЫЕ ДНИ (4 окошка): 1-4,8-11,15-18,22-25,29-32,36-39,43-46,50-53
-  const keyDays = [1,2,3,4,8,9,10,11,15,16,17,18,22,23,24,25,29,30,31,32,36,37,38,39,43,44,45,46,50,51,52,53];
-  // ЗВЁЗДНЫЕ ДНИ: 5-6,12-13,19-20,26-27,33-34,40-41,47-48,54-55
-  const starDays = [5,6,12,13,19,20,26,27,33,34,40,41,47,48,54,55];
-  // СИЯЮЩИЕ ДНИ: 7,14,21,28,35,42,49,56
-  
-  if (keyDays.includes(dayNum)) return 'key';
-  if (starDays.includes(dayNum)) return 'star';
-  return 'shiny';
-}
-
-// УРОВЕНЬ
-function getRankByDay(dayNum) {
-  if (dayNum >= 50) return {label:'👑 МАСТЕР', cls:'rank-master'};
-  if (dayNum >= 36) return {label:'⚡ ПРОФИ', cls:'rank-pro'};
-  if (dayNum >= 15) return {label:'📖 УЧЕНИК', cls:'rank-student'};
-  return {label:'🌱 НОВИЧОК', cls:'rank-novice'};
-}
-
-function getTimeUntilNextDay() {
-  const now = new Date();
-  const tomorrow = new Date(now);
-  tomorrow.setDate(now.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
-  const diff = tomorrow - now;
-  const hours = Math.floor(diff / 3600000);
-  const minutes = Math.floor((diff % 3600000) / 60000);
-  return {hours, minutes};
-}
-
-let state = {};
-let playerKey = '';
-
-function freshState(name, nick) {
-  return {
-    name: name, nick: nick,
-    firstWorkoutDate: null,   // дата первой зарядки (старт игры)
-    lastWorkoutDate: null,    // дата последней зарядки
-    keyStep: 0,               // сколько ключей собрано в текущей неделе (0-4)
-    stars: 0,
-    shinyStars: 0,
-    gotBase: [],
-    gotRare: [],
-    gotEpic: [],
-    gotLegend: false,
-    nextBaseIdx: Math.floor(Math.random() * BASE.length)
-  };
-}
-
-function save() { if(playerKey) localStorage.setItem('as_' + playerKey, JSON.stringify(state)); }
-function load() {
-  const raw = localStorage.getItem('as_' + playerKey);
-  if(!raw) return false;
-  try {
-    const d = JSON.parse(raw);
-    state = d;
-    if(!state.gotBase) state.gotBase = [];
-    if(!state.gotRare) state.gotRare = [];
-    if(!state.gotEpic) state.gotEpic = [];
-    if(state.gotLegend === undefined) state.gotLegend = false;
-    if(state.keyStep === undefined) state.keyStep = 0;
-    if(state.stars === undefined) state.stars = 0;
-    if(state.shinyStars === undefined) state.shinyStars = 0;
-    if(state.nextBaseIdx === undefined) state.nextBaseIdx = Math.floor(Math.random() * BASE.length);
-    return true;
-  } catch(e) { return false; }
-}
-
-function randomBaseIndex() {
-  const available = BASE.map((_,i)=>i).filter(i=>!state.gotBase.includes(i));
-  if(available.length === 0) return 0;
-  return available[Math.floor(Math.random() * available.length)];
-}
-
-function playSound(type) {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const sounds = {
-      key: [[880,0.1,'sine']],
-      base: [[523,.15],[659,.15],[784,.15]],
-      rare: [[523,.12],[659,.12]],
-      epic: [[659,.15],[880,.15]],
-      legend: [[262,.18],[392,.18],[523,.18]]
-    };
-    const seq = sounds[type];
-    if(!seq) return;
-    seq.forEach(([f,dt,sh],i)=>{
-      const o=ctx.createOscillator(), g=ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.type=sh||'sine';
-      const t=ctx.currentTime+i*(dt||0.12);
-      o.frequency.setValueAtTime(f,t);
-      g.gain.setValueAtTime(0.25,t);
-      g.gain.exponentialRampToValueAtTime(0.001,t+0.35);
-      o.start(t); o.stop(t+0.35);
-    });
-  } catch(e) {}
-}
-
-function celebrate(emoji, title, text, img, snd) {
-  document.getElementById('celebEmoji').innerHTML = emoji;
-  document.getElementById('celebTitle').innerHTML = title;
-  document.getElementById('celebText').innerHTML = text;
-  const imgEl = document.getElementById('celebImg');
-  if(img) { imgEl.src = img; imgEl.style.display = 'block'; imgEl.onerror = () => imgEl.style.display = 'none'; }
-  else imgEl.style.display = 'none';
-  document.getElementById('celebration').classList.add('show');
-  if(snd) playSound(snd);
-}
-window.closeCeleb = function() { document.getElementById('celebration').classList.remove('show'); render(); };
-
-function checkLegendary() {
-  const allBase = state.gotBase.length === BASE.length;
-  const allRare = state.gotRare.length === RARE.length;
-  const allEpic = state.gotEpic.length === EPIC.length;
-  if(!state.gotLegend && allBase && allRare && allEpic) {
-    state.gotLegend = true;
-    save();
-    setTimeout(() => celebrate('🔥', 'ЛЕГЕНДА!', 'Все суперсилы собраны. Ты — легенда!', LEGEND.img, 'legend'), 500);
-  }
-}
-
-function render() {
-  const dayNum = getCurrentDayNumber();
-  const rank = getRankByDay(dayNum);
-  document.getElementById('rankBadge').className = 'rank-badge ' + rank.cls;
-  document.getElementById('rankBadge').innerHTML = rank.label;
-  document.getElementById('starCount').innerHTML = state.stars;
-  document.getElementById('shinyCount').innerHTML = state.shinyStars;
-  document.getElementById('greeting').innerHTML = 'Привет, ' + (state.name || '') + '!';
-  
-  const isFinished = dayNum > 56;
-  
-  if(isFinished) {
-    document.getElementById('keysGrid').style.display = 'none';
-    document.getElementById('charWrap').classList.remove('show');
-    document.getElementById('progressText').innerHTML = '✨ Все суперсилы собраны. Ты — легенда! ✨';
-    document.getElementById('infoBox').style.display = 'block';
-    document.getElementById('infoBox').innerHTML = '🏆 Поздравляем! Ты прошёл(а) все дни!';
-    document.getElementById('claimBtn').style.display = 'none';
-    document.getElementById('cooldown').style.display = 'none';
-    return;
-  }
-  
-  const todayReward = getTodayRewardType();
-  const btn = document.getElementById('claimBtn');
-  const infoBox = document.getElementById('infoBox');
-  
-  if(todayReward === 'star') {
-    infoBox.style.display = 'block';
-    infoBox.innerHTML = '⭐ Сегодня ты получишь ЗВЕЗДУ! ⭐';
-    btn.className = 'btn btn-star';
-    btn.innerHTML = '⭐ Я сделал(а) зарядку!';
-  } else if(todayReward === 'shiny') {
-    infoBox.style.display = 'block';
-    infoBox.innerHTML = '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
-    btn.className = 'btn btn-shiny';
-    btn.innerHTML = '🌟 Я сделал(а) зарядку!';
+  const saved = localStorage.getItem('as_save_' + nick);
+  if(saved) {
+    state = JSON.parse(saved);
+    // Если загрузили сохранение, проверяем, не сменился ли день
+    checkDayProgress();
   } else {
-    infoBox.style.display = 'none';
-    btn.className = 'btn btn-green';
-    btn.innerHTML = '🏃‍♀️ Я сделал(а) зарядку!';
+    state.name = name; state.nick = nick;
+    // Используем настройку старта
+    state.day = START_DAY_OVERRIDE > 0 ? START_DAY_OVERRIDE : 1;
+    state.lastDate = null; 
+    state.keysCollected = 0;
   }
   
-  const keysGrid = document.getElementById('keysGrid');
-  const charWrap = document.getElementById('charWrap');
+  saveState();
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = 'block';
+  renderGame();
+  startTimerLoop();
+}
+
+document.querySelectorAll('.field-input').forEach(inp => {
+  inp.addEventListener('input', () => {
+    const n = document.getElementById('inpName').value.trim();
+    const k = document.getElementById('inpNick').value.trim();
+    document.getElementById('startBtn').disabled = !(n && k);
+  });
+});
+
+function getRank(day) {
+  if(day >= 50) return {t:"МАСТЕР", c:"rank-master"};
+  if(day >= 36) return {t:"ПРОФИ", c:"rank-pro"};
+  if(day >= 15) return {t:"УЧЕНИК", c:"rank-student"};
+  return {t:"НОВИЧОК", c:"rank-novice"};
+}
+
+function isKeyDay(d) { return GOLD_DAYS.includes(d); }
+function isStarDay(d) { return STAR_DAYS.includes(d); }
+function isShinyDay(d) { return SHINY_DAYS.includes(d); }
+
+// Проверка смены дня по дате
+function checkDayProgress() {
+  const todayStr = new Date().toDateString();
+  if(state.lastDate !== todayStr) {
+    // Если сегодня еще не отмечались, значит день тот, который был записан.
+    // Но если мы хотим, чтобы день сам увеличивался каждый новый день реального времени:
+    // (Эта логика сложнее, пока оставим ручное переключение через doDailyTask)
+  }
+}
+
+function renderGame() {
+  const d = state.day;
+  const rank = getRank(d);
   
-  if(todayReward === 'key') {
-    // ПОКАЗЫВАЕМ 4 ОКОШКА ДЛЯ КЛЮЧЕЙ
-    keysGrid.style.display = 'grid';
-    charWrap.classList.remove('show');
+  const badge = document.getElementById('rankBadge');
+  badge.className = `rank-badge ${rank.c}`;
+  badge.innerText = rank.t;
+  
+  document.getElementById('greeting').innerText = `Привет, ${state.name}!`;
+  document.getElementById('valStar').innerText = state.stars;
+  document.getElementById('valShiny').innerText = state.shiny;
+
+  const grid = document.getElementById('keysGrid');
+  const taskText = document.getElementById('taskText');
+  
+  if(isKeyDay(d)) {
+    grid.style.display = 'grid';
     for(let i=0; i<4; i++) {
-      const slot = document.getElementById('ks'+i);
-      if(i < state.keyStep) {
+      const slot = document.getElementById('k'+i);
+      if(i < state.keysCollected) {
         slot.classList.add('filled');
         slot.innerHTML = '🔑';
       } else {
@@ -473,249 +415,262 @@ function render() {
         slot.innerHTML = '';
       }
     }
-    const left = 4 - state.keyStep;
-    if(left === 0) {
-      document.getElementById('progressText').innerHTML = '✨ Сегодня откроется новая суперсила! ✨';
+    
+    const keysLeft = 4 - state.keysCollected;
+    if(keysLeft > 0) {
+        taskText.innerText = `Собери ещё ${keysLeft} ключ(а), чтобы открыть Суперсилу!`;
     } else {
-      document.getElementById('progressText').innerHTML = `🔑 Собери 4 ключа: ${state.keyStep}/4 • Осталось ${left} ${left===1?'зарядка':'зарядки'}`;
+        taskText.innerText = `Последний рывок! Получи 4-й ключ!`;
     }
+
   } else {
-    // ЗВЁЗДНЫЕ ДНИ — ОКОШЕК НЕТ
-    keysGrid.style.display = 'none';
-    charWrap.classList.remove('show');
-    if(todayReward === 'star') {
-      const need = 4 - ((state.stars % 4) || 4);
-      document.getElementById('progressText').innerHTML = `⭐ У тебя ${state.stars} звёзд. До редкой суперсилы: ${need} ⭐`;
-    } else if(todayReward === 'shiny') {
-      const need = 4 - ((state.shinyStars % 4) || 4);
-      document.getElementById('progressText').innerHTML = `🌟 У тебя ${state.shinyStars} сияющих. До эпической суперсилы: ${need} 🌟`;
-    }
+    grid.style.display = 'none';
+    if(isStarDay(d)) taskText.innerText = "Выполни зарядку и получи Звезду ⭐";
+    else if(isShinyDay(d)) taskText.innerText = "Супер-день! Светящаяся звезда 🌟 ждёт тебя!";
+    else taskText.innerText = "Продолжай заниматься, чтобы стать сильнее!";
   }
+
+  checkAvailability();
+}
+
+function checkAvailability() {
+  const btn = document.getElementById('actionBtn');
+  const cdBox = document.getElementById('cooldownBox');
   
-  // ПРОВЕРКА — МОЖНО ЛИ ДЕЛАТЬ ЗАРЯДКУ СЕГОДНЯ?
-  if(!canWorkoutToday()) {
+  const todayStr = new Date().toDateString();
+  
+  if(state.lastDate === todayStr) {
     btn.style.display = 'none';
-    document.getElementById('cooldown').style.display = 'block';
-    const {hours, minutes} = getTimeUntilNextDay();
-    document.getElementById('cooldown').innerHTML = `⏳ Следующая зарядка будет доступна <span class="cooldown-time">через ${hours}ч ${minutes}мин</span>`;
+    cdBox.style.display = 'block';
   } else {
     btn.style.display = 'block';
-    document.getElementById('cooldown').style.display = 'none';
+    cdBox.style.display = 'none';
   }
 }
 
-async function doWorkout() {
-  const dayNum = getCurrentDayNumber();
-  if(dayNum > 56) {
-    celebrate('🏆', 'Поздравляем!', 'Все дни пройдены! Ты легенда!', null);
-    return;
-  }
+function doDailyTask() {
+  const todayStr = new Date().toDateString();
+  if(state.lastDate === todayStr) return; 
   
-  // ПРОВЕРКА — МОЖНО ЛИ ДЕЛАТЬ ЗАРЯДКУ СЕГОДНЯ?
-  if(!canWorkoutToday()) {
-    render();
-    return;
-  }
+  state.lastDate = todayStr;
   
-  // ПЕРВАЯ ЗАРЯДКА — ЗАПОМИНАЕМ ДАТУ СТАРТА
-  if (!state.firstWorkoutDate) {
-    state.firstWorkoutDate = new Date().toISOString();
-  }
-  
-  state.lastWorkoutDate = new Date().toISOString();
-  const todayReward = getTodayRewardType();
-  
-  if(todayReward === 'key') {
-    state.keyStep++;
-    playSound('key');
+  let rewardText = "";
+  let emoji = "🏃";
+  let title = "Зарядка принята!";
+
+  if(isKeyDay(state.day)) {
+    state.keysCollected++;
+    playSound('pop');
     
-    if(state.keyStep >= 4) {
-      // ОТКРЫВАЕМ БАЗОВУЮ СУПЕРСИЛУ
-      const idx = state.nextBaseIdx;
-      const char = BASE[idx];
-      if(!state.gotBase.includes(idx)) state.gotBase.push(idx);
-      state.keyStep = 0;
-      state.nextBaseIdx = randomBaseIndex();
-      save();
-      celebrate('🎉', char.power + ' открыта!', char.name + ' теперь в твоей коллекции!', char.img, 'base');
-      checkLegendary();
+    if(state.keysCollected >= 4) {
+      const charIndex = state.unlocked.base.length % BASE_CHARS.length;
+      const newChar = BASE_CHARS[charIndex];
+      state.unlocked.base.push(charIndex);
+      
+      emoji = newChar.i;
+      title = "СУПЕРСИЛА!";
+      rewardText = `Ты открыл силу: ${newChar.p} (${newChar.n})!`;
+      playSound('win');
+      
+      state.keysCollected = 0;
     } else {
-      save();
-      const left = 4 - state.keyStep;
-      celebrate('🔑', 'Ключ ' + state.keyStep + ' из 4!', 'Осталось ' + left + ' ' + (left===1?'зарядка':'зарядки') + ' до суперсилы', null, 'key');
+      rewardText = `Ключ ${state.keysCollected} из 4 получен!`;
     }
-  }
-  else if(todayReward === 'star') {
+  } 
+  else if(isStarDay(state.day)) {
     state.stars++;
-    save();
-    const need = 4 - ((state.stars % 4) || 4);
-    celebrate('⭐', 'Звезда получена!', '⭐ Всего: ' + state.stars + '<br>До редкой суперсилы: ' + need + ' ⭐', null, 'rare');
+    rewardText = `Ты получил звезду! Всего: ${state.stars} ⭐`;
+    emoji = "⭐";
+    playSound('coin');
+  } 
+  else if(isShinyDay(state.day)) {
+    state.shiny++;
+    rewardText = `Сияющая звезда получена! Всего: ${state.shiny} 🌟`;
+    emoji = "🌟";
+    playSound('magic');
   }
-  else if(todayReward === 'shiny') {
-    state.shinyStars++;
-    save();
-    const need = 4 - ((state.shinyStars % 4) || 4);
-    celebrate('🌟', 'Сияющая звезда!', '🌟 Всего: ' + state.shinyStars + '<br>До эпической суперсилы: ' + need + ' 🌟', null, 'epic');
+
+  // Переход к следующему дню
+  if(state.day < 56) {
+    state.day++;
   }
-  
-  render();
+
+  saveState();
+  renderGame();
+  showModal(emoji, title, rewardText);
 }
 
-// ██████████████████████████████████████████████████████████████████████████
-// ГАЛЕРЕЯ
-// ██████████████████████████████████████████████████████████████████████████
-function switchTab(tab, btn) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderGallery(tab);
-}
-
-function renderGallery(tab) {
-  const cont = document.getElementById('galleryContent');
-  cont.innerHTML = '';
-  
-  if(tab === 'rare' || tab === 'epic') {
-    const info = document.createElement('div');
-    info.style.cssText = 'background:#f9f9f9;border-radius:14px;padding:10px;margin-bottom:12px;font-size:13px;font-weight:700';
-    info.innerHTML = tab === 'rare' ? `⭐ У тебя ${state.stars} звёзд. 4 звезды = редкий герой` : `🌟 У тебя ${state.shinyStars} сияющих. 4 = эпический герой`;
-    cont.appendChild(info);
-  }
-  
-  const chars = tab === 'base' ? BASE : tab === 'rare' ? RARE : tab === 'epic' ? EPIC : [LEGEND];
-  const grid = document.createElement('div'); grid.className = 'gallery-grid';
-  
-  chars.forEach((c, i) => {
-    let got = false;
-    if(tab === 'legend') got = state.gotLegend;
-    else if(tab === 'base') got = state.gotBase.includes(i);
-    else if(tab === 'rare') got = state.gotRare.includes(i);
-    else if(tab === 'epic') got = state.gotEpic.includes(i);
-    
-    const div = document.createElement('div');
-    div.className = 'g-item ' + (got ? 'got' : 'locked');
-    
-    const imgDiv = document.createElement('div'); imgDiv.className = 'g-img';
-    if(got) {
-      const img = document.createElement('img'); img.src = c.img; img.alt = c.power;
-      img.onerror = () => { img.style.display='none'; imgDiv.innerHTML='<span style="font-size:40px">'+c.animal+'</span>'; };
-      imgDiv.appendChild(img);
+function startTimerLoop() {
+  setInterval(() => {
+    if(state.lastDate === new Date().toDateString()) {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0,0,0,0); 
+      
+      const diff = tomorrow - now;
+      const h = Math.floor(diff / (1000 * 60 * 60));
+      const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      document.getElementById('timerDisplay').innerText = 
+        `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
     } else {
-      imgDiv.innerHTML = '<div class="g-q">❓</div>';
+      checkAvailability(); 
     }
-    div.appendChild(imgDiv);
-    
-    if(got) {
-      const nameDiv = document.createElement('div'); nameDiv.className = 'g-name'; nameDiv.innerHTML = c.power;
-      div.appendChild(nameDiv);
-    }
-    
-    if(!got && (tab === 'rare' || tab === 'epic')) {
-      const cost = 4;
-      const have = tab === 'rare' ? state.stars : state.shinyStars;
-      const icon = tab === 'rare' ? '⭐' : '🌟';
-      if(have >= cost) {
-        const buyBtn = document.createElement('button');
-        buyBtn.style.cssText = 'border:none;border-radius:10px;padding:6px 12px;font-family:Nunito;font-weight:800;font-size:11px;cursor:pointer;margin:8px;background:#FFF8E1;color:#F9A825';
-        buyBtn.innerHTML = icon + ' ' + cost + ' → Открыть!';
-        buyBtn.onclick = (e) => {
-          e.stopPropagation();
-          if(tab === 'rare' && state.stars >= cost && !state.gotRare.includes(i)) {
-            state.stars -= cost;
-            state.gotRare.push(i);
-            save();
-            celebrate('⭐', c.power + ' открыта!', c.name + ' в коллекции!', c.img, 'rare');
-            renderGallery(tab);
-            render();
-            checkLegendary();
-          } else if(tab === 'epic' && state.shinyStars >= cost && !state.gotEpic.includes(i)) {
-            state.shinyStars -= cost;
-            state.gotEpic.push(i);
-            save();
-            celebrate('🌟', c.power + ' открыта!', c.name + ' в коллекции!', c.img, 'epic');
-            renderGallery(tab);
-            render();
-            checkLegendary();
-          }
-        };
-        div.appendChild(buyBtn);
-      } else {
-        const needDiv = document.createElement('div'); needDiv.style.cssText = 'font-size:11px;font-weight:700;color:#bbb;margin:8px'; needDiv.innerHTML = icon + ' ' + have + '/' + cost;
-        div.appendChild(needDiv);
-      }
-    }
-    
-    if(tab === 'legend' && !got) {
-      const hint = document.createElement('div'); hint.style.cssText = 'font-size:11px;font-weight:700;color:#aaa;margin:8px'; hint.innerHTML = 'Собери всех героев!';
-      div.appendChild(hint);
-    }
-    
-    if(!got && tab !== 'legend') {
-      const rarity = document.createElement('span'); rarity.className = 'rarity-label rarity-' + tab;
-      const labels = {base:'базовый', rare:'редкий', epic:'эпический'};
-      rarity.innerHTML = labels[tab];
-      div.appendChild(rarity);
-    }
-    grid.appendChild(div);
-  });
-  cont.appendChild(grid);
+  }, 1000);
 }
 
-window.showGallery = function() {
+// --- ГАЛЕРЕЯ ---
+let currentTab = 'base';
+
+function openGallery() {
   document.getElementById('gameScreen').style.display = 'none';
   document.getElementById('galleryScreen').style.display = 'block';
-  renderGallery('base');
-};
-window.hideGallery = function() {
+  renderGallery();
+}
+function closeGallery() {
   document.getElementById('galleryScreen').style.display = 'none';
   document.getElementById('gameScreen').style.display = 'block';
-  render();
-};
-window.switchTab = switchTab;
-
-// ██████████████████████████████████████████████████████████████████████████
-// СТАРТ
-// ██████████████████████████████████████████████████████████████████████████
-function checkBtn() {
-  const name = document.getElementById('nameInput').value.trim();
-  const nick = document.getElementById('nickInput').value.trim();
-  document.getElementById('startBtn').disabled = !(name && nick);
 }
 
-window.startGame = function() {
-  const name = document.getElementById('nameInput').value.trim();
-  const nick = document.getElementById('nickInput').value.trim();
-  if(!name || !nick) return;
-  playerKey = (name + '_' + nick).toLowerCase().replace(/[^a-zа-яё0-9]/gi, '_');
-  localStorage.setItem('as_who', JSON.stringify({name, nick}));
-  if(!load()) state = freshState(name, nick);
-  else { state.name = name; state.nick = nick; }
-  save();
-  document.getElementById('nameScreen').style.display = 'none';
-  document.getElementById('gameScreen').style.display = 'block';
-  render();
-};
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  renderGallery();
+}
 
-window.changeName = function() {
-  localStorage.removeItem('as_who');
-  document.getElementById('gameScreen').style.display = 'none';
-  document.getElementById('nameScreen').style.display = 'block';
-  document.getElementById('nameInput').value = '';
-  document.getElementById('nickInput').value = '';
-  checkBtn();
-};
+function renderGallery() {
+  const container = document.getElementById('galleryContent');
+  container.innerHTML = '';
+  
+  let items = [];
+  if(currentTab === 'base') items = BASE_CHARS.map((c,i) => ({...c, type:'base', idx:i, unlocked: state.unlocked.base.includes(i)}));
+  if(currentTab === 'rare') items = RARE_CHARS.map((c,i) => ({...c, type:'rare', idx:i, unlocked: state.unlocked.rare.includes(i)}));
+  if(currentTab === 'epic') items = EPIC_CHARS.map((c,i) => ({...c, type:'epic', idx:i, unlocked: state.unlocked.epic.includes(i)}));
+  if(currentTab === 'legend') items = [{...LEGEND_CHAR, type:'legend', unlocked: state.unlocked.legend}];
 
-const savedWho = localStorage.getItem('as_who');
-if(savedWho) {
-  try {
-    const d = JSON.parse(savedWho);
-    if(d.name && d.nick) {
-      document.getElementById('nameInput').value = d.name;
-      document.getElementById('nickInput').value = d.nick;
-      checkBtn();
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = `g-card ${item.unlocked ? 'unlocked' : 'locked'}`;
+    
+    let html = '';
+    
+    if(item.unlocked) {
+        html += `<span class="g-icon">${item.i}</span>`;
+        html += `<div class="g-name">${item.n}</div>`;
+        html += `<div style="color:#2E7D32; font-weight:800; font-size:10px;">ЕСТЬ</div>`;
+    } else {
+        // Логика отображения закрытых
+        if(item.type === 'base') {
+            // Только красный вопрос
+            html += `<span class="big-q">?</span>`;
+        } else if (item.type === 'rare') {
+            html += `<span class="g-icon">❓</span>`;
+            html += `<div class="g-name">???</div>`;
+            html += `<div class="g-price">⭐ ${item.cost}</div>`;
+            if(state.stars >= item.cost) {
+                html += `<button class="buy-btn" onclick="buyItem('rare', ${item.idx})">Купить</button>`;
+            }
+        } else if (item.type === 'epic') {
+            html += `<span class="g-icon">❓</span>`;
+            html += `<div class="g-name">???</div>`;
+            html += `<div class="g-price">🌟 ${item.cost}</div>`;
+            if(state.shiny >= item.cost) {
+                html += `<button class="buy-btn" onclick="buyItem('epic', ${item.idx})">Купить</button>`;
+            }
+        } else if (item.type === 'legend') {
+             html += `<span class="g-icon">❓</span>`;
+             html += `<div class="g-name">ЛЕГЕНДА</div>`;
+             html += `<div class="g-price">Собери все суперсилы</div>`;
+        }
     }
-  } catch(e) {}
+    
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
 }
-setInterval(checkBtn, 200);
+
+function buyItem(type, idx) {
+  if(type === 'rare') {
+    if(state.stars >= 4 && !state.unlocked.rare.includes(idx)) {
+      state.stars -= 4;
+      state.unlocked.rare.push(idx);
+      saveState();
+      showModal(RARE_CHARS[idx].i, "Открыто!", `Ты получил силу: ${RARE_CHARS[idx].p}`);
+      renderGallery();
+      renderGame(); 
+    }
+  } else if (type === 'epic') {
+    if(state.shiny >= 4 && !state.unlocked.epic.includes(idx)) {
+      state.shiny -= 4;
+      state.unlocked.epic.push(idx);
+      saveState();
+      showModal(EPIC_CHARS[idx].i, "ЭПИК!", `Ты получил силу: ${EPIC_CHARS[idx].p}`);
+      renderGallery();
+      renderGame();
+    }
+  }
+}
+
+function saveState() {
+  localStorage.setItem('as_save_' + state.nick, JSON.stringify(state));
+  localStorage.setItem('as_lastUser', state.nick);
+}
+
+function hardReset() {
+  if(confirm("Точно сбросить весь прогресс?")) {
+    localStorage.removeItem('as_save_' + state.nick);
+    location.reload();
+  }
+}
+
+function showModal(emoji, title, desc) {
+  document.getElementById('mEmoji').innerText = emoji;
+  document.getElementById('mTitle').innerText = title;
+  document.getElementById('mDesc').innerText = desc;
+  document.getElementById('rewardModal').classList.add('show');
+}
+window.closeModal = function() {
+  document.getElementById('rewardModal').classList.remove('show');
+}
+
+function playSound(type) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    if(type === 'pop') {
+      osc.frequency.setValueAtTime(600, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+      osc.start(); osc.stop(ctx.currentTime + 0.1);
+    } else if (type === 'coin') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1200, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1800, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
+      osc.start(); osc.stop(ctx.currentTime + 0.3);
+    } else if (type === 'win') {
+       [523, 659, 784, 1046].forEach((freq, i) => {
+         const o = ctx.createOscillator();
+         const g = ctx.createGain();
+         o.connect(g); g.connect(ctx.destination);
+         o.frequency.value = freq;
+         g.gain.setValueAtTime(0.1, ctx.currentTime + i*0.1);
+         g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.1 + 0.3);
+         o.start(ctx.currentTime + i*0.1);
+         o.stop(ctx.currentTime + i*0.1 + 0.3);
+       });
+    }
+  } catch(e){}
+}
 </script>
 </body>
 </html>
