@@ -77,6 +77,9 @@
   }
   .rank-row { display: flex; justify-content: space-between; align-items: center; }
   .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     padding: 6px 12px;
     border-radius: 20px;
     font-family: 'Fredoka One', cursive;
@@ -149,6 +152,11 @@
     transition: color .2s;
   }
   .col-link:hover { color: #667eea; }
+  
+  .change-name {
+    font-size: 11px; color: #ccc; margin-top: 10px; cursor: pointer; font-weight: 700;
+  }
+  .change-name:hover { color: #667eea; }
 
   /* Галерея */
   #galleryScreen { display: none; text-align: left; }
@@ -174,7 +182,7 @@
     text-align: center; 
     background: #fff;
     position: relative;
-    min-height: 130px;
+    min-height: 140px; /* Фиксированная высота для выравнивания */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -224,7 +232,6 @@
   @keyframes fadeIn { from{opacity:0} to{opacity:1} }
   @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
 
-  .reset-link { font-size: 10px; color: #ccc; margin-top: 15px; text-decoration: underline; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -244,7 +251,7 @@
 <div class="card" id="gameScreen" style="display:none">
   <div class="top-bar">
     <div class="rank-row">
-      <div id="rankBadge" class="rank-badge rank-novice">Новичок</div>
+      <div id="rankBadge" class="rank-badge rank-novice">🌱 Новичок</div>
       <div class="wallet">
         <div class="w-slot w-star">⭐ <span id="valStar">0</span></div>
         <div class="w-slot w-shiny">🌟 <span id="valShiny">0</span></div>
@@ -271,7 +278,7 @@
   </div>
 
   <div class="col-link" onclick="openGallery()">🏅 Моя коллекция →</div>
-  <div class="reset-link" onclick="hardReset()">Сбросить прогресс</div>
+  <div class="change-name" onclick="changeName()">Это не я → сменить имя</div>
 </div>
 
 <!-- Экран галереи -->
@@ -301,9 +308,8 @@
 
 <script>
 // --- НАСТРОЙКИ СТАРТА ---
-// Если нужно начать с конкретного дня (например, с 5), поставьте число здесь.
-// Если 0, игра начнется с 1 дня.
-const START_DAY_OVERRIDE = 5; 
+// 0 = начать сначала. 5 = начать с 5 дня (для теста).
+const START_DAY_OVERRIDE = 0; 
 
 // --- ДАННЫЕ ИГРЫ ---
 const GOLD_DAYS = [1,2,3,4, 8,9,10,11, 15,16,17,18, 22,23,24,25, 29,30,31,32, 36,37,38,39, 43,44,45,46, 50,51,52,53];
@@ -342,11 +348,8 @@ function initGame() {
   const saved = localStorage.getItem('as_save_' + nick);
   if(saved) {
     state = JSON.parse(saved);
-    // Если загрузили сохранение, проверяем, не сменился ли день
-    checkDayProgress();
   } else {
     state.name = name; state.nick = nick;
-    // Используем настройку старта
     state.day = START_DAY_OVERRIDE > 0 ? START_DAY_OVERRIDE : 1;
     state.lastDate = null; 
     state.keysCollected = 0;
@@ -378,23 +381,20 @@ function isKeyDay(d) { return GOLD_DAYS.includes(d); }
 function isStarDay(d) { return STAR_DAYS.includes(d); }
 function isShinyDay(d) { return SHINY_DAYS.includes(d); }
 
-// Проверка смены дня по дате
-function checkDayProgress() {
-  const todayStr = new Date().toDateString();
-  if(state.lastDate !== todayStr) {
-    // Если сегодня еще не отмечались, значит день тот, который был записан.
-    // Но если мы хотим, чтобы день сам увеличивался каждый новый день реального времени:
-    // (Эта логика сложнее, пока оставим ручное переключение через doDailyTask)
-  }
-}
-
 function renderGame() {
   const d = state.day;
   const rank = getRank(d);
   
   const badge = document.getElementById('rankBadge');
   badge.className = `rank-badge ${rank.c}`;
-  badge.innerText = rank.t;
+  // Добавляем иконки к тексту ранга
+  let icon = "";
+  if(rank.t === "НОВИЧОК") icon = "🌱 ";
+  if(rank.t === "УЧЕНИК") icon = "📖 ";
+  if(rank.t === "ПРОФИ") icon = "⚡ ";
+  if(rank.t === "МАСТЕР") icon = "👑 ";
+  
+  badge.innerText = icon + rank.t;
   
   document.getElementById('greeting').innerText = `Привет, ${state.name}!`;
   document.getElementById('valStar').innerText = state.stars;
@@ -490,7 +490,6 @@ function doDailyTask() {
     playSound('magic');
   }
 
-  // Переход к следующему дню
   if(state.day < 56) {
     state.day++;
   }
@@ -567,21 +566,18 @@ function renderGallery() {
             // Только красный вопрос
             html += `<span class="big-q">?</span>`;
         } else if (item.type === 'rare') {
-            html += `<span class="g-icon">❓</span>`;
             html += `<div class="g-name">???</div>`;
             html += `<div class="g-price">⭐ ${item.cost}</div>`;
             if(state.stars >= item.cost) {
                 html += `<button class="buy-btn" onclick="buyItem('rare', ${item.idx})">Купить</button>`;
             }
         } else if (item.type === 'epic') {
-            html += `<span class="g-icon">❓</span>`;
             html += `<div class="g-name">???</div>`;
             html += `<div class="g-price">🌟 ${item.cost}</div>`;
             if(state.shiny >= item.cost) {
                 html += `<button class="buy-btn" onclick="buyItem('epic', ${item.idx})">Купить</button>`;
             }
         } else if (item.type === 'legend') {
-             html += `<span class="g-icon">❓</span>`;
              html += `<div class="g-name">ЛЕГЕНДА</div>`;
              html += `<div class="g-price">Собери все суперсилы</div>`;
         }
@@ -619,12 +615,10 @@ function saveState() {
   localStorage.setItem('as_lastUser', state.nick);
 }
 
-function hardReset() {
-  if(confirm("Точно сбросить весь прогресс?")) {
-    localStorage.removeItem('as_save_' + state.nick);
-    location.reload();
-  }
-}
+window.changeName = function() {
+  localStorage.removeItem('as_lastUser');
+  location.reload();
+};
 
 function showModal(emoji, title, desc) {
   document.getElementById('mEmoji').innerText = emoji;
