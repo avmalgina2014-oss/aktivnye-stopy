@@ -236,40 +236,79 @@ const EPIC = [
 const LEGEND = {animal:"🔥",power:"Возрождение",name:"Феникс",img:"feniks.png"};
 
 // ██████████████████████████████████████████████████████████████████████████
-// ЛОГИКА ДНЕЙ (скрытая от пользователя)
-// Дни считаются от 1 до 56, но НЕ ПОКАЗЫВАЮТСЯ
+// ЛОГИКА ДНЕЙ (привязана к ДАТЕ, а не к счётчику!)
+// День 1 = 24 апреля 2026 (если нужен конкретный старт)
 // ██████████████████████████████████████████████████████████████████████████
-function getDayType(dayNum) {
-  if(dayNum < 1 || dayNum > 56) return 'end';
+
+// ⚠️ ЕСЛИ ХОЧЕШЬ НАЧАТЬ С КОНКРЕТНОГО ДНЯ — ИЗМЕНИ ЭТУ СТРОКУ
+// Например: const FORCED_START_DATE = new Date(2026, 3, 28); // 28 апреля (день 5)
+// Если оставить null — игра будет считать от даты первой зарядки
+const FORCED_START_DATE = null;  // ← СЮДА МОЖНО ВСТАВИТЬ ДАТУ СТАРТА
+
+// Получить номер дня (1-56) на основе истории зарядок
+function getCurrentDayNumber() {
+  // Если есть принудительная дата старта
+  if (FORCED_START_DATE && !state.firstWorkoutDate) {
+    state.firstWorkoutDate = FORCED_START_DATE.toISOString();
+    state.lastWorkoutDate = FORCED_START_DATE.toISOString();
+    // Симулируем прогресс для этого дня
+    save();
+  }
+  
+  // Если ещё ни разу не занимались — день 1
+  if (!state.firstWorkoutDate) {
+    return 1;
+  }
+  
+  const firstDate = new Date(state.firstWorkoutDate);
+  const today = new Date();
+  
+  // Обрезаем время до начала дня
+  firstDate.setHours(0, 0, 0, 0);
+  const todayStart = new Date(today);
+  todayStart.setHours(0, 0, 0, 0);
+  
+  // Вычисляем количество пройденных дней
+  const diffDays = Math.floor((todayStart - firstDate) / (1000 * 60 * 60 * 24));
+  let dayNum = diffDays + 1;
+  
+  // Не больше 56
+  if (dayNum > 56) dayNum = 56;
+  return dayNum;
+}
+
+// Можно ли сегодня сделать зарядку? (новый день)
+function canWorkoutToday() {
+  if (!state.lastWorkoutDate) return true;
+  const last = new Date(state.lastWorkoutDate);
+  const today = new Date();
+  return last.getDate() !== today.getDate() || 
+         last.getMonth() !== today.getMonth() || 
+         last.getFullYear() !== today.getFullYear();
+}
+
+// Какой тип награды сегодня (key/star/shiny)
+function getTodayRewardType() {
+  const dayNum = getCurrentDayNumber();
+  if (dayNum > 56) return 'finished';
   
   // КЛЮЧЕВЫЕ ДНИ (4 окошка): 1-4,8-11,15-18,22-25,29-32,36-39,43-46,50-53
   const keyDays = [1,2,3,4,8,9,10,11,15,16,17,18,22,23,24,25,29,30,31,32,36,37,38,39,43,44,45,46,50,51,52,53];
   // ЗВЁЗДНЫЕ ДНИ: 5-6,12-13,19-20,26-27,33-34,40-41,47-48,54-55
   const starDays = [5,6,12,13,19,20,26,27,33,34,40,41,47,48,54,55];
   // СИЯЮЩИЕ ДНИ: 7,14,21,28,35,42,49,56
-  const shinyDays = [7,14,21,28,35,42,49,56];
   
-  if(keyDays.includes(dayNum)) return 'key';
-  if(starDays.includes(dayNum)) return 'star';
-  if(shinyDays.includes(dayNum)) return 'shiny';
-  return 'end';
+  if (keyDays.includes(dayNum)) return 'key';
+  if (starDays.includes(dayNum)) return 'star';
+  return 'shiny';
 }
 
+// УРОВЕНЬ
 function getRankByDay(dayNum) {
-  if(dayNum >= 50) return {label:'👑 МАСТЕР', cls:'rank-master'};
-  if(dayNum >= 36) return {label:'⚡ ПРОФИ', cls:'rank-pro'};
-  if(dayNum >= 15) return {label:'📖 УЧЕНИК', cls:'rank-student'};
+  if (dayNum >= 50) return {label:'👑 МАСТЕР', cls:'rank-master'};
+  if (dayNum >= 36) return {label:'⚡ ПРОФИ', cls:'rank-pro'};
+  if (dayNum >= 15) return {label:'📖 УЧЕНИК', cls:'rank-student'};
   return {label:'🌱 НОВИЧОК', cls:'rank-novice'};
-}
-
-// КУЛДАУН: проверяем, наступил ли новый день
-function isNewDayAvailable(lastClaim) {
-  if(!lastClaim) return true;
-  const last = new Date(lastClaim);
-  const now = new Date();
-  return (last.getDate() !== now.getDate() || 
-          last.getMonth() !== now.getMonth() || 
-          last.getFullYear() !== now.getFullYear());
 }
 
 function getTimeUntilNextDay() {
@@ -289,15 +328,15 @@ let playerKey = '';
 function freshState(name, nick) {
   return {
     name: name, nick: nick,
-    currentDay: 0,        // сколько дней ПРОЙДЕНО (внутренний счётчик, НЕ ПОКАЗЫВАЕТСЯ)
-    keyStep: 0,           // ключей собрано в текущей неделе (0-4)
+    firstWorkoutDate: null,   // дата первой зарядки (старт игры)
+    lastWorkoutDate: null,    // дата последней зарядки
+    keyStep: 0,               // сколько ключей собрано в текущей неделе (0-4)
     stars: 0,
     shinyStars: 0,
     gotBase: [],
     gotRare: [],
     gotEpic: [],
     gotLegend: false,
-    lastClaim: null,
     nextBaseIdx: Math.floor(Math.random() * BASE.length)
   };
 }
@@ -316,7 +355,7 @@ function load() {
     if(state.keyStep === undefined) state.keyStep = 0;
     if(state.stars === undefined) state.stars = 0;
     if(state.shinyStars === undefined) state.shinyStars = 0;
-    if(state.currentDay === undefined) state.currentDay = 0;
+    if(state.nextBaseIdx === undefined) state.nextBaseIdx = Math.floor(Math.random() * BASE.length);
     return true;
   } catch(e) { return false; }
 }
@@ -376,16 +415,15 @@ function checkLegendary() {
 }
 
 function render() {
-  // УРОВЕНЬ (новичок/ученик/профи/мастер) на основе пройденных дней
-  const rank = getRankByDay(state.currentDay);
+  const dayNum = getCurrentDayNumber();
+  const rank = getRankByDay(dayNum);
   document.getElementById('rankBadge').className = 'rank-badge ' + rank.cls;
   document.getElementById('rankBadge').innerHTML = rank.label;
   document.getElementById('starCount').innerHTML = state.stars;
   document.getElementById('shinyCount').innerHTML = state.shinyStars;
   document.getElementById('greeting').innerHTML = 'Привет, ' + (state.name || '') + '!';
   
-  const nextDay = state.currentDay + 1;
-  const isFinished = state.currentDay >= 56;
+  const isFinished = dayNum > 56;
   
   if(isFinished) {
     document.getElementById('keysGrid').style.display = 'none';
@@ -398,18 +436,16 @@ function render() {
     return;
   }
   
-  const dayType = getDayType(nextDay);
-  
-  // НАСТРОЙКА КНОПКИ
+  const todayReward = getTodayRewardType();
   const btn = document.getElementById('claimBtn');
   const infoBox = document.getElementById('infoBox');
   
-  if(dayType === 'star') {
+  if(todayReward === 'star') {
     infoBox.style.display = 'block';
     infoBox.innerHTML = '⭐ Сегодня ты получишь ЗВЕЗДУ! ⭐';
     btn.className = 'btn btn-star';
     btn.innerHTML = '⭐ Я сделал(а) зарядку!';
-  } else if(dayType === 'shiny') {
+  } else if(todayReward === 'shiny') {
     infoBox.style.display = 'block';
     infoBox.innerHTML = '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
     btn.className = 'btn btn-shiny';
@@ -423,7 +459,7 @@ function render() {
   const keysGrid = document.getElementById('keysGrid');
   const charWrap = document.getElementById('charWrap');
   
-  if(dayType === 'key') {
+  if(todayReward === 'key') {
     // ПОКАЗЫВАЕМ 4 ОКОШКА ДЛЯ КЛЮЧЕЙ
     keysGrid.style.display = 'grid';
     charWrap.classList.remove('show');
@@ -447,17 +483,17 @@ function render() {
     // ЗВЁЗДНЫЕ ДНИ — ОКОШЕК НЕТ
     keysGrid.style.display = 'none';
     charWrap.classList.remove('show');
-    if(dayType === 'star') {
+    if(todayReward === 'star') {
       const need = 4 - ((state.stars % 4) || 4);
       document.getElementById('progressText').innerHTML = `⭐ У тебя ${state.stars} звёзд. До редкой суперсилы: ${need} ⭐`;
-    } else if(dayType === 'shiny') {
+    } else if(todayReward === 'shiny') {
       const need = 4 - ((state.shinyStars % 4) || 4);
       document.getElementById('progressText').innerHTML = `🌟 У тебя ${state.shinyStars} сияющих. До эпической суперсилы: ${need} 🌟`;
     }
   }
   
-  // ПРОВЕРКА КУЛДАУНА
-  if(!isNewDayAvailable(state.lastClaim)) {
+  // ПРОВЕРКА — МОЖНО ЛИ ДЕЛАТЬ ЗАРЯДКУ СЕГОДНЯ?
+  if(!canWorkoutToday()) {
     btn.style.display = 'none';
     document.getElementById('cooldown').style.display = 'block';
     const {hours, minutes} = getTimeUntilNextDay();
@@ -469,22 +505,27 @@ function render() {
 }
 
 async function doWorkout() {
-  if(state.currentDay >= 56) {
+  const dayNum = getCurrentDayNumber();
+  if(dayNum > 56) {
     celebrate('🏆', 'Поздравляем!', 'Все дни пройдены! Ты легенда!', null);
     return;
   }
   
-  // ПРОВЕРКА — НОВЫЙ ЛИ ДЕНЬ?
-  if(!isNewDayAvailable(state.lastClaim)) {
+  // ПРОВЕРКА — МОЖНО ЛИ ДЕЛАТЬ ЗАРЯДКУ СЕГОДНЯ?
+  if(!canWorkoutToday()) {
     render();
     return;
   }
   
-  state.currentDay++;
-  state.lastClaim = new Date().toISOString();
-  const dayType = getDayType(state.currentDay);
+  // ПЕРВАЯ ЗАРЯДКА — ЗАПОМИНАЕМ ДАТУ СТАРТА
+  if (!state.firstWorkoutDate) {
+    state.firstWorkoutDate = new Date().toISOString();
+  }
   
-  if(dayType === 'key') {
+  state.lastWorkoutDate = new Date().toISOString();
+  const todayReward = getTodayRewardType();
+  
+  if(todayReward === 'key') {
     state.keyStep++;
     playSound('key');
     
@@ -504,13 +545,13 @@ async function doWorkout() {
       celebrate('🔑', 'Ключ ' + state.keyStep + ' из 4!', 'Осталось ' + left + ' ' + (left===1?'зарядка':'зарядки') + ' до суперсилы', null, 'key');
     }
   }
-  else if(dayType === 'star') {
+  else if(todayReward === 'star') {
     state.stars++;
     save();
     const need = 4 - ((state.stars % 4) || 4);
     celebrate('⭐', 'Звезда получена!', '⭐ Всего: ' + state.stars + '<br>До редкой суперсилы: ' + need + ' ⭐', null, 'rare');
   }
-  else if(dayType === 'shiny') {
+  else if(todayReward === 'shiny') {
     state.shinyStars++;
     save();
     const need = 4 - ((state.shinyStars % 4) || 4);
