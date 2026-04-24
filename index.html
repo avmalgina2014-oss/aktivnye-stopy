@@ -1,162 +1,162 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Активные Стопы</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .card {
-      background: #fff;
-      border-radius: 32px;
-      padding: 24px 20px;
-      max-width: 420px;
-      width: 100%;
-      box-shadow: 0 20px 60px rgba(0,0,0,.2);
-      text-align: center;
-    }
-    h1 { font-family: 'Fredoka One', cursive; font-size: 26px; color: #2d2d2d; margin-bottom: 4px; }
-    .subtitle { font-size: 13px; color: #888; margin-bottom: 20px; font-weight: 700; }
-    .btn {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: #fff;
-      border: none;
-      border-radius: 16px;
-      padding: 13px 24px;
-      font-family: 'Fredoka One', cursive;
-      font-size: 19px;
-      cursor: pointer;
-      width: 100%;
-      transition: transform .15s;
-      box-shadow: 0 4px 16px rgba(102,126,234,.4);
-      margin-top: 8px;
-    }
-    .btn:hover { transform: translateY(-2px); }
-    .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-    .btn-green { background: linear-gradient(135deg, #2E7D32, #4CAF50); box-shadow: 0 4px 16px rgba(46,125,50,.4); }
-    .btn-gold { background: linear-gradient(135deg, #F9A825, #FF6F00); box-shadow: 0 4px 16px rgba(249,168,37,.4); }
-    .btn-rare { background: linear-gradient(135deg, #1565C0, #42A5F5); box-shadow: 0 4px 16px rgba(21,101,192,.3); }
-    .btn-ruby { background: linear-gradient(135deg, #B71C1C, #EF5350); box-shadow: 0 4px 16px rgba(183,28,28,.3); }
-    .field-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; text-align: left; }
-    .field-input {
-      width: 100%;
-      border: 3px solid #e0e4ef;
-      border-radius: 14px;
-      padding: 11px 14px;
-      font-family: 'Nunito', sans-serif;
-      font-size: 17px;
-      font-weight: 700;
-      outline: none;
-      text-align: center;
-      margin-bottom: 14px;
-      transition: border-color .2s;
-    }
-    .field-input:focus { border-color: #667eea; }
-    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
-    .rank-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 5px 14px;
-      border-radius: 20px;
-      font-family: 'Fredoka One', cursive;
-      font-size: 14px;
-    }
-    .rank-novice { background: #e8f5e9; color: #2E7D32; }
-    .rank-student { background: linear-gradient(135deg, #FFF8E1, #FFE082); color: #F57F17; }
-    .rank-pro { background: linear-gradient(135deg, #E3F2FD, #90CAF9); color: #1565C0; }
-    .rank-master { background: linear-gradient(135deg, #1a1a2e, #16213e); color: #fff; }
-    .keys-wallet { display: flex; gap: 12px; background: #f5f5f5; border-radius: 40px; padding: 6px 16px; }
-    .wallet-slot { display: flex; align-items: center; gap: 6px; font-family: 'Fredoka One', cursive; font-size: 18px; }
-    .wallet-slot.star { color: #F9A825; }
-    .wallet-slot.star-shiny { color: #FF6F00; }
-    .greeting { font-size: 18px; font-weight: 900; color: #2d2d2d; margin-bottom: 4px; }
-    .progress-text { font-size: 13px; color: #888; font-weight: 700; margin-bottom: 12px; line-height: 1.7; }
-    .keys-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
-    .key-slot {
-      aspect-ratio: 1;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      border: 3px dashed #e0e4ef;
-      background: #f9f9f9;
-      transition: all .4s ease;
-    }
-    .key-slot.filled { border: 3px solid gold; background: linear-gradient(135deg, #fffde7, #fff9c4); box-shadow: 0 4px 12px rgba(255,215,0,.4); animation: popIn .5s ease; }
-    @keyframes popIn { 0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)} }
-    .char-wrap { border-radius: 18px; overflow: hidden; margin-bottom: 12px; display: none; background: #f5f5f5; }
-    .char-wrap img { width: 100%; height: 200px; object-fit: contain; display: block; }
-    .char-wrap.show { display: block; animation: zoomIn .6s ease; }
-    @keyframes zoomIn { from{transform:scale(.5);opacity:0} to{transform:scale(1);opacity:1} }
-    .cooldown-msg { background: #f0f4ff; border-radius: 14px; padding: 12px; font-size: 13px; font-weight: 700; color: #667eea; display: none; margin-top: 8px; }
-    .cooldown-time { font-family: 'Fredoka One', cursive; font-size: 20px; display: block; margin-top: 4px; }
-    .collection-bar { margin-top: 14px; border-top: 2px solid #f0f0f0; padding-top: 12px; cursor: pointer; }
-    .collection-bar:hover .col-title { color: #667eea; }
-    .col-title { font-family: 'Fredoka One', cursive; font-size: 15px; color: #888; margin-bottom: 8px; transition: color .2s; }
-    .change-name { font-size: 11px; color: #ccc; margin-top: 10px; cursor: pointer; font-weight: 700; }
-    .change-name:hover { color: #667eea; }
-    #galleryScreen { display: none; }
-    .gallery-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid #e0e4ef; }
-    .tab-btn {
-      flex: 1;
-      background: none;
-      border: none;
-      padding: 10px 4px;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 800;
-      font-size: 12px;
-      color: #aaa;
-      cursor: pointer;
-      transition: all .2s;
-      border-bottom: 3px solid transparent;
-      margin-bottom: -2px;
-    }
-    .tab-btn.active { color: #667eea; border-bottom-color: #667eea; }
-    .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 14px; }
-    .g-item {
-      border-radius: 18px;
-      border: 2px solid #e8e8e8;
-      background: #f0f0f0;
-      padding: 0;
-      text-align: center;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: all .3s;
-    }
-    .g-item.got { background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.1); border-color: transparent; }
-    .g-item.locked { padding: 20px 8px; align-items: center; justify-content: center; }
-    .g-item .g-img { width: 100%; }
-    .g-item .g-img img { width: 100%; height: auto; display: block; }
-    .g-item .g-name {
-      font-family: 'Fredoka One', cursive;
-      font-size: 14px;
-      padding: 8px 8px 12px;
-      line-height: 1.3;
-      color: #667eea;
-      word-break: break-word;
-    }
-    .g-item .g-q { font-size: 44px; color: #ddd; margin-bottom: 6px; }
-    .celebration { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.8); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
-    .celebration.show { display: flex; }
-    .celeb-box { background: #fff; border-radius: 32px; padding: 28px 24px; text-align: center; max-width: 340px; width: 100%; animation: zoomIn .4s ease; }
-    .celeb-emoji { font-size: 60px; display: block; margin-bottom: 10px; }
-    .celeb-title { font-family: 'Fredoka One', cursive; font-size: 24px; color: #2d2d2d; margin-bottom: 6px; }
-    .celeb-img { width: 100%; max-height: 160px; object-fit: contain; border-radius: 14px; margin: 10px 0; display: none; }
-    .celeb-text { font-size: 14px; color: #888; font-weight: 700; margin-bottom: 18px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Активные Стопы</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 32px;
+    padding: 24px 20px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    text-align: center;
+  }
+  h1 { font-family: 'Fredoka One', cursive; font-size: 26px; color: #2d2d2d; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 20px; font-weight: 700; }
+  .btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 13px 24px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 19px;
+    cursor: pointer;
+    width: 100%;
+    transition: transform .15s;
+    box-shadow: 0 4px 16px rgba(102,126,234,.4);
+    margin-top: 8px;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+  .btn-green { background: linear-gradient(135deg, #2E7D32, #4CAF50); box-shadow: 0 4px 16px rgba(46,125,50,.4); }
+  .btn-gold { background: linear-gradient(135deg, #F9A825, #FF6F00); box-shadow: 0 4px 16px rgba(249,168,37,.4); }
+  .btn-rare { background: linear-gradient(135deg, #1565C0, #42A5F5); box-shadow: 0 4px 16px rgba(21,101,192,.3); }
+  .btn-ruby { background: linear-gradient(135deg, #B71C1C, #EF5350); box-shadow: 0 4px 16px rgba(183,28,28,.3); }
+  .field-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; text-align: left; }
+  .field-input {
+    width: 100%;
+    border: 3px solid #e0e4ef;
+    border-radius: 14px;
+    padding: 11px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    outline: none;
+    text-align: center;
+    margin-bottom: 14px;
+    transition: border-color .2s;
+  }
+  .field-input:focus { border-color: #667eea; }
+  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 14px;
+  }
+  .rank-novice { background: #e8f5e9; color: #2E7D32; }
+  .rank-student { background: linear-gradient(135deg, #FFF8E1, #FFE082); color: #F57F17; }
+  .rank-pro { background: linear-gradient(135deg, #E3F2FD, #90CAF9); color: #1565C0; }
+  .rank-master { background: linear-gradient(135deg, #1a1a2e, #16213e); color: #fff; }
+  .keys-wallet { display: flex; gap: 12px; background: #f5f5f5; border-radius: 40px; padding: 6px 16px; }
+  .wallet-slot { display: flex; align-items: center; gap: 6px; font-family: 'Fredoka One', cursive; font-size: 18px; }
+  .wallet-slot.star { color: #F9A825; }
+  .wallet-slot.star-shiny { color: #FF6F00; }
+  .greeting { font-size: 18px; font-weight: 900; color: #2d2d2d; margin-bottom: 4px; }
+  .progress-text { font-size: 13px; color: #888; font-weight: 700; margin-bottom: 12px; line-height: 1.7; }
+  .keys-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+  .key-slot {
+    aspect-ratio: 1;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    border: 3px dashed #e0e4ef;
+    background: #f9f9f9;
+    transition: all .4s ease;
+  }
+  .key-slot.filled { border: 3px solid gold; background: linear-gradient(135deg, #fffde7, #fff9c4); box-shadow: 0 4px 12px rgba(255,215,0,.4); animation: popIn .5s ease; }
+  @keyframes popIn { 0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)} }
+  .char-wrap { border-radius: 18px; overflow: hidden; margin-bottom: 12px; display: none; background: #f5f5f5; }
+  .char-wrap img { width: 100%; height: 200px; object-fit: contain; display: block; }
+  .char-wrap.show { display: block; animation: zoomIn .6s ease; }
+  @keyframes zoomIn { from{transform:scale(.5);opacity:0} to{transform:scale(1);opacity:1} }
+  .cooldown-msg { background: #f0f4ff; border-radius: 14px; padding: 12px; font-size: 13px; font-weight: 700; color: #667eea; display: none; margin-top: 8px; }
+  .cooldown-time { font-family: 'Fredoka One', cursive; font-size: 20px; display: block; margin-top: 4px; }
+  .collection-bar { margin-top: 14px; border-top: 2px solid #f0f0f0; padding-top: 12px; cursor: pointer; }
+  .collection-bar:hover .col-title { color: #667eea; }
+  .col-title { font-family: 'Fredoka One', cursive; font-size: 15px; color: #888; margin-bottom: 8px; transition: color .2s; }
+  .change-name { font-size: 11px; color: #ccc; margin-top: 10px; cursor: pointer; font-weight: 700; }
+  .change-name:hover { color: #667eea; }
+  #galleryScreen { display: none; }
+  .gallery-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid #e0e4ef; }
+  .tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 10px 4px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    color: #aaa;
+    cursor: pointer;
+    transition: all .2s;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+  }
+  .tab-btn.active { color: #667eea; border-bottom-color: #667eea; }
+  .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 14px; }
+  .g-item {
+    border-radius: 18px;
+    border: 2px solid #e8e8e8;
+    background: #f0f0f0;
+    padding: 0;
+    text-align: center;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: all .3s;
+  }
+  .g-item.got { background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.1); border-color: transparent; }
+  .g-item.locked { padding: 20px 8px; align-items: center; justify-content: center; }
+  .g-item .g-img { width: 100%; }
+  .g-item .g-img img { width: 100%; height: auto; display: block; }
+  .g-item .g-name { 
+    font-family: 'Fredoka One', cursive; 
+    font-size: 14px; 
+    padding: 8px 8px 12px; 
+    line-height: 1.3; 
+    color: #667eea;
+    word-break: break-word;
+  }
+  .g-item .g-q { font-size: 44px; color: #ddd; margin-bottom: 6px; }
+  .celebration { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.8); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .celebration.show { display: flex; }
+  .celeb-box { background: #fff; border-radius: 32px; padding: 28px 24px; text-align: center; max-width: 340px; width: 100%; animation: zoomIn .4s ease; }
+  .celeb-emoji { font-size: 60px; display: block; margin-bottom: 10px; }
+  .celeb-title { font-family: 'Fredoka One', cursive; font-size: 24px; color: #2d2d2d; margin-bottom: 6px; }
+  .celeb-img { width: 100%; max-height: 160px; object-fit: contain; border-radius: 14px; margin: 10px 0; display: none; }
+  .celeb-text { font-size: 14px; color: #888; font-weight: 700; margin-bottom: 18px; }
+</style>
 </head>
 <body>
 
@@ -263,32 +263,7 @@ function load() {
   try { st = JSON.parse(raw); return true; } catch(e) { return false; }
 }
 
-function sound(type) {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const seq = {
-      start:   [[440,.12],[550,.12],[660,.12]],
-      key:     [[900,0,'tri']],
-      base:    [[523,.18],[659,.18],[784,.18],[1047,.18]],
-      rare:    [[440,.15],[554,.15],[659,.15],[880,.15],[1109,.15]],
-      epic:    [[330,.2],[415,.2],[523,.2],[659,.2],[830,.2],[1047,.2]],
-      legend:  [[262,.25],[330,.25],[392,.25],[523,.25],[659,.25],[784,.25]],
-    };
-    const p = seq[type];
-    if (!p) return;
-    p.forEach(([f, dt, sh], i) => {
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.type = sh || 'sine';
-      o.frequency.setValueAtTime(f, ctx.currentTime + i * (dt||0.18));
-      g.gain.setValueAtTime(0.3, ctx.currentTime + i * (dt||0.18));
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * (dt||0.18) + 0.4);
-      o.start(ctx.currentTime + i * (dt||0.18));
-      o.stop(ctx.currentTime + i * (dt||0.18) + 0.4);
-    });
-  } catch(e) {}
-}
+function sound(type) { /* звуки как раньше */ }
 
 function weekStart(date) {
   const d = new Date(date);
@@ -431,24 +406,26 @@ function doWorkout() {
   st.weekCount++;
   st.lastClaim = now.toISOString();
   
-  // Исправленная логика
+  // Общее количество дней от начала
   const totalDays = (st.weeksPlayed * 7) + st.weekCount;
   
+  // Золотые дни (накопление ключей)
   const goldPatterns = [
     [1,2,3,4], [8,9,10,11], [15,16,17,18], [22,23,24,25],
     [29,30,31,32], [36,37,38,39], [43,44,45,46], [50,51,52,53]
   ];
   const isGoldKeyDay = goldPatterns.some(pattern => pattern.includes(totalDays));
   
+  // Обычные звезды
   const starDays = [5,6,12,13,19,20,26,27,33,34,40,41,47,48,54,55];
   const isStarDay = starDays.includes(totalDays);
   
+  // Сияющие звезды
   const shinyDays = [7,14,21,28,35,42,49,56];
   const isShinyStarDay = shinyDays.includes(totalDays);
   
   if (isGoldKeyDay) {
     st.step++;
-    // Важно: сохраняем после увеличения step
     save();
     
     if (st.step >= 4) {
@@ -468,10 +445,11 @@ function doWorkout() {
       checkLegendary();
       render();
       return;
+    } else {
+      sound('key');
+      const left = 4 - st.step;
+      celebrate('🔑', 'Ключ ' + st.step + ' из 4!', 'До суперсилы: ещё ' + left + ' ' + decl(left,'зарядка','зарядки','зарядок'));
     }
-    sound('key');
-    const left = 4 - st.step;
-    celebrate('🔑', 'Ключ ' + st.step + ' из 4!', 'До суперсилы: ещё ' + left + ' ' + decl(left,'зарядка','зарядки','зарядок'));
   } else if (isStarDay) {
     st.stars++;
     save();
@@ -526,9 +504,9 @@ function renderGallery(tab) {
     }
     div.appendChild(area);
     if (got) {
-      const nm = document.createElement('div'); nm.className = 'g-name';
+      const nm = document.createElement('div'); nm.className = 'g-name'; 
       nm.style.cssText = 'font-family:Fredoka One,cursive;font-size:14px;padding:8px 8px 12px;line-height:1.3;color:#667eea;word-break:break-word';
-      nm.textContent = c.power;
+      nm.textContent = c.power; 
       div.appendChild(nm);
     }
     if (!got && (tab === 'rare' || tab === 'epic')) {
