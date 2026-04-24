@@ -10,7 +10,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -277,7 +276,6 @@
     cursor: pointer;
   }
 
-  /* Галерея */
   .gallery-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -414,10 +412,10 @@
   <h1>👣 Активные Стопы</h1>
   <div class="subtitle">Собери все суперсилы!</div>
   <div class="field-label">Твоё имя</div>
-  <input class="field-input" id="nameInput" placeholder="Например: Саша">
+  <input class="field-input" id="nameInput" placeholder="Например: Саша" maxlength="15">
   <div class="field-label">Придумай ник</div>
-  <input class="field-input" id="nickInput" placeholder="Ракета 🚀">
-  <button class="btn" id="startBtn" onclick="startGame()" disabled>Вперёд! 🚀</button>
+  <input class="field-input" id="nickInput" placeholder="Ракета 🚀" maxlength="20">
+  <button class="btn" id="startBtn" disabled>Вперёд! 🚀</button>
 </div>
 
 <div class="card" id="gameScreen" style="display:none">
@@ -432,27 +430,27 @@
   <div class="progress-text" id="progressText"></div>
   <div class="keys-grid" id="keysGrid"></div>
   <div class="char-wrap" id="charWrap"><img id="charImg" src=""></div>
-  <button class="btn btn-green" id="claimBtn" onclick="doWorkout()">🏃‍♀️ Я сделал(а) зарядку!</button>
+  <button class="btn btn-green" id="claimBtn">🏃‍♀️ Я сделал(а) зарядку!</button>
   <div class="cooldown-msg" id="cooldownMsg"></div>
   <div class="info-box" id="infoBox"></div>
-  <div class="collection-bar" onclick="showGallery()">🏅 Моя коллекция →</div>
-  <div class="change-name" onclick="resetProfile()">🔄 Сменить имя</div>
+  <div class="collection-bar" id="collectionBar">🏅 Моя коллекция →</div>
+  <div class="change-name" id="changeNameBtn">🔄 Сменить имя</div>
 </div>
 
 <div class="card" id="galleryScreen" style="display:none">
   <h1>🏅 Галерея сил</h1>
   <div class="gallery-tabs" id="galleryTabs"></div>
   <div id="galleryContent"></div>
-  <button class="btn" onclick="hideGallery()">← На главную</button>
+  <button class="btn" id="backToGameBtn">← На главную</button>
 </div>
 
-<div class="celebration" id="celebration" onclick="closeCeleb()">
-  <div class="celeb-box" onclick="event.stopPropagation()">
+<div class="celebration" id="celebration">
+  <div class="celeb-box">
     <div class="celeb-emoji" id="celebEmoji">🎉</div>
     <div class="celeb-title" id="celebTitle"></div>
     <img class="celeb-img" id="celebImg" style="width:100%; margin:8px 0; display:none;">
     <div class="celeb-text" id="celebText" style="margin:10px 0;"></div>
-    <button class="btn" onclick="closeCeleb()">Класс!</button>
+    <button class="btn" id="closeCelebBtn">Класс!</button>
   </div>
 </div>
 
@@ -526,7 +524,7 @@
   function defaultState(name, nick) {
     return {
       name: name, nick: nick,
-      startDate: null,          // первая тренировка (дата)
+      startDate: null,
       lastWorkoutDate: null,
       currentKeyStep: 0,
       stars: 0,
@@ -562,7 +560,6 @@
     } catch(e) { return false; }
   }
 
-  // вычисляем текущий день (1-56) на основе даты первого дня
   function getCurrentDayNumber() {
     if (!state.startDate) return 1;
     const start = new Date(state.startDate);
@@ -580,11 +577,9 @@
     return isNewDay(state.lastWorkoutDate);
   }
 
-  // открыть базового (следующий случайный)
   function openBaseCharacter() {
     const newIdx = state.nextBaseIndex;
     if (!state.collectedBase.includes(newIdx)) state.collectedBase.push(newIdx);
-    // следующий
     const free = BASE_CHARS.map((_,i)=>i).filter(i => !state.collectedBase.includes(i));
     state.nextBaseIndex = free.length ? free[Math.floor(Math.random() * free.length)] : 0;
     saveGame();
@@ -635,21 +630,22 @@
   }
 
   function celebrate(emoji, title, text, img, soundType) {
+    const celebDiv = document.getElementById("celebration");
     document.getElementById("celebEmoji").innerText = emoji;
     document.getElementById("celebTitle").innerText = title;
     document.getElementById("celebText").innerHTML = text;
     const imgEl = document.getElementById("celebImg");
     if (img) { imgEl.src = img; imgEl.style.display = "block"; imgEl.onerror = () => imgEl.style.display = "none"; }
     else imgEl.style.display = "none";
-    document.getElementById("celebration").classList.add("show");
+    celebDiv.classList.add("show");
     if (soundType) playSound(soundType);
   }
-  window.closeCeleb = function() {
+
+  function closeCeleb() {
     document.getElementById("celebration").classList.remove("show");
     renderUI();
-  };
+  }
 
-  // -------------------- ОСНОВНАЯ ФУНКЦИЯ ЗАРЯДКИ --------------------
   async function doWorkout() {
     if (getCurrentDayNumber() >= 56) {
       celebrate("🏆", "Игра пройдена!", "Ты собрал(а) все суперсилы!", "", "legend");
@@ -663,14 +659,12 @@
     const todayNum = getCurrentDayNumber();
     const rewardType = getDayType(todayNum);
 
-    // первая зарядка в жизни - фиксируем дату старта
     if (!state.startDate) {
       state.startDate = new Date().toISOString();
     }
     state.lastWorkoutDate = new Date().toISOString();
 
     if (rewardType === 'key') {
-      // ключ!
       state.currentKeyStep++;
       playSound("key");
       if (state.currentKeyStep >= 4) {
@@ -698,7 +692,6 @@
     renderUI();
   }
 
-  // ------ ОТРИСОВКА ГЛАВНОГО ЭКРАНА -------
   function renderUI() {
     const today = getCurrentDayNumber();
     const rank = getRank(today);
@@ -768,7 +761,6 @@
       }
     }
 
-    // Кулдаун
     const coolDiv = document.getElementById("cooldownMsg");
     if (!canWorkoutToday()) {
       claimBtn.style.display = "none";
@@ -781,13 +773,12 @@
     }
   }
 
-  // ----------- ГАЛЕРЕЯ (ребенок сам выбирает кого открыть) ---------
+  // ГАЛЕРЕЯ
   function renderGallery(tab) {
     const container = document.getElementById("galleryContent");
     container.innerHTML = "";
 
     let items = [];
-    let type = tab;
     if (tab === "base") items = BASE_CHARS;
     else if (tab === "rare") items = RARE_CHARS;
     else if (tab === "epic") items = EPIC_CHARS;
@@ -905,11 +896,13 @@
     initGalleryTabs();
     renderGallery("base");
   }
+  
   function hideGallery() {
     document.getElementById("galleryScreen").style.display = "none";
     document.getElementById("gameScreen").style.display = "block";
     renderUI();
   }
+  
   function resetProfile() {
     localStorage.removeItem(`active_foot_${currentPlayerKey}`);
     document.getElementById("gameScreen").style.display = "none";
@@ -919,6 +912,7 @@
     document.getElementById("startBtn").disabled = true;
   }
 
+  // ----- ИНИЦИАЛИЗАЦИЯ КНОПОК -----
   function checkInputs() {
     const name = document.getElementById("nameInput").value.trim();
     const nick = document.getElementById("nickInput").value.trim();
@@ -943,16 +937,17 @@
     renderUI();
   }
 
-  window.startGame = startGame;
-  window.doWorkout = doWorkout;
-  window.showGallery = showGallery;
-  window.hideGallery = hideGallery;
-  window.resetProfile = resetProfile;
-
+  // ПРИВЯЗКА СОБЫТИЙ
+  document.getElementById("startBtn").onclick = startGame;
+  document.getElementById("claimBtn").onclick = doWorkout;
+  document.getElementById("collectionBar").onclick = showGallery;
+  document.getElementById("backToGameBtn").onclick = hideGallery;
+  document.getElementById("changeNameBtn").onclick = resetProfile;
+  document.getElementById("closeCelebBtn").onclick = closeCeleb;
   document.getElementById("nameInput").addEventListener("input", checkInputs);
   document.getElementById("nickInput").addEventListener("input", checkInputs);
-  checkInputs();
-
+  
+  // Восстановление имени при загрузке
   const savedMeta = localStorage.getItem("as_who");
   if (savedMeta) {
     try {
@@ -964,8 +959,9 @@
       }
     } catch(e) {}
   }
+  
+  checkInputs();
   setInterval(() => { if(document.getElementById("gameScreen").style.display === "block") renderUI(); }, 30000);
 </script>
 </body>
 </html>
-    
