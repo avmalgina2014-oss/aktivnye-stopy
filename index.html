@@ -55,6 +55,7 @@
   .g-item { border-radius: 18px; border: 2px solid #e8e8e8; background: #f0f0f0; padding: 0; text-align: center; overflow: hidden; display: flex; flex-direction: column; transition: all .3s; }
   .g-item.got { background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.1); border-color: transparent; }
   .g-item.locked { padding: 20px 8px; align-items: center; justify-content: center; }
+  /* ✅ ИСХОДНЫЙ РАЗМЕР КАРТИНОК (БЕЗ ИЗМЕНЕНИЙ) */
   .g-item .g-img { width: 100%; }
   .g-item .g-img img { width: 100%; height: auto; display: block; }
   .g-item .g-name { font-family: 'Fredoka One', cursive; font-size: 14px; padding: 8px 8px 12px; line-height: 1.3; color: #667eea; word-break: break-word; }
@@ -126,7 +127,7 @@
 <div class="celebration" id="celebration">
   <div class="celeb-box" id="celebBox">
     <img class="celeb-img" id="celebImg" src="" alt="">
-    <button class="btn btn-gold" id="celebBtn" onclick="closeCeleb()" style="margin-top:20px; width: 200px;">Я Легенда! 🔥</button>
+    <button class="btn btn-gold" id="celebBtn" onclick="closeCeleb()" style="margin-top:20px; width: 200px;">Ты Легенда! 🔥</button>
   </div>
 </div>
 
@@ -158,9 +159,17 @@ let st = {};
 let playerKey = '';
 let justUnlockedChar = null;
 
-// 🔥 НАДЕЖНЫЙ РАНДОМ
+// 🔐 ГАРАНТИРОВАННЫЙ РАНДОМ (КРИПТО + СМЕШИВАНИЕ)
 function getRandomIndex(array) {
-  return Math.floor(Math.random() * array.length);
+  let rnd;
+  if (window.crypto && window.crypto.getRandomValues) {
+    const arr = new Uint32Array(1);
+    window.crypto.getRandomValues(arr);
+    rnd = arr[0] / (0xFFFFFFFF + 1);
+  } else {
+    rnd = Math.random();
+  }
+  return Math.floor(rnd * array.length);
 }
 
 function getToday() {
@@ -249,11 +258,10 @@ function getRank() {
 }
 
 function canOpenLegend() {
-  const can = (st.gotBase?.length >= BASE.length) && 
+  return (st.gotBase?.length >= BASE.length) && 
          (st.gotRare?.length >= RARE.length) && 
          (st.gotEpic?.length >= EPIC.length) && 
          !st.gotLegend;
-  return can;
 }
 
 function celebrate(emoji, title, text, img, snd) {
@@ -261,17 +269,16 @@ function celebrate(emoji, title, text, img, snd) {
   document.getElementById('celebImg').style.display = 'block';
   document.getElementById('celebBtn').style.display = 'block';
   document.getElementById('celebBtn').innerText = 'Ура! 🎉';
-  
   document.getElementById('celebEmoji').innerHTML = emoji;
   document.getElementById('celebTitle').innerHTML = title;
   document.getElementById('celebText').innerHTML = text;
   const el = document.getElementById('celebImg'); 
   if(img) { el.src=img; el.style.display='block'; } else el.style.display='none';
-  
   document.getElementById('celebration').classList.add('show'); 
   if(snd) sound(snd);
 }
 
+// 🔥 ОТКРЫТИЕ ЛЕГЕНДЫ ПО КНОПКЕ
 window.openLegend = function() {
   if (!canOpenLegend()) {
     alert("Сначала собери всех базовых, редких и эпических персонажей!");
@@ -286,8 +293,10 @@ window.openLegend = function() {
   el.style.display = 'block';
   el.className = 'celeb-img';
   
-  document.getElementById('celebBtn').innerText = 'Я Легенда! 🔥';
+  document.getElementById('celebBtn').innerText = 'Ты Легенда! 🔥';
   document.getElementById('celebration').classList.add('show');
+  
+  // Звук вызывается строго внутри клика (браузеры разрешают)
   sound('legend');
 };
 
@@ -313,10 +322,8 @@ function render() {
   
   keysGrid.style.display = 'none'; charWrap.style.display = 'none'; charWrap.classList.remove('show'); motivational.style.display = 'none'; progressText.innerHTML = '';
   
-  // 🔥 ПРОВЕРКА КНОПКИ ЛЕГЕНДЫ
   if (canOpenLegend()) {
     legendBtn.style.display = 'block';
-    console.log('✅ Кнопка Легенды показана!');
   } else {
     legendBtn.style.display = 'none';
   }
@@ -373,9 +380,8 @@ function doWorkout() {
     if (st.keys >= 4) {
       const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
       if (available.length > 0) {
-        // 🔥 РАНДОМНЫЙ ВЫБОР
-        const randomIndex = getRandomIndex(available);
-        const idx = available[randomIndex];
+        // 🔐 НАСТОЯЩИЙ РАНДОМ
+        const idx = available[getRandomIndex(available)];
         st.gotBase.push(idx); st.charIdx = idx; st.keys = 0; save(); sound('base');
         justUnlockedChar = BASE[idx];
         celebrate('🎉', BASE[idx].power + ' открыта!', 'Суперсила добавлена!', BASE[idx].img);
@@ -521,7 +527,7 @@ window.showDebugPopup = function() {
     const availableBase = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
     let charAdded = false;
     if (availableBase.length > 0) {
-      // 🔥 РАНДОМ
+      // 🔐 НАСТОЯЩИЙ РАНДОМ ДЛЯ ТЕСТА
       const randomIdx = availableBase[getRandomIndex(availableBase)];
       st.gotBase.push(randomIdx);
       st.charIdx = randomIdx;
