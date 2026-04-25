@@ -335,6 +335,7 @@ function render() {
   document.getElementById('starShinyCount').innerText = st.starsShiny || 0;
   document.getElementById('greeting').innerHTML = 'Привет, ' + (st.name || '') + '!';
 
+  // Показываем прогресс или открытую суперсилу
   if (st.step < 4) {
     document.getElementById('keysGrid').style.display = 'grid';
     document.getElementById('charWrap').classList.remove('show');
@@ -430,30 +431,15 @@ function doWorkout() {
   
   st.weekCount++;
   st.lastClaim = now.toISOString();
+  const wc = st.weekCount;
   
-  // Общее количество дней от начала (приблизительно)
-  const totalDays = (st.weeksPlayed * 7) + st.weekCount;
-  
-  // Золотые ключи: дни 1-4, 8-11, 15-18, 22-25, 29-32, 36-39, 43-46, 50-53
-  const goldPatterns = [
-    [1,2,3,4], [8,9,10,11], [15,16,17,18], [22,23,24,25],
-    [29,30,31,32], [36,37,38,39], [43,44,45,46], [50,51,52,53]
-  ];
-  const isGoldKeyDay = goldPatterns.some(pattern => pattern.includes(totalDays));
-  
-  // Обычные звёзды: 5,6, 12,13, 19,20, 26,27, 33,34, 40,41, 47,48, 54,55
-  const starDays = [5,6,12,13,19,20,26,27,33,34,40,41,47,48,54,55];
-  const isStarDay = starDays.includes(totalDays);
-  
-  // Сияющие звёзды: 7,14,21,28,35,42,49,56
-  const shinyDays = [7,14,21,28,35,42,49,56];
-  const isShinyStarDay = shinyDays.includes(totalDays);
-  
-  if (isGoldKeyDay) {
+  if (wc <= 4) {
+    // 1-4 дни: копим ключи для открытия базового персонажа
     st.step++;
     sound('key');
     
     if (st.step >= 4) {
+      // Открываем базового персонажа
       if (!st.gotBase.includes(st.charIdx)) {
         st.gotBase.push(st.charIdx);
       }
@@ -462,6 +448,7 @@ function doWorkout() {
       sound('base');
       celebrate('🎉', BASE[st.charIdx].power + ' открыта!', 'Суперсила добавлена в коллекцию!', BASE[st.charIdx].img);
       
+      // Выбираем следующего базового персонажа
       const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
       if (available.length > 0) {
         st.charIdx = available[Math.floor(Math.random() * available.length)];
@@ -474,12 +461,14 @@ function doWorkout() {
       const left = 4 - st.step;
       celebrate('🔑', 'Ключ ' + st.step + ' из 4!', 'До суперсилы: ещё ' + left + ' ' + decl(left,'зарядка','зарядки','зарядок'));
     }
-  } else if (isStarDay) {
+  } else if (wc === 5 || wc === 6) {
+    // 5-6 день: обычная звезда ⭐
     st.stars++;
     save();
     sound('rare');
     celebrate('⭐', 'Звезда получена!', 'У тебя ' + st.stars + ' ⭐. Накопи 4 — открой редкого персонажа!');
-  } else if (isShinyStarDay) {
+  } else if (wc === 7) {
+    // 7 день: сияющая звезда 🌟
     st.starsShiny++;
     save();
     sound('rare');
