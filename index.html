@@ -156,6 +156,16 @@
   .celeb-title { font-family: 'Fredoka One', cursive; font-size: 24px; color: #2d2d2d; margin-bottom: 6px; }
   .celeb-img { width: 100%; max-height: 160px; object-fit: contain; border-radius: 14px; margin: 10px 0; display: none; }
   .celeb-text { font-size: 14px; color: #888; font-weight: 700; margin-bottom: 18px; }
+  .motivation-text {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 15px;
+    border-radius: 28px;
+    margin: 12px 0;
+    font-size: 14px;
+    font-weight: 700;
+    display: none;
+  }
 </style>
 </head>
 <body>
@@ -185,6 +195,7 @@
     <div class="key-slot" id="ks2"></div><div class="key-slot" id="ks3"></div>
   </div>
   <div class="char-wrap" id="charWrap"><img id="charImg" src="" alt=""></div>
+  <div class="motivation-text" id="motivationText">🏆 Ты собрал(а) всех базовых героев! 🏆<br>🔥 Продолжай заниматься, чтобы открыть редких и эпических! 🔥</div>
   <button class="btn btn-green" id="claimBtn" onclick="doWorkout()">Я сделал(а) зарядку! 🏃</button>
   <div class="cooldown-msg" id="cooldown"></div>
   <div class="collection-bar" onclick="showGallery()"><div class="col-title">🏅 Моя коллекция →</div></div>
@@ -325,8 +336,29 @@ function celebrate(emoji, title, text, img, snd) {
 }
 window.closeCeleb = function() { document.getElementById('celebration').classList.remove('show'); render(); };
 
+// Функция проверки: можно ли сделать зарядку сегодня (по календарному дню, не 24 часа)
+function canWorkoutToday() {
+  if (!st.lastClaim) return true;
+  const last = new Date(st.lastClaim);
+  const now = new Date();
+  return last.getDate() !== now.getDate() ||
+         last.getMonth() !== now.getMonth() ||
+         last.getFullYear() !== now.getFullYear();
+}
+
+// Функция получения времени до следующего календарного дня (00:00)
+function getTimeToNextCalendarDay() {
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(now.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+  const diff = tomorrow - now;
+  const hours = Math.floor(diff / 3600000);
+  const minutes = Math.floor((diff % 3600000) / 60000);
+  return { hours, minutes };
+}
+
 function render() {
-  const char = BASE[st.charIdx];
   const rank = getRank();
   const badge = document.getElementById('rankBadge');
   badge.className = 'rank-badge ' + rank.cls;
@@ -335,22 +367,58 @@ function render() {
   document.getElementById('starShinyCount').innerText = st.starsShiny || 0;
   document.getElementById('greeting').innerHTML = 'Привет, ' + (st.name || '') + '!';
 
-  // Показываем прогресс или открытую суперсилу
-  if (st.step < 4) {
+  const isBaseCompleted = st.gotBase.length === BASE.length;
+  const currentWeekDay = st.weekCount; // 1-7
+  const isStarDay = (currentWeekDay === 5 || currentWeekDay === 6);
+  const isShinyDay = (currentWeekDay === 7);
+  
+  // Определяем, показывать ли окошки ключей (только дни 1-4 И база не открыта)
+  const showKeys = (!isBaseCompleted && currentWeekDay >= 1 && currentWeekDay <= 4);
+  
+  // Определяем, показывать ли картинку персонажа (только дни 1-4 И база не открыта, или после открытия показываем последнего, но НЕ в 5-7 дни)
+  const showCharacter = (!isBaseCompleted && currentWeekDay >= 1 && currentWeekDay <= 4 && st.gotBase.length > 0);
+  
+  if (showKeys) {
     document.getElementById('keysGrid').style.display = 'grid';
     document.getElementById('charWrap').classList.remove('show');
+    document.getElementById('motivationText').style.display = 'none';
     document.getElementById('progressText').innerHTML = 'До суперсилы: ' + (4 - st.step) + ' ' + decl(4 - st.step, 'зарядка', 'зарядки', 'зарядок');
     for (let i = 0; i < 4; i++) {
       const sl = document.getElementById('ks' + i);
       if (i < st.step) { sl.classList.add('filled'); sl.innerHTML = '🔑'; }
       else { sl.classList.remove('filled'); sl.innerHTML = ''; }
     }
-  } else {
+  } else if (showCharacter) {
+    // Дни 1-4, база не открыта, показываем последнего открытого персонажа
     document.getElementById('keysGrid').style.display = 'none';
     document.getElementById('charWrap').classList.add('show');
-    document.getElementById('charImg').src = char.img;
-    document.getElementById('progressText').innerHTML = '<div style="font-family:Fredoka One,cursive;font-size:26px;font-weight:900;color:#667eea;margin:12px 0 6px">' + char.power + '</div><div style="font-size:13px;color:#aaa">суперсила открыта ✨</div>';
+    document.getElementById('motivationText').style.display = 'none';
+    const lastOpened = BASE[st.gotBase[st.gotBase.length - 1]];
+    document.getElementById('charImg').src = lastOpened.img;
+    document.getElementById('progressText').innerHTML = '<div style="font-family:Fredoka One,cursive;font-size:26px;font-weight:900;color:#667eea;margin:12px 0 6px">' + lastOpened.power + '</div><div style="font-size:13px;color:#aaa">суперсила открыта ✨</div>';
+  } else if (isBaseCompleted) {
+    // Все базовые собраны — показываем мотивационный текст, НЕ показываем картинку
+    document.getElementById('keysGrid').style.display = 'none';
+    document.getElementById('charWrap').classList.remove('show');
+    document.getElementById('motivationText').style.display = 'block';
+    document.getElementById('progressText').innerHTML = '🏆 Ты собрал(а) всех базовых героев! 🔥 Продолжай заниматься, чтобы открыть редких и эпических!';
+  } else if (isStarDay || isShinyDay) {
+    // 5-7 дни: нет окошек, нет картинки персонажа, только мотивация
+    document.getElementById('keysGrid').style.display = 'none';
+    document.getElementById('charWrap').classList.remove('show');
+    document.getElementById('motivationText').style.display = 'none';
+    if (isStarDay) {
+      document.getElementById('progressText').innerHTML = '⭐ Сегодня ты получишь ЗВЕЗДУ! ⭐';
+    } else if (isShinyDay) {
+      document.getElementById('progressText').innerHTML = '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
+    }
+  } else {
+    document.getElementById('keysGrid').style.display = 'none';
+    document.getElementById('charWrap').classList.remove('show');
+    document.getElementById('motivationText').style.display = 'none';
+    document.getElementById('progressText').innerHTML = '🏃‍♀️ Продолжай заниматься каждый день!';
   }
+  
   checkCooldown();
 }
 
@@ -367,10 +435,8 @@ function checkCooldown() {
     return;
   }
   
-  const last = new Date(st.lastClaim);
-  const next = new Date(last.getTime() + 24 * 3600 * 1000);
-  
-  if (new Date() >= next) {
+  // ИСПРАВЛЕНИЕ 1: кулдаун до следующего календарного дня, а не 24 часа
+  if (canWorkoutToday()) {
     claimBtn.style.display = 'block';
     claimBtn.className = 'btn btn-green';
     claimBtn.innerHTML = 'Я сделал(а) зарядку! 🏃';
@@ -379,29 +445,26 @@ function checkCooldown() {
   } else {
     claimBtn.style.display = 'none';
     coolEl.style.display = 'block';
-    updateCountdown(next);
+    updateCountdownToNextDay();
     const iv = setInterval(() => {
-      if (new Date() >= next) { clearInterval(iv); render(); }
-      else updateCountdown(next);
+      if (canWorkoutToday()) { clearInterval(iv); render(); }
+      else updateCountdownToNextDay();
     }, 30000);
   }
 }
 
-function updateCountdown(next) {
-  const diff = next - new Date();
-  const hours = Math.floor(diff / 3600000);
-  const minutes = Math.floor((diff % 3600000) / 60000);
-  const timeString = hours > 0 ? `${hours} ч ${minutes} мин` : `${minutes} мин`;
-  
+function updateCountdownToNextDay() {
   const coolEl = document.getElementById('cooldown');
   if (!coolEl) return;
+  const { hours, minutes } = getTimeToNextCalendarDay();
+  const timeString = `${hours} ч ${minutes} мин`;
   
   let message = '';
-  if (diff > 12 * 3600000) {
+  if (hours > 12) {
     message = 'Отличная работа! Приходи завтра 🌙';
-  } else if (diff > 5 * 3600000) {
+  } else if (hours > 5) {
     message = `Скоро можно будет сделать новую зарядку! Осталось: ${timeString}`;
-  } else if (diff > 3600000) {
+  } else if (hours > 1) {
     message = `Совсем скоро! Осталось: ${timeString}`;
   } else {
     message = `Уже почти! Осталось: ${timeString}`;
@@ -413,11 +476,9 @@ function updateCountdown(next) {
 function doWorkout() {
   const now = new Date();
   
-  if (st.lastClaim && (now - new Date(st.lastClaim)) < 24 * 3600 * 1000) {
-    const next = new Date(new Date(st.lastClaim).getTime() + 24 * 3600 * 1000);
-    document.getElementById('claimBtn').style.display = 'none';
-    document.getElementById('cooldown').style.display = 'block';
-    updateCountdown(next);
+  // ИСПРАВЛЕНИЕ 1: проверка по календарному дню
+  if (!canWorkoutToday()) {
+    checkCooldown();
     return;
   }
   
@@ -432,34 +493,39 @@ function doWorkout() {
   st.weekCount++;
   st.lastClaim = now.toISOString();
   const wc = st.weekCount;
+  const isBaseCompleted = st.gotBase.length === BASE.length;
   
   if (wc <= 4) {
     // 1-4 дни: копим ключи для открытия базового персонажа
-    st.step++;
-    sound('key');
-    
-    if (st.step >= 4) {
-      // Открываем базового персонажа
-      if (!st.gotBase.includes(st.charIdx)) {
-        st.gotBase.push(st.charIdx);
-      }
-      st.lastUnlockWeek = nowWeek;
-      save();
-      sound('base');
-      celebrate('🎉', BASE[st.charIdx].power + ' открыта!', 'Суперсила добавлена в коллекцию!', BASE[st.charIdx].img);
+    if (!isBaseCompleted) {
+      st.step++;
+      sound('key');
       
-      // Выбираем следующего базового персонажа
-      const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
-      if (available.length > 0) {
-        st.charIdx = available[Math.floor(Math.random() * available.length)];
+      if (st.step >= 4) {
+        // Открываем базового персонажа
+        if (!st.gotBase.includes(st.charIdx)) {
+          st.gotBase.push(st.charIdx);
+        }
+        save();
+        sound('base');
+        celebrate('🎉', BASE[st.charIdx].power + ' открыта!', 'Суперсила добавлена в коллекцию!', BASE[st.charIdx].img);
+        
+        // Выбираем следующего базового персонажа
+        const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
+        if (available.length > 0) {
+          st.charIdx = available[Math.floor(Math.random() * available.length)];
+        }
+        st.step = 0;
+        checkLegendary();
+        render();
+        return;
+      } else {
+        const left = 4 - st.step;
+        celebrate('🔑', 'Ключ ' + st.step + ' из 4!', 'До суперсилы: ещё ' + left + ' ' + decl(left,'зарядка','зарядки','зарядок'));
       }
-      st.step = 0;
-      checkLegendary();
-      render();
-      return;
     } else {
-      const left = 4 - st.step;
-      celebrate('🔑', 'Ключ ' + st.step + ' из 4!', 'До суперсилы: ещё ' + left + ' ' + decl(left,'зарядка','зарядки','зарядок'));
+      // База уже открыта, ключевой день — просто похвала
+      celebrate('💪', 'Молодец!', 'Так держать!');
     }
   } else if (wc === 5 || wc === 6) {
     // 5-6 день: обычная звезда ⭐
@@ -473,8 +539,6 @@ function doWorkout() {
     save();
     sound('rare');
     celebrate('🌟', 'Сияющая звезда получена!', 'У тебя ' + st.starsShiny + ' 🌟. Накопи 4 — открой эпического персонажа!');
-  } else {
-    celebrate('🏃', 'Зарядка засчитана!', 'Новая неделя — новый персонаж! Жди понедельника 🗓️');
   }
   
   save();
@@ -578,6 +642,7 @@ window.showGallery = function() {
 window.hideGallery = function() {
   document.getElementById('galleryScreen').style.display = 'none';
   document.getElementById('gameScreen').style.display = 'block';
+  render();
 };
 
 function checkBtn() {
