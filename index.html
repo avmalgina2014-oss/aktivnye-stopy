@@ -1,123 +1,124 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Активные Стопы — Маленькие герои</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Активные Стопы</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { 
-    font-family: 'Nunito', sans-serif; 
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-    min-height: 100vh; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    padding: 16px; 
-  }
-  
-  /* ✅ ГОРИЗОНТАЛЬНЫЙ ПРЯМОУГОЛЬНИК, МЕНЬШЕ РАЗМЕР */
-  .card { 
-    background: #fff; 
-    border-radius: 36px; 
-    padding: 20px 18px; 
-    max-width: 380px;    /* было 420 -> 380 (уже) */
-    width: 100%; 
-    box-shadow: 0 20px 40px rgba(0,0,0,.2); 
-    text-align: center; 
-    transition: all 0.2s;
-  }
-  
-  h1 { font-family: 'Fredoka One', cursive; font-size: 24px; color: #2d2d2d; margin-bottom: 2px; letter-spacing: -0.3px; }
-  .subtitle { font-size: 12px; color: #888; margin-bottom: 18px; font-weight: 800; }
-  
-  .btn { 
-    background: linear-gradient(135deg, #667eea, #764ba2); 
-    color: #fff; 
-    border: none; 
-    border-radius: 40px; 
-    padding: 10px 18px; 
-    font-family: 'Fredoka One', cursive; 
-    font-size: 17px; 
-    cursor: pointer; 
-    width: 100%; 
-    transition: transform .15s; 
-    box-shadow: 0 5px 14px rgba(102,126,234,.4); 
-    margin-top: 6px; 
-  }
+  body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .card { background: #fff; border-radius: 32px; padding: 24px 20px; max-width: 420px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.2); text-align: center; }
+  h1 { font-family: 'Fredoka One', cursive; font-size: 26px; color: #2d2d2d; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 20px; font-weight: 700; }
+  .btn { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border: none; border-radius: 16px; padding: 13px 24px; font-family: 'Fredoka One', cursive; font-size: 19px; cursor: pointer; width: 100%; transition: transform .15s; box-shadow: 0 4px 16px rgba(102,126,234,.4); margin-top: 8px; }
   .btn:hover { transform: translateY(-2px); }
   .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-  .btn-green { background: linear-gradient(135deg, #2E7D32, #4CAF50); box-shadow: 0 4px 14px rgba(46,125,50,.4); }
-  .btn-gold { background: linear-gradient(135deg, #F9A825, #FF6F00); box-shadow: 0 4px 12px rgba(249,168,37,.4); animation: pulseGold 1.6s infinite; }
-  @keyframes pulseGold { 0% { transform: scale(1); } 50% { transform: scale(1.01); } 100% { transform: scale(1); } }
-  
-  .field-label { font-size: 11px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 5px; text-align: left; }
-  .field-input { 
-    width: 100%; border: 2.5px solid #e0e4ef; border-radius: 28px; 
-    padding: 8px 14px; font-family: 'Nunito', sans-serif; font-size: 15px; 
-    font-weight: 700; outline: none; text-align: center; margin-bottom: 12px; 
-    transition: border-color .2s; background: #fefefe;
-  }
+  .btn-green { background: linear-gradient(135deg, #2E7D32, #4CAF50); box-shadow: 0 4px 16px rgba(46,125,50,.4); }
+  .btn-gold { background: linear-gradient(135deg, #F9A825, #FF6F00); box-shadow: 0 4px 16px rgba(249,168,37,.4); animation: pulseGold 2s infinite; }
+  @keyframes pulseGold { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+  .field-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; text-align: left; }
+  .field-input { width: 100%; border: 3px solid #e0e4ef; border-radius: 14px; padding: 11px 14px; font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 700; outline: none; text-align: center; margin-bottom: 14px; transition: border-color .2s; }
   .field-input:focus { border-color: #667eea; }
-  
-  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 6px; }
-  .rank-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 30px; font-family: 'Fredoka One', cursive; font-size: 12px; background: #e8f5e9; color: #2E7D32; }
+  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+  .rank-badge { display: inline-flex; align-items: center; gap: 4px; padding: 5px 14px; border-radius: 20px; font-family: 'Fredoka One', cursive; font-size: 14px; }
   .rank-novice { background: #e8f5e9; color: #2E7D32; }
   .rank-student { background: linear-gradient(135deg, #FFF8E1, #FFE082); color: #F57F17; }
   .rank-pro { background: linear-gradient(135deg, #E3F2FD, #90CAF9); color: #1565C0; }
   .rank-master { background: linear-gradient(135deg, #1a1a2e, #16213e); color: #fff; }
-  
-  .keys-wallet { display: flex; gap: 12px; background: #f5f5f5; border-radius: 40px; padding: 4px 14px; }
-  .wallet-slot { display: flex; align-items: center; gap: 5px; font-family: 'Fredoka One', cursive; font-size: 17px; }
+  .keys-wallet { display: flex; gap: 12px; background: #f5f5f5; border-radius: 40px; padding: 6px 16px; }
   .wallet-slot.star { color: #F9A825; }
   .wallet-slot.star-shiny { color: #FF6F00; }
-  .greeting { font-size: 17px; font-weight: 900; color: #2d2d2d; margin-bottom: 6px; }
-  .progress-text { font-size: 12px; color: #888; font-weight: 800; margin-bottom: 10px; line-height: 1.5; }
+  .greeting { font-size: 18px; font-weight: 900; color: #2d2d2d; margin-bottom: 4px; }
+  .progress-text { font-size: 13px; color: #888; font-weight: 700; margin-bottom: 12px; line-height: 1.7; }
   
-  /* КЛЮЧИ — компактные */
-  .keys-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
-  .key-slot { aspect-ratio: 1 / 0.9; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 2.5px dashed #e0e4ef; background: #faf9fe; transition: all .3s ease; }
-  .key-slot.filled { border: 2.5px solid gold; background: linear-gradient(145deg, #fffbe6, #fff5cc); box-shadow: 0 2px 12px rgba(255,215,0,.5); animation: popIn .4s ease; }
-  @keyframes popIn { 0%{transform:scale(0.7);opacity:0}80%{transform:scale(1.1)}100%{transform:scale(1)} }
+  /* 🔧 ГОРИЗОНТАЛЬНЫЕ КОМПАКТНЫЕ СЛОТЫ */
+  .keys-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 10px; 
+    margin-bottom: 14px; 
+  }
+  .key-slot { 
+    width: 100%;
+    height: 42px; 
+    border-radius: 12px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 18px; 
+    border: 3px dashed #e0e4ef; 
+    background: #f9f9f9; 
+    transition: all .4s ease; 
+    font-weight: 700;
+  }
+  .key-slot.filled { 
+    border: 3px solid gold; 
+    background: linear-gradient(135deg, #fffde7, #fff9c4); 
+    box-shadow: 0 4px 12px rgba(255,215,0,.4); 
+    animation: popIn .5s ease; 
+  }
+  @keyframes popIn { 0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)} }
   
-  /* ПЕРСОНАЖ — небольшой, аккуратный */
-  .char-wrap { border-radius: 24px; overflow: hidden; margin-bottom: 10px; background: #f8f5ff; display: none; border: 1px solid #f0e9ff; }
-  .char-wrap img { width: 100%; height: 150px; object-fit: contain; display: block; background: #faf9fe; }
-  .char-wrap.show { display: block; animation: fadeUp .5s ease; }
-  @keyframes fadeUp { from{opacity:0; transform: translateY(16px)} to{opacity:1; transform: translateY(0)} }
-  
-  .cooldown-msg { background: #f0f4ff; border-radius: 20px; padding: 10px; font-size: 12px; font-weight: 700; color: #667eea; display: none; margin-top: 6px; }
-  .cooldown-time { font-family: 'Fredoka One', cursive; font-size: 17px; display: block; margin-top: 3px; }
-  .collection-bar { margin-top: 12px; border-top: 1.5px solid #f0eff5; padding-top: 10px; cursor: pointer; }
+  .char-wrap { border-radius: 18px; overflow: hidden; margin-bottom: 12px; display: none; background: #f5f5f5; }
+  .char-wrap img { width: 100%; height: 200px; object-fit: contain; display: block; }
+  .char-wrap.show { display: block; animation: zoomIn .6s ease; }
+  @keyframes zoomIn { from{transform:scale(.5);opacity:0} to{transform:scale(1);opacity:1} }
+  .cooldown-msg { background: #f0f4ff; border-radius: 14px; padding: 12px; font-size: 13px; font-weight: 700; color: #667eea; display: none; margin-top: 8px; }
+  .cooldown-time { font-family: 'Fredoka One', cursive; font-size: 20px; display: block; margin-top: 4px; }
+  .collection-bar { margin-top: 14px; border-top: 2px solid #f0f0f0; padding-top: 12px; cursor: pointer; }
   .collection-bar:hover .col-title { color: #667eea; }
-  .col-title { font-family: 'Fredoka One', cursive; font-size: 14px; color: #888; margin-bottom: 6px; transition: color .2s; }
-  .change-name { font-size: 10px; color: #ccc; margin-top: 8px; cursor: pointer; font-weight: 800; }
+  .col-title { font-family: 'Fredoka One', cursive; font-size: 15px; color: #888; margin-bottom: 8px; transition: color .2s; }
+  .change-name { font-size: 11px; color: #ccc; margin-top: 10px; cursor: pointer; font-weight: 700; }
   .change-name:hover { color: #667eea; }
-  
-  /* галерея */
   #galleryScreen { display: none; }
-  .gallery-tabs { display: flex; gap: 2px; margin-bottom: 14px; border-bottom: 2px solid #eef2ff; }
-  .tab-btn { flex: 1; background: none; border: none; padding: 8px 2px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 11px; color: #aaa; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+  .gallery-tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid #e0e4ef; }
+  .tab-btn { flex: 1; background: none; border: none; padding: 10px 4px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 12px; color: #aaa; cursor: pointer; transition: all .2s; border-bottom: 3px solid transparent; margin-bottom: -2px; }
   .tab-btn.active { color: #667eea; border-bottom-color: #667eea; }
-  .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; max-height: 380px; overflow-y: auto; padding: 4px; }
-  .g-item { border-radius: 20px; border: 1px solid #eef0f5; background: #f8f9ff; text-align: center; overflow: hidden; transition: all .2s; }
-  .g-item.got { background: #ffffff; box-shadow: 0 6px 12px rgba(0,0,0,.05); border-color: #d9e2ff; }
-  .g-item .g-img { width: 100%; height: 105px; display: flex; align-items: center; justify-content: center; background: #fafafd; overflow: hidden; }
+  .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 14px; }
+  .g-item { border-radius: 18px; border: 2px solid #e8e8e8; background: #f0f0f0; padding: 0; text-align: center; overflow: hidden; display: flex; flex-direction: column; transition: all .3s; }
+  .g-item.got { background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.1); border-color: transparent; }
+  .g-item.locked { padding: 20px 8px; align-items: center; justify-content: center; }
+  .g-item .g-img { width: 100%; height: 150px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; overflow: hidden; }
   .g-item .g-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
-  .g-item .g-name { font-family: 'Fredoka One', cursive; font-size: 13px; padding: 8px 5px 12px; color: #667eea; }
-  .g-item.locked .g-img { background: #f2f3f8; }
-  .g-item .g-q { font-size: 44px; color: #ccc; }
+  .g-item .g-name { font-family: 'Fredoka One', cursive; font-size: 14px; padding: 8px 8px 12px; line-height: 1.3; color: #667eea; word-break: break-word; }
+  .g-item .g-q { font-size: 44px; color: #ddd; margin-bottom: 6px; }
   
-  /* Праздник уменьшенный */
-  .celebration { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.85); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
+  .celebration { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.9); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
   .celebration.show { display: flex; }
-  .celeb-box { background: transparent; max-width: 320px; width: 100%; border-radius: 48px; padding: 8px; text-align: center; animation: zoomIn .3s ease; }
-  .celeb-img { width: 100%; max-height: 180px; object-fit: contain; border-radius: 28px; background: white; padding: 12px; margin-bottom: 10px; background: #fff6e0; }
-  .legend-glow { box-shadow: 0 0 30px #ffaa33; animation: legendPulse 1s infinite alternate; border-radius: 28px; }
-  @keyframes legendPulse { 0% { transform: scale(1); box-shadow: 0 0 12px #ffaa55; } 100% { transform: scale(1.02); box-shadow: 0 0 30px #ff6a00; } }
-  .motivational { background: linear-gradient(135deg, #fff9c4, #ffecb3); border-radius: 20px; padding: 10px; font-size: 12px; font-weight: 700; color: #F57F17; display: none; margin: 6px 0; }
-  .debug-btn { margin-top: 12px; font-size: 10px; color: #bbb; background: none; border: 1px dashed #ddd; padding: 4px; border-radius: 20px; width: 100%; cursor: pointer; }
+  .celeb-box { background: transparent; border-radius: 32px; padding: 0; text-align: center; width: 100%; animation: zoomIn .4s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .celeb-emoji { font-size: 60px; display: block; margin-bottom: 10px; }
+  .celeb-title { font-family: 'Fredoka One', cursive; font-size: 24px; color: #2d2d2d; margin-bottom: 6px; }
+  
+  .legend-glow {
+    width: 100%; max-width: 400px; border-radius: 20px;
+    box-shadow: 0 0 40px rgba(255, 165, 0, 0.8);
+    animation: legendPulse 1.5s infinite alternate;
+  }
+  @keyframes legendPulse {
+    0% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 165, 0, 0.5); }
+    100% { transform: scale(1.05); box-shadow: 0 0 60px rgba(255, 69, 0, 0.9); }
+  }
+
+  .celeb-text { font-size: 14px; color: #888; font-weight: 700; margin-bottom: 18px; }
+  .motivational { background: linear-gradient(135deg, #fff9c4, #ffecb3); border-radius: 14px; padding: 12px; font-size: 13px; font-weight: 700; color: #F57F17; display: none; margin: 8px 0; }
+  .debug-btn { margin-top: 15px; font-size: 10px; color: #bbb; background: none; border: 1px dashed #ccc; padding: 5px; border-radius: 8px; width: 100%; cursor: pointer; }
+  .debug-popup-btn { background: #eee; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; margin-top: 8px; font-weight: 700; width: 100%; }
+  .debug-popup-btn.test { background: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
+  .debug-popup-btn.reset { background: #FFEBEE; color: #C62828; border: 1px solid #EF5350; }
+  .debug-popup-btn.close { background: #f5f5f5; color: #666; }
+  #legendBtn { display: none; }
+  
+  /* Анимация появления ключа */
+  .key-slot.filled::after {
+    content: '🔑';
+    animation: bounceIn .3s ease;
+  }
+  @keyframes bounceIn {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
 </style>
 </head>
 <body>
@@ -142,10 +143,15 @@
   </div>
   <div class="greeting" id="greeting">Привет!</div>
   <div class="progress-text" id="progressText"></div>
+  
+  <!-- Горизонтальные компактные слоты -->
   <div class="keys-grid" id="keysGrid">
-    <div class="key-slot" id="ks0"></div><div class="key-slot" id="ks1"></div>
-    <div class="key-slot" id="ks2"></div><div class="key-slot" id="ks3"></div>
+    <div class="key-slot" id="ks0"></div>
+    <div class="key-slot" id="ks1"></div>
+    <div class="key-slot" id="ks2"></div>
+    <div class="key-slot" id="ks3"></div>
   </div>
+  
   <div class="char-wrap" id="charWrap"><img id="charImg" src="" alt=""></div>
   <div class="motivational" id="motivationalBlock"></div>
   <button class="btn btn-gold" id="legendBtn" onclick="openLegend()">🔥 Открыть Легенду!</button>
@@ -153,11 +159,11 @@
   <div class="cooldown-msg" id="cooldown"></div>
   <div class="collection-bar" onclick="showGallery()"><div class="col-title">🏅 Моя коллекция →</div></div>
   <div class="change-name" onclick="changeName()">Это не я → сменить имя</div>
-  <button class="debug-btn" onclick="showDebugPopup()">🐛 Проверить данные</button>
+  <button class="debug-btn" onclick="showDebugPopup()">🐛 Проверить данные (для Анастасии)</button>
 </div>
 
 <div class="card" id="galleryScreen">
-  <h1 style="margin-bottom:8px; font-size:22px">🏅 Коллекция</h1>
+  <h1 style="margin-bottom:12px">🏅 Моя коллекция</h1>
   <div class="gallery-tabs">
     <button class="tab-btn active" onclick="switchTab('base',this)">Базовые</button>
     <button class="tab-btn" onclick="switchTab('rare',this)">Редкие</button>
@@ -165,18 +171,17 @@
     <button class="tab-btn" onclick="switchTab('legend',this)">Легенда</button>
   </div>
   <div id="galleryContent"></div>
-  <button class="btn" onclick="hideGallery()" style="margin-top:6px">← Назад</button>
+  <button class="btn" onclick="hideGallery()">← Назад</button>
 </div>
 
 <div class="celebration" id="celebration">
   <div class="celeb-box" id="celebBox">
     <img class="celeb-img" id="celebImg" src="" alt="">
-    <button class="btn btn-gold" id="celebBtn" onclick="closeCeleb()" style="margin-top:14px; width: 180px;">🔥 Ура!</button>
+    <button class="btn btn-gold" id="celebBtn" onclick="closeCeleb()" style="margin-top:20px; width: 200px;">Ты Легенда! 🔥</button>
   </div>
 </div>
 
 <script>
-// ---------- БАЗА ПЕРСОНАЖЕЙ (рандомно перемешиваем открытие) ----------
 const BASE = [
   { animal:"🐆", power:"Скорость", name:"Гепард", img:"gepard.png" },
   { animal:"🐦", power:"Лёгкость", name:"Колибри", img:"kolibri.png" },
@@ -198,18 +203,21 @@ const EPIC = [
   { animal:"🐉", power:"Суперсила", name:"Дракон", img:"drakon.png" },
 ];
 const LEGEND = { animal:"🔥", power:"Возрождение", name:"Феникс", img:"feniks.png" };
-const PRAISE_PHRASES = ["💪 Отлично! Ещё шаг!", "💪 Ты чемпион!", "⭐ Зарядка = суперсила!", "✨ Ты на пути к легенде!"];
+const PRAISE_PHRASES = ["💪 «Отлично! Продолжай!»", "💪 «Ты супер!»", "💪 «Молодец!»"];
 
 let st = {};
 let playerKey = '';
 let justUnlockedChar = null;
 
-// ✅ ЧЕСТНЫЙ РАНДОМ — перетасовка Фишера-Йетса (для открытия разных персонажей)
-function getRandomItemFromList(arr) {
-  // возвращает случайный индекс с равномерным распределением, без привязки к порядку
-  if (!arr.length) return null;
-  const randomIndex = Math.floor(Math.random() * arr.length);
-  return arr[randomIndex];
+// 🔥 ЧЕСТНЫЙ РАНДОМ (Fisher-Yates shuffle)
+function getRandomItem(array) {
+  if (!array || array.length === 0) return null;
+  let arr = array.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr[0];
 }
 
 function getToday() {
@@ -236,20 +244,21 @@ function calculateCurrentStreak() {
   return 0;
 }
 
-function freshState() { 
+function freshState() {
   return { streak: 0, keys: 0, stars: 0, shinyStars: 0, gotBase: [], gotRare: [], gotEpic: [], gotLegend: false, lastWorkout: null, name: '', nick: '', charIdx: 0 };
 }
+
 function save() { if (playerKey) localStorage.setItem('as_' + playerKey, JSON.stringify(st)); }
+
 function load() {
   if (!playerKey) return false;
   const raw = localStorage.getItem('as_' + playerKey);
   if (!raw) return false;
   try { 
     let data = JSON.parse(raw);
-    ['step','weekCount','weekStart','weeksPlayed','lastClaim'].forEach(k => { if (data[k] !== undefined) delete data[k]; });
+    ['step','weekCount','weekStart','weeksPlayed','lastClaim','lastUnlockWeek'].forEach(k => { if (data[k] !== undefined) delete data[k]; });
     ['streak','keys','stars','shinyStars'].forEach(k => { if (data[k] === undefined) data[k] = 0; });
     ['gotBase','gotRare','gotEpic'].forEach(k => { if (!Array.isArray(data[k])) data[k] = []; });
-    if (data.gotLegend === undefined) data.gotLegend = false;
     st = data; 
     return true; 
   } catch(e) { return false; }
@@ -259,13 +268,14 @@ function sound(type) {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     if (ctx.state === 'suspended') ctx.resume();
+    
     const seq = { 
-      start:[[440,.1],[550,.1],[660,.1]], 
-      key:[[900,0.1,'tri']], 
-      base:[[523,.12],[659,.12],[784,.12]], 
-      rare:[[440,.12],[554,.12],[659,.12]], 
-      epic:[[330,.15],[415,.15],[523,.15],[659,.15]], 
-      legend:[[262,.2],[330,.2],[392,.2],[523,.2],[659,.2]] 
+      start:[[440,.12],[550,.12],[660,.12]], 
+      key:[[900,0,'tri']], 
+      base:[[523,.18],[659,.18],[784,.18],[1047,.18]], 
+      rare:[[440,.15],[554,.15],[659,.15],[880,.15],[1109,.15]], 
+      epic:[[330,.2],[415,.2],[523,.2],[659,.2],[830,.2],[1047,.2]], 
+      legend:[[262,.25],[330,.25],[392,.25],[523,.25],[659,.25],[784,.25]] 
     };
     const p = seq[type]; 
     if (!p) return;
@@ -273,11 +283,11 @@ function sound(type) {
       const o=ctx.createOscillator(), g=ctx.createGain(); 
       o.connect(g); g.connect(ctx.destination); 
       o.type=sh||'sine'; 
-      const t=ctx.currentTime+i*(dt||0.15); 
+      const t=ctx.currentTime+i*(dt||0.18); 
       o.frequency.setValueAtTime(f,t); 
-      g.gain.setValueAtTime(0.25,t); 
-      g.gain.exponentialRampToValueAtTime(0.001,t+0.35); 
-      o.start(t); o.stop(t+0.35); 
+      g.gain.setValueAtTime(0.3,t); 
+      g.gain.exponentialRampToValueAtTime(0.001,t+0.4); 
+      o.start(t); o.stop(t+0.4); 
     });
   } catch(e) {}
 }
@@ -304,31 +314,43 @@ function canOpenLegend() {
          !st.gotLegend;
 }
 
-function celebrate(imgSrc, title, customMsg, sndType, isLegend=false) {
-  const box = document.getElementById('celebImg');
-  box.src = imgSrc;
-  box.style.display = 'block';
-  if(isLegend) box.className = 'celeb-img legend-glow';
-  else box.className = 'celeb-img';
-  document.getElementById('celebBtn').innerText = customMsg ? '✨ Здорово!' : 'Ура!';
-  document.getElementById('celebration').classList.add('show');
-  if(sndType) sound(sndType);
+function celebrate(emoji, title, text, img, snd) {
+  document.getElementById('celebImg').className = 'celeb-img'; 
+  document.getElementById('celebImg').style.display = 'block';
+  document.getElementById('celebBtn').style.display = 'block';
+  document.getElementById('celebBtn').innerText = 'Ура! 🎉';
+  document.getElementById('celebEmoji').innerHTML = emoji;
+  document.getElementById('celebTitle').innerHTML = title;
+  document.getElementById('celebText').innerHTML = text;
+  const el = document.getElementById('celebImg'); 
+  if(img) { el.src=img; el.style.display='block'; } else el.style.display='none';
+  document.getElementById('celebration').classList.add('show'); 
+  if(snd) sound(snd);
 }
 
 window.openLegend = function() {
   if (!canOpenLegend()) {
-    alert("Сначала собери всех базовых, редких и эпических персонажей!\n(8 базовых, 4 редких, 2 эпических)");
+    alert("Сначала собери всех базовых, редких и эпических персонажей!");
     return;
   }
+  
   st.gotLegend = true;
   save();
-  celebrate(LEGEND.img, '🔥 ЛЕГЕНДА ФЕНИКС!', 'Ты получил(а) дар возрождения!', 'legend', true);
+  
+  const el = document.getElementById('celebImg'); 
+  el.src = LEGEND.img; 
+  el.style.display = 'block';
+  el.className = 'legend-glow';
+  
+  document.getElementById('celebBtn').innerText = 'Ты Легенда! 🔥';
+  document.getElementById('celebration').classList.add('show');
+  sound('legend');
 };
 
 window.closeCeleb = function() { 
   document.getElementById('celebration').classList.remove('show');
   justUnlockedChar = null;
-  setTimeout(() => render(), 80);
+  setTimeout(() => render(), 100);
 };
 
 function render() {
@@ -338,7 +360,7 @@ function render() {
   document.getElementById('rankBadge').textContent = rank.label;
   document.getElementById('starCount').innerText = st.stars || 0;
   document.getElementById('starShinyCount').innerText = st.shinyStars || 0;
-  document.getElementById('greeting').innerHTML = `Привет, ${st.name || 'герой'}! ✨`;
+  document.getElementById('greeting').innerHTML = 'Привет, ' + (st.name || '') + '!';
   const keysGrid = document.getElementById('keysGrid');
   const charWrap = document.getElementById('charWrap');
   const progressText = document.getElementById('progressText');
@@ -347,28 +369,37 @@ function render() {
   
   keysGrid.style.display = 'none'; charWrap.style.display = 'none'; charWrap.classList.remove('show'); motivational.style.display = 'none'; progressText.innerHTML = '';
   
-  if (canOpenLegend()) legendBtn.style.display = 'block';
-  else legendBtn.style.display = 'none';
+  if (canOpenLegend()) {
+    legendBtn.style.display = 'block';
+  } else {
+    legendBtn.style.display = 'none';
+  }
   
   if (justUnlockedChar) {
     charWrap.style.display = 'block'; charWrap.classList.add('show');
     document.getElementById('charImg').src = justUnlockedChar.img;
-    progressText.innerHTML = `<div style="font-family:'Fredoka One';font-size:24px;color:#667eea;margin:8px 0 2px">✨ ${justUnlockedChar.power} ✨</div><div style="font-size:12px;color:#7e8aa2">сила в твоём теле!</div>`;
+    progressText.innerHTML = `<div style="font-family:Fredoka One,cursive;font-size:26px;font-weight:900;color:#667eea;margin:12px 0 6px">${justUnlockedChar.power}</div><div style="font-size:13px;color:#aaa">суперсила открыта ✨</div>`;
     return;
   }
-  if (st.gotBase?.length >= BASE.length) { motivational.style.display = 'block'; motivational.innerHTML = '🏆 Ура! Все базовые суперсилы твои! Иди к легенде!'; }
+  if (st.gotBase?.length >= BASE.length) { motivational.style.display = 'block'; motivational.innerHTML = '🏆 Ты собрал(а) все базовые суперсилы! Круто!'; }
   if (currentStreak >= 5 && currentStreak <= 6) {
-    progressText.innerHTML = '⭐ ЗАВТРА будет ЗВЕЗДА! Продолжай! ⭐';
+    progressText.innerHTML = '⭐ Сегодня ты получишь ЗВЕЗДУ! ⭐';
   } else if (currentStreak === 7) {
-    progressText.innerHTML = '🌟 ЗАВТРА СИЯЮЩАЯ ЗВЕЗДА! 🌟 Ты огонь!';
+    progressText.innerHTML = '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
   } else {
     keysGrid.style.display = 'grid';
     const keys = Math.min(st.keys || 0, 4);
     const needed = 4 - keys;
-    progressText.innerHTML = '⚡ До суперсилы: ' + needed + ' ' + decl(needed, 'зарядка', 'зарядки', 'зарядок');
+    progressText.innerHTML = 'До суперсилы: ' + needed + ' ' + decl(needed, 'зарядка', 'зарядки', 'зарядок');
     for (let i = 0; i < 4; i++) {
       const sl = document.getElementById('ks' + i);
-      if (i < keys) { sl.classList.add('filled'); sl.innerHTML = '🔑'; } else { sl.classList.remove('filled'); sl.innerHTML = ''; }
+      if (i < keys) { 
+        sl.classList.add('filled'); 
+        sl.innerHTML = ''; // Эмодзи добавляется через ::after в CSS
+      } else { 
+        sl.classList.remove('filled'); 
+        sl.innerHTML = ''; 
+      }
     }
   }
   checkCooldown();
@@ -382,13 +413,14 @@ function checkCooldown() {
     claimBtn.style.display = 'none'; coolEl.style.display = 'block';
     const now = new Date(); const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1);
     const diff = midnight - now; const hours = Math.floor(diff/3600000); const minutes = Math.floor((diff%3600000)/60000);
-    coolEl.innerHTML = `✅ Сегодня уже выполнено! Возвращайся завтра 🌙 <span class="cooldown-time">${hours>0?hours+'ч '+minutes+'мин':minutes+'мин'}</span>`;
+    const timeString = hours > 0 ? `${hours} ч ${minutes} мин` : `${minutes} мин`;
+    let message = diff > 12*3600000 ? 'Отличная работа! Приходи завтра 🌙' : (diff > 5*3600000 ? `Скоро! Осталось: ${timeString}` : (diff > 3600000 ? `Совсем скоро! Осталось: ${timeString}` : `Уже почти! Осталось: ${timeString}`));
+    coolEl.innerHTML = `${message}<span class="cooldown-time">${timeString}</span>`;
   } else {
-    claimBtn.style.display = 'block'; coolEl.style.display = 'none';
+    claimBtn.style.display = 'block'; claimBtn.className = 'btn btn-green'; claimBtn.innerHTML = 'Я сделал(а) зарядку! 🏃'; claimBtn.onclick = doWorkout; coolEl.style.display = 'none';
   }
 }
 
-// ОСНОВНАЯ МЕХАНИКА — повышенная рандомность открытия
 function doWorkout() {
   const today = getToday();
   if (st.lastWorkout === today) { checkCooldown(); return; }
@@ -397,56 +429,32 @@ function doWorkout() {
   st.streak = newStreak;
   st.lastWorkout = today;
   
-  // ✅ СТРИК 1-4 дня: даём ключ, при 4 ключах открываем случайного базового (рандомность)
   if (newStreak >= 1 && newStreak <= 4) {
-    st.keys = (st.keys || 0) + 1;
-    save(); 
-    sound('key');
+    st.keys = (st.keys || 0) + 1; save(); sound('key');
     if (st.keys >= 4) {
+      // 🔥 РАНДОМНЫЙ ВЫБОР из ещё не открытых базовых персонажей
       const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
       if (available.length > 0) {
-        // 🔥 СЛУЧАЙНЫЙ НЕОТКРЫТЫЙ ПЕРСОНАЖ, а не по порядку!
-        const randomIndex = getRandomItemFromList(available);
-        const idx = randomIndex;
-        st.gotBase.push(idx);
-        st.charIdx = idx;
-        st.keys = 0;
-        save();
-        sound('base');
-        justUnlockedChar = BASE[idx];
-        celebrate(BASE[idx].img, `${BASE[idx].power} открыта!`, 'Новая способность активирована!', 'base');
-        setTimeout(() => render(), 100);
-        return;
-      } else {
-        // если все открыты - сбрасываем ключи просто так, но даём звезду за переполнение
-        st.keys = 0;
-        st.stars = (st.stars || 0) + 1;
-        save();
-        celebrate('', 'Все базовые уже собраны!', 'Получаешь звезду за усердие!', 'rare');
+        const randomIdx = getRandomItem(available); 
+        st.gotBase.push(randomIdx); st.charIdx = randomIdx; st.keys = 0; save(); sound('base');
+        justUnlockedChar = BASE[randomIdx];
+        celebrate('🎉', BASE[randomIdx].power + ' открыта!', 'Суперсила добавлена!', BASE[randomIdx].img);
+        setTimeout(() => render(), 100); return;
       }
-    } else {
-      const praise = getRandomItemFromList(PRAISE_PHRASES);
-      celebrate('', '🔑 Ещё ключ!', praise);
+    } else { 
+      const praise = getRandomItem(PRAISE_PHRASES);
+      celebrate('🔑', 'Ключ ' + st.keys + ' из 4!', praise); 
     }
-  } 
-  // стрик 5-6: звезда
-  else if (newStreak === 5 || newStreak === 6) {
-    st.stars = (st.stars || 0) + 1;
-    save(); sound('rare');
-    celebrate('', '⭐ Звезда суперсилы!', `У тебя ${st.stars} ⭐. Скоро откроешь редкого героя!`);
-  } 
-  // стрик 7: сияющая звезда и сброс
-  else if (newStreak === 7) {
-    st.shinyStars = (st.shinyStars || 0) + 1;
-    st.streak = 0;
-    save(); sound('epic');
-    celebrate('', '🌟 СИЯЮЩАЯ ЗВЕЗДА!', `Теперь ${st.shinyStars} 🌟 можешь купить эпического!`);
+  } else if (newStreak === 5 || newStreak === 6) {
+    st.stars = (st.stars || 0) + 1; save(); sound('rare');
+    celebrate('⭐', 'Звезда получена!', 'У тебя ' + st.stars + ' ⭐.');
+  } else if (newStreak === 7) {
+    st.shinyStars = (st.shinyStars || 0) + 1; st.streak = 0; save(); sound('rare');
+    celebrate('🌟', 'Сияющая звезда!', 'У тебя ' + st.shinyStars + ' 🌟.');
   }
-  save(); 
-  render();
+  save(); render();
 }
 
-// ГАЛЕРЕЯ и покупка с помощью звезд
 window.switchTab = function(tab, btn) { 
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); 
   btn.classList.add('active'); 
@@ -466,12 +474,13 @@ function renderGallery(tab) {
     const got = collection.includes(i);
     const div = document.createElement('div'); 
     div.className = 'g-item' + (got ? ' got' : ' locked');
+    if(got){div.style.borderColor='#667eea';div.style.background='#EDF2FF';}
     const area = document.createElement('div'); area.className='g-img';
     if(got){
       const img=document.createElement('img');
       img.src=c.img;
       img.alt=c.power;
-      img.onerror=()=>{img.style.display='none';area.innerHTML='<span style="font-size:34px">'+c.animal+'</span>';};
+      img.onerror=()=>{img.style.display='none';area.innerHTML='<span style="font-size:40px">'+c.animal+'</span>';};
       area.appendChild(img);
     } else {
       area.innerHTML='<span class="g-q">❓</span>';
@@ -483,26 +492,26 @@ function renderGallery(tab) {
       nm.textContent=c.power;
       div.appendChild(nm);
     }
-    if(!got && (tab==='rare'||tab==='epic')){
-      const cost=4;
+    if(!got&&(tab==='rare'||tab==='epic')){
+      const cost=4; 
       const can=tab==='rare'?((st.stars||0)>=cost):((st.shinyStars||0)>=cost);
       if(can){
         const btn=document.createElement('button');
-        btn.innerHTML=(tab==='rare'?'⭐ '+cost:'🌟 '+cost)+' → Открыть!';
-        btn.style.cssText='border:none;background:#FFF3E0;color:#F57F17;border-radius:30px;padding:6px 12px;font-weight:900;font-size:11px;cursor:pointer;margin:6px 8px 12px;';
-        btn.onclick=(e)=>{e.stopPropagation(); spendStars(tab, i, cost);};
+        btn.innerHTML=(tab==='rare'?'⭐':'🌟')+' '+cost+' → Открыть!';
+        btn.style.cssText='border:none;background:#FFF8E1;color:#F9A825;border-radius:10px;padding:8px;font-weight:800;font-size:12px;cursor:pointer;margin:8px 8px 12px;';
+        btn.onclick=(e)=>{e.stopPropagation();spendStars(tab,i,cost);};
         div.appendChild(btn);
       } else {
         const p=document.createElement('div');
-        p.innerHTML=(tab==='rare'?'⭐':'🌟')+' нужно '+cost;
-        p.style.cssText='font-size:10px;color:#aaa;margin-bottom:12px;';
+        p.innerHTML=(tab==='rare'?'⭐':'🌟')+' '+cost;
+        p.style.cssText='font-size:11px;font-weight:700;color:#bbb;margin-top:6px;';
         div.appendChild(p);
       }
     }
-    if(tab==='legend' && !got){
+    if(tab==='legend'&&!got){
       const h=document.createElement('div');
-      h.innerHTML='⭐ Собери всех героев!';
-      h.style.cssText='font-size:10px;color:#888;margin:8px 0px;';
+      h.innerHTML='Собери всех!';
+      h.style.cssText='font-size:11px;color:#aaa;margin-top:6px;';
       div.appendChild(h);
     }
     grid.appendChild(div);
@@ -512,23 +521,23 @@ function renderGallery(tab) {
 
 function spendStars(tab, idx, cost) {
   if(tab==='rare'){
-    if((st.stars||0)<cost) return alert('Не хватает звёзд! Делай зарядку!');
-    if((st.gotRare||[]).includes(idx)) return alert('Уже открыт!');
+    if((st.stars||0)<cost) { alert('Недостаточно звёзд!'); return; }
+    if((st.gotRare||[]).includes(idx)) { alert('Уже открыто!'); return; }
     st.stars-=cost; 
-    if(!st.gotRare) st.gotRare=[]; 
+    if(!st.gotRare)st.gotRare=[]; 
     st.gotRare.push(idx); 
     save(); 
-    celebrate(RARE[idx].img, RARE[idx].power+' открыт!', 'Редкий герой в коллекции!', 'rare');
-    renderGallery('rare');
+    celebrate('⭐',RARE[idx].power+' открыта!',RARE[idx].name+' теперь в твоей коллекции!',RARE[idx].img,'rare');
+    renderGallery(tab);
   } else if(tab==='epic'){
-    if((st.shinyStars||0)<cost) return alert('Не хватает сияющих звёзд! Получи 7-дневный стрик!');
-    if((st.gotEpic||[]).includes(idx)) return alert('Уже есть эпик!');
+    if((st.shinyStars||0)<cost) { alert('Недостаточно сияющих звёзд!'); return; }
+    if((st.gotEpic||[]).includes(idx)) { alert('Уже открыто!'); return; }
     st.shinyStars-=cost; 
-    if(!st.gotEpic) st.gotEpic=[]; 
+    if(!st.gotEpic)st.gotEpic=[]; 
     st.gotEpic.push(idx); 
     save(); 
-    celebrate(EPIC[idx].img, EPIC[idx].power+' сияет!', 'Эпическая суперсила твоя!', 'epic');
-    renderGallery('epic');
+    celebrate('🌟',EPIC[idx].power+' открыта!',EPIC[idx].name+' теперь в твоей коллекции!',EPIC[idx].img,'epic');
+    renderGallery(tab);
   }
 }
 
@@ -538,6 +547,7 @@ window.showGallery = function() {
   renderGallery('base'); 
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===0)); 
 };
+
 window.hideGallery = function() { 
   document.getElementById('galleryScreen').style.display='none'; 
   document.getElementById('gameScreen').style.display='block'; 
@@ -545,37 +555,75 @@ window.hideGallery = function() {
 };
 
 window.showDebugPopup = function() {
+  const today = getToday();
+  const streak = calculateCurrentStreak();
   const canLegend = canOpenLegend();
-  const msg = `🔍 Данные Анастасии 🔍\n\n⭐ Звезд: ${st.stars||0}\n🌟 Сияющих: ${st.shinyStars||0}\n📦 Базовых: ${st.gotBase?.length||0}/8\n✨ Редких: ${st.gotRare?.length||0}/4\n🔥 Эпических: ${st.gotEpic?.length||0}/2\n🐉 Легенда: ${st.gotLegend?'ДА':'НЕТ'}\n🏆 Можно Легенду: ${canLegend ? '✅ ДА' : '❌ НЕТ'}\n🔑 Текущие ключи: ${st.keys||0}\n📅 Последняя зарядка: ${st.lastWorkout||'нет'}`;
-  alert(msg);
-};
+  const msg = "🕵️ ДАННЫЕ:\n\n" +
+              "📅 Сегодня: " + today + "\n" +
+              "🏃 Последний клик: " + (st.lastWorkout || "нет") + "\n" +
+              "🔥 Стрик: " + st.streak + "\n" +
+              "🔑 Ключей: " + (st.keys||0) + "\n" +
+              "⭐ Звезд: " + (st.stars||0) + "\n" +
+              "🌟 Сияющих: " + (st.shinyStars||0) + "\n\n" +
+              "📊 Прогресс:\n" +
+              "Базовых: " + (st.gotBase?.length||0) + "/8\n" +
+              "Редких: " + (st.gotRare?.length||0) + "/4\n" +
+              "Эпических: " + (st.gotEpic?.length||0) + "/2\n\n" +
+              "🔥 Можно открыть Легенду: " + (canLegend ? "ДА ✅" : "НЕТ ❌");
+  let customAlert = document.createElement('div');
+  customAlert.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:20px;border-radius:20px;box-shadow:0 0 20px rgba(0,0,0,0.5);z-index:9999;text-align:center;width:90%;max-width:320px;";
+  customAlert.innerHTML = `
+    <h3 style="margin-bottom:10px;font-family:'Fredoka One';color:#667eea">Отладка</h3>
+    <pre style="text-align:left;font-size:11px;font-family:monospace;background:#f5f5f5;padding:10px;border-radius:8px;margin-bottom:15px;white-space:pre-wrap;">${msg}</pre>
+    <button id="debugTestWeek" class="debug-popup-btn test">🧪 ПРОТЕСТИРОВАТЬ НЕДЕЛЮ</button>
+    <button id="debugReset" class="debug-popup-btn reset">🗑 СБРОСИТЬ ПРОГРЕСС</button>
+    <button class="debug-popup-btn close" onclick="this.parentElement.remove()">Закрыть</button>
+  `;
+  document.body.appendChild(customAlert);
+  document.getElementById('debugTestWeek').onclick = function() {
+    // 🔥 РАНДОМНОЕ ОТКРЫТИЕ одного базового персонажа
+    const availableBase = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
+    let charAdded = false;
+    if (availableBase.length > 0) {
+      const randomIdx = getRandomItem(availableBase);
+      st.gotBase.push(randomIdx);
+      st.charIdx = randomIdx;
+      charAdded = true;
+    }
+    st.stars = (st.stars || 0) + 2;
+    st.shinyStars = (st.shinyStars || 0) + 1;
+    st.keys = 0;
+    st.streak = 0;
+    st.lastWorkout = getToday();
+    save();
+    render();
+    this.parentElement.remove();
+    if(charAdded) {
+      alert("✅ Готово! Открыт: " + BASE[st.charIdx].name + "\nЗвёзд: " + st.stars + "\nСияющих: " + st.shinyStars);
+    } else {
+      alert("⚠️ Все базовые открыты! Награды добавлены.");
+    }
+  };
+  document.getElementById('debugReset').onclick = function() {
+    if(confirm("Точно сбросить весь прогресс?")) {
+      localStorage.removeItem('as_' + playerKey);
+      location.reload();
+    }
+  };
+}
 
 function checkBtn() { const n=document.getElementById('nameInput').value.trim(); const k=document.getElementById('nickInput').value.trim(); document.getElementById('startBtn').disabled=!(n&&k); }
 let _ac=0; const _at=setInterval(()=>{checkBtn();if(++_ac>=20)clearInterval(_at);},200);
 
 window.startGame = function() {
-  const name=document.getElementById('nameInput').value.trim(); const nick=document.getElementById('nickInput').value.trim(); 
-  if(!name||!nick) return;
+  const name=document.getElementById('nameInput').value.trim(); const nick=document.getElementById('nickInput').value.trim(); if(!name||!nick) return;
   playerKey=(name+'_'+nick).toLowerCase().replace(/[^a-zа-яё0-9]/gi,'_');
   localStorage.setItem('as_who',JSON.stringify({name,nick}));
-  if(!load()) st=freshState(); 
-  st.name=name; st.nick=nick; 
-  if(!st.gotBase) st.gotBase = [];
-  save();
-  sound('start'); 
-  document.getElementById('nameScreen').style.display='none'; 
-  document.getElementById('gameScreen').style.display='block'; 
-  render();
+  if(!load()) st=freshState(); st.name=name; st.nick=nick; save();
+  sound('start'); document.getElementById('nameScreen').style.display='none'; document.getElementById('gameScreen').style.display='block'; render();
 };
 
-window.changeName = function() { 
-  localStorage.removeItem('as_who'); 
-  document.getElementById('gameScreen').style.display='none'; 
-  document.getElementById('nameScreen').style.display='block'; 
-  document.getElementById('nameInput').value=''; 
-  document.getElementById('nickInput').value=''; 
-  checkBtn(); 
-};
+window.changeName = function() { localStorage.removeItem('as_who'); document.getElementById('gameScreen').style.display='none'; document.getElementById('nameScreen').style.display='block'; document.getElementById('nameInput').value=''; document.getElementById('nickInput').value=''; checkBtn(); };
 
 document.addEventListener('DOMContentLoaded', function() {
   const _who = localStorage.getItem('as_who');
