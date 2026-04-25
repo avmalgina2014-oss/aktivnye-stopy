@@ -6,7 +6,6 @@
 <title>Активные Стопы</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
-  /* Стили те же самые */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
   .card { background: #fff; border-radius: 32px; padding: 24px 20px; max-width: 420px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.2); text-align: center; }
@@ -356,7 +355,7 @@ function spendStars(tab, idx, cost) {
 window.showGallery = function() { document.getElementById('gameScreen').style.display='none'; document.getElementById('galleryScreen').style.display='block'; renderGallery('base'); document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===0)); };
 window.hideGallery = function() { document.getElementById('galleryScreen').style.display='none'; document.getElementById('gameScreen').style.display='block'; render(); };
 
-// ФУНКЦИЯ ОТЛАДКИ С КНОПКОЙ ТЕСТА
+// ✅ ИСПРАВЛЕННАЯ КНОПКА ДЛЯ ОТЛАДКИ
 window.showDebugPopup = function() {
   const today = getToday();
   const streak = calculateCurrentStreak();
@@ -379,53 +378,39 @@ window.showDebugPopup = function() {
   `;
   document.body.appendChild(customAlert);
 
-  // КНОПКА ТЕСТА НЕДЕЛИ
   document.getElementById('debugTestWeek').onclick = function() {
-    // Сброс перед тестом
-    st.streak = 0; st.keys = 0; st.stars = 0; st.shinyStars = 0;
-    st.gotBase = []; st.gotRare = []; st.gotEpic = []; st.gotLegend = false;
-    st.lastWorkout = null;
-    
-    // Эмуляция 7 дней
-    let testDate = new Date();
-    testDate.setDate(testDate.getDate() - 6); // Начинаем с 6 дней назад
-    
-    for(let i=0; i<7; i++) {
-      let dateStr = testDate.getFullYear() + '-' + String(testDate.getMonth()+1).padStart(2,'0') + '-' + String(testDate.getDate()).padStart(2,'0');
-      
-      // Логика doWorkout для каждого дня
-      let newStreak = (st.lastWorkout && isConsecutiveDay(st.lastWorkout, dateStr)) ? (st.streak + 1) : 1;
-      st.streak = newStreak;
-      st.lastWorkout = dateStr;
+    // 1. Открываем ОДНОГО случайного базового персонажа
+    const availableBase = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
+    let charAdded = false;
 
-      if (newStreak >= 1 && newStreak <= 4) {
-        st.keys++;
-        if (st.keys >= 4) {
-           const available = BASE.map((_,idx) => idx).filter(idx => !st.gotBase.includes(idx));
-           if(available.length>0) {
-             const idx = available[0];
-             st.gotBase.push(idx); st.charIdx = idx; st.keys = 0;
-           }
-        }
-      } else if (newStreak === 5 || newStreak === 6) {
-        st.stars++;
-      } else if (newStreak === 7) {
-        st.shinyStars++;
-        st.streak = 0;
-      }
-      
-      testDate.setDate(testDate.getDate() + 1);
+    if (availableBase.length > 0) {
+      const randomIdx = availableBase[Math.floor(Math.random() * availableBase.length)];
+      st.gotBase.push(randomIdx);
+      st.charIdx = randomIdx; // Обновляем текущего персонажа
+      charAdded = true;
     }
-    
-    // Фиксируем "сегодня" как последний день
-    st.lastWorkout = today;
+
+    // 2. Начисляем награды за неделю (2 звезды + 1 сияющая)
+    st.stars = (st.stars || 0) + 2;
+    st.shinyStars = (st.shinyStars || 0) + 1;
+
+    // 3. Сбрасываем ключи и стрик (неделя прошла)
+    st.keys = 0;
+    st.streak = 0;
+    st.lastWorkout = getToday();
+
     save();
+    checkLegendary(); // Проверяем Феникса
     render();
+
     this.parentElement.remove();
-    alert("✅ Тест завершен! Проверьте коллекцию и копилку.");
+    if(charAdded) {
+      alert("✅ Готово! Открыт новый персонаж и добавлены награды.");
+    } else {
+      alert("⚠️ Все базовые персонажи уже открыты! Награды добавлены.");
+    }
   };
 
-  // КНОПКА СБРОСА
   document.getElementById('debugReset').onclick = function() {
     if(confirm("Точно сбросить весь прогресс?")) {
       localStorage.removeItem('as_' + playerKey);
