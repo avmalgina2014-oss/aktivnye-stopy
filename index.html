@@ -70,13 +70,19 @@
   .debug-popup-btn.test { background: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
   .debug-popup-btn.reset { background: #FFEBEE; color: #C62828; border: 1px solid #EF5350; }
   .debug-popup-btn.close { background: #f5f5f5; color: #666; }
-  .legend-box { animation: legendGlow 1.5s ease-in-out infinite; border: 3px solid #FFD700; }
-  @keyframes legendGlow { 0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.5); transform: scale(1); } 50% { box-shadow: 0 0 50px rgba(255,215,0,0.9), 0 0 80px rgba(255,165,0,0.5); transform: scale(1.03); } }
-  .legend-title { font-size: 36px !important; background: linear-gradient(45deg, #FFD700, #FFA500, #FF4500, #FFD700); background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: goldShimmer 2s ease-in-out infinite, titlePulse 1s ease-in-out infinite; display: block; margin-bottom: 10px; }
-  @keyframes goldShimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-  @keyframes titlePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
-  .confetti { position: absolute; width: 10px; height: 10px; background: #FFD700; animation: confettiFall 3s ease-in-out infinite; }
-  @keyframes confettiFall { 0% { transform: translateY(-100px) rotate(0deg); opacity: 1; } 100% { transform: translateY(500px) rotate(720deg); opacity: 0; } }
+
+  /* Специальный стиль для картинки Феникса (Легенды) */
+  .legend-img-full {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(255, 165, 0, 0.6);
+    animation: glowPulse 2s infinite alternate;
+  }
+  @keyframes glowPulse {
+    from { box-shadow: 0 0 20px rgba(255, 165, 0, 0.4); }
+    to { box-shadow: 0 0 40px rgba(255, 69, 0, 0.8); }
+  }
 </style>
 </head>
 <body>
@@ -132,7 +138,7 @@
     <div class="celeb-title" id="celebTitle"></div>
     <img class="celeb-img" id="celebImg" src="" alt="">
     <div class="celeb-text" id="celebText"></div>
-    <button class="btn" onclick="closeCeleb()">Ура! 🎉</button>
+    <button class="btn" id="celebBtn" onclick="closeCeleb()">Ура! 🎉</button>
   </div>
 </div>
 
@@ -205,10 +211,7 @@ function load() {
     ['gotBase','gotRare','gotEpic'].forEach(k => { if (!Array.isArray(data[k])) data[k] = []; });
     st = data; 
     return true; 
-  } catch(e) { 
-    console.error('Load error:', e);
-    return false; 
-  }
+  } catch(e) { return false; }
 }
 
 function sound(type) {
@@ -253,43 +256,46 @@ function getRank() {
 }
 
 function celebrate(emoji, title, text, img, snd) {
+  // Сбрасываем стили легенды
+  document.getElementById('celebImg').className = 'celeb-img'; 
+  document.getElementById('celebEmoji').style.display = 'block';
+  document.getElementById('celebTitle').style.display = 'block';
+  document.getElementById('celebText').style.display = 'block';
+  document.getElementById('celebBtn').style.display = 'block';
+  
   document.getElementById('celebEmoji').innerHTML = emoji;
   document.getElementById('celebTitle').innerHTML = title;
   document.getElementById('celebText').innerHTML = text;
   const el = document.getElementById('celebImg'); 
   if(img) { el.src=img; el.style.display='block'; } else el.style.display='none';
-  document.getElementById('celebBox').classList.remove('legend-box');
-  document.querySelectorAll('.confetti').forEach(c => c.remove());
+  
   document.getElementById('celebration').classList.add('show'); 
   if(snd) sound(snd);
 }
 
+// Специальная функция для Легенды (Феникса)
 function celebrateLegend() {
-  document.getElementById('celebEmoji').innerHTML = '🔥🔥';
-  document.getElementById('celebTitle').innerHTML = '<span class="legend-title">ТЫ ЛЕГЕНДА!</span>';
-  document.getElementById('celebText').innerHTML = 'Ты собрал(а) все суперсилы! Невероятно круто!';
+  // Скрываем обычный текст и эмодзи
+  document.getElementById('celebEmoji').style.display = 'none';
+  document.getElementById('celebTitle').style.display = 'none';
+  document.getElementById('celebText').style.display = 'none';
+  document.getElementById('celebBtn').style.display = 'block'; // Кнопку оставляем
+  document.getElementById('celebBtn').innerText = 'Я Легенда! 🔥';
+
   const el = document.getElementById('celebImg'); 
   el.src = LEGEND.img; 
   el.style.display = 'block';
-  document.getElementById('celebBox').classList.add('legend-box');
+  // Добавляем спец класс для свечения и размера
+  el.className = 'legend-img-full';
+
   document.getElementById('celebration').classList.add('show');
   sound('legend');
-  const colors = ['#FFD700', '#FFA500', '#FF4500', '#FF69B4', '#00CED1', '#98FB98'];
-  for(let i=0; i<30; i++) {
-    const confetti = document.createElement('div');
-    confetti.className = 'confetti';
-    confetti.style.left = Math.random() * 100 + '%';
-    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-    confetti.style.animationDelay = Math.random() * 2 + 's';
-    confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
-    document.getElementById('celebration').appendChild(confetti);
-  }
 }
 
 window.closeCeleb = function() { 
   document.getElementById('celebration').classList.remove('show');
-  document.getElementById('celebBox').classList.remove('legend-box');
-  document.querySelectorAll('.confetti').forEach(c => c.remove());
+  // Возвращаем стили
+  document.getElementById('celebImg').className = 'celeb-img';
   if(justUnlockedChar) setTimeout(()=>{justUnlockedChar=null;render();},100); 
   else render(); 
 };
@@ -379,7 +385,7 @@ function doWorkout() {
 function checkLegendary() {
   if (!st.gotLegend && st.gotBase?.length >= BASE.length && st.gotRare?.length >= RARE.length && st.gotEpic?.length >= EPIC.length) {
     st.gotLegend = true; save();
-    setTimeout(() => celebrateLegend(), 1000);
+    setTimeout(() => celebrateLegend(), 500);
   }
 }
 
