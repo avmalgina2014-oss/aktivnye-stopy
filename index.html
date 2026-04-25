@@ -6,7 +6,7 @@
 <title>Активные Стопы</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
 <style>
-  /* Стили */
+  /* Стили те же самые */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
   .card { background: #fff; border-radius: 32px; padding: 24px 20px; max-width: 420px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.2); text-align: center; }
@@ -16,9 +16,6 @@
   .btn:hover { transform: translateY(-2px); }
   .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
   .btn-green { background: linear-gradient(135deg, #2E7D32, #4CAF50); box-shadow: 0 4px 16px rgba(46,125,50,.4); }
-  .btn-gold { background: linear-gradient(135deg, #F9A825, #FF6F00); box-shadow: 0 4px 16px rgba(249,168,37,.4); }
-  .btn-rare { background: linear-gradient(135deg, #1565C0, #42A5F5); box-shadow: 0 4px 16px rgba(21,101,192,.3); }
-  .btn-ruby { background: linear-gradient(135deg, #B71C1C, #EF5350); box-shadow: 0 4px 16px rgba(183,28,28,.3); }
   .field-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; text-align: left; }
   .field-input { width: 100%; border: 3px solid #e0e4ef; border-radius: 14px; padding: 11px 14px; font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 700; outline: none; text-align: center; margin-bottom: 14px; transition: border-color .2s; }
   .field-input:focus { border-color: #667eea; }
@@ -69,10 +66,11 @@
   .celeb-img { width: 100%; max-height: 160px; object-fit: contain; border-radius: 14px; margin: 10px 0; display: none; }
   .celeb-text { font-size: 14px; color: #888; font-weight: 700; margin-bottom: 18px; }
   .motivational { background: linear-gradient(135deg, #fff9c4, #ffecb3); border-radius: 14px; padding: 12px; font-size: 13px; font-weight: 700; color: #F57F17; display: none; margin: 8px 0; }
-  
   .debug-btn { margin-top: 15px; font-size: 10px; color: #bbb; background: none; border: 1px dashed #ccc; padding: 5px; border-radius: 8px; width: 100%; cursor: pointer; }
-  .debug-popup-btn { background: #eee; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; margin-top: 5px; }
-  .debug-popup-btn:hover { background: #ddd; }
+  .debug-popup-btn { background: #eee; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; margin-top: 8px; font-weight: 700; width: 100%; }
+  .debug-popup-btn.test { background: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
+  .debug-popup-btn.reset { background: #FFEBEE; color: #C62828; border: 1px solid #EF5350; }
+  .debug-popup-btn.close { background: #f5f5f5; color: #666; }
 </style>
 </head>
 <body>
@@ -358,36 +356,81 @@ function spendStars(tab, idx, cost) {
 window.showGallery = function() { document.getElementById('gameScreen').style.display='none'; document.getElementById('galleryScreen').style.display='block'; renderGallery('base'); document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===0)); };
 window.hideGallery = function() { document.getElementById('galleryScreen').style.display='none'; document.getElementById('gameScreen').style.display='block'; render(); };
 
-// КНОПКА ДЛЯ ОТЛАДКИ
+// ФУНКЦИЯ ОТЛАДКИ С КНОПКОЙ ТЕСТА
 window.showDebugPopup = function() {
   const today = getToday();
   const streak = calculateCurrentStreak();
-  const msg = "🕵️ ДАННЫЕ ДЛЯ АНАСТАСИИ\n\n" +
+  const msg = "🕵️ ДАННЫЕ:\n\n" +
               "📅 Сегодня: " + today + "\n" +
               "🏃 Последний клик: " + (st.lastWorkout || "нет") + "\n" +
-              "🔥 Стрик в памяти: " + st.streak + "\n" +
-              "🧮 Расчетный стрик: " + streak + "\n" +
+              "🔥 Стрик: " + st.streak + "\n" +
               "🔑 Ключей: " + (st.keys||0) + "\n" +
-              "⭐ Звезд: " + (st.stars||0);
-  
-  // Создаем кастомное окошко для теста
+              "⭐ Звезд: " + (st.stars||0) + "\n" +
+              "🌟 Сияющих: " + (st.shinyStars||0);
+
   let customAlert = document.createElement('div');
-  customAlert.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:20px;border-radius:20px;box-shadow:0 0 20px rgba(0,0,0,0.5);z-index:9999;text-align:center;width:80%;max-width:300px;";
+  customAlert.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:20px;border-radius:20px;box-shadow:0 0 20px rgba(0,0,0,0.5);z-index:9999;text-align:center;width:90%;max-width:320px;";
   customAlert.innerHTML = `
-    <pre style="text-align:left;font-size:12px;font-family:monospace;white-space:pre-wrap;">${msg}</pre>
-    <button id="debugAddDay" class="debug-popup-btn">[ТЕСТ] +1 день к стрику</button>
-    <button class="debug-popup-btn" onclick="this.parentElement.remove()">Закрыть</button>
+    <h3 style="margin-bottom:10px;font-family:'Fredoka One';color:#667eea">Отладка</h3>
+    <pre style="text-align:left;font-size:11px;font-family:monospace;background:#f5f5f5;padding:10px;border-radius:8px;margin-bottom:15px;white-space:pre-wrap;">${msg}</pre>
+    <button id="debugTestWeek" class="debug-popup-btn test">🧪 ПРОТЕСТИРОВАТЬ НЕДЕЛЮ</button>
+    <button id="debugReset" class="debug-popup-btn reset">🗑 СБРОСИТЬ ПРОГРЕСС</button>
+    <button class="debug-popup-btn close" onclick="this.parentElement.remove()">Закрыть</button>
   `;
   document.body.appendChild(customAlert);
 
-  document.getElementById('debugAddDay').onclick = function() {
-    st.streak = (st.streak || 0) + 1;
-    // Эмулируем, что игрок сделал зарядку сегодня, чтобы стрик закрепился
-    if (st.lastWorkout !== today) st.lastWorkout = today;
+  // КНОПКА ТЕСТА НЕДЕЛИ
+  document.getElementById('debugTestWeek').onclick = function() {
+    // Сброс перед тестом
+    st.streak = 0; st.keys = 0; st.stars = 0; st.shinyStars = 0;
+    st.gotBase = []; st.gotRare = []; st.gotEpic = []; st.gotLegend = false;
+    st.lastWorkout = null;
+    
+    // Эмуляция 7 дней
+    let testDate = new Date();
+    testDate.setDate(testDate.getDate() - 6); // Начинаем с 6 дней назад
+    
+    for(let i=0; i<7; i++) {
+      let dateStr = testDate.getFullYear() + '-' + String(testDate.getMonth()+1).padStart(2,'0') + '-' + String(testDate.getDate()).padStart(2,'0');
+      
+      // Логика doWorkout для каждого дня
+      let newStreak = (st.lastWorkout && isConsecutiveDay(st.lastWorkout, dateStr)) ? (st.streak + 1) : 1;
+      st.streak = newStreak;
+      st.lastWorkout = dateStr;
+
+      if (newStreak >= 1 && newStreak <= 4) {
+        st.keys++;
+        if (st.keys >= 4) {
+           const available = BASE.map((_,idx) => idx).filter(idx => !st.gotBase.includes(idx));
+           if(available.length>0) {
+             const idx = available[0];
+             st.gotBase.push(idx); st.charIdx = idx; st.keys = 0;
+           }
+        }
+      } else if (newStreak === 5 || newStreak === 6) {
+        st.stars++;
+      } else if (newStreak === 7) {
+        st.shinyStars++;
+        st.streak = 0;
+      }
+      
+      testDate.setDate(testDate.getDate() + 1);
+    }
+    
+    // Фиксируем "сегодня" как последний день
+    st.lastWorkout = today;
     save();
     render();
     this.parentElement.remove();
-    alert("Стрик увеличен до " + st.streak + "! Обновите экран.");
+    alert("✅ Тест завершен! Проверьте коллекцию и копилку.");
+  };
+
+  // КНОПКА СБРОСА
+  document.getElementById('debugReset').onclick = function() {
+    if(confirm("Точно сбросить весь прогресс?")) {
+      localStorage.removeItem('as_' + playerKey);
+      location.reload();
+    }
   };
 }
 
