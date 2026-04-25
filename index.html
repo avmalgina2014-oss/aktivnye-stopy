@@ -27,39 +27,15 @@
   .rank-pro { background: linear-gradient(135deg, #E3F2FD, #90CAF9); color: #1565C0; }
   .rank-master { background: linear-gradient(135deg, #1a1a2e, #16213e); color: #fff; }
   .keys-wallet { display: flex; gap: 12px; background: #f5f5f5; border-radius: 40px; padding: 6px 16px; }
+  .wallet-slot { display: flex; align-items: center; gap: 6px; font-family: 'Fredoka One', cursive; font-size: 18px; }
   .wallet-slot.star { color: #F9A825; }
   .wallet-slot.star-shiny { color: #FF6F00; }
   .greeting { font-size: 18px; font-weight: 900; color: #2d2d2d; margin-bottom: 4px; }
   .progress-text { font-size: 13px; color: #888; font-weight: 700; margin-bottom: 12px; line-height: 1.7; }
-  
-  /* 🔧 ГОРИЗОНТАЛЬНЫЕ КОМПАКТНЫЕ СЛОТЫ */
-  .keys-grid { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 10px; 
-    margin-bottom: 14px; 
-  }
-  .key-slot { 
-    width: 100%;
-    height: 42px; 
-    border-radius: 12px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-size: 18px; 
-    border: 3px dashed #e0e4ef; 
-    background: #f9f9f9; 
-    transition: all .4s ease; 
-    font-weight: 700;
-  }
-  .key-slot.filled { 
-    border: 3px solid gold; 
-    background: linear-gradient(135deg, #fffde7, #fff9c4); 
-    box-shadow: 0 4px 12px rgba(255,215,0,.4); 
-    animation: popIn .5s ease; 
-  }
+  .keys-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+  .key-slot { aspect-ratio: 1; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; border: 3px dashed #e0e4ef; background: #f9f9f9; transition: all .4s ease; }
+  .key-slot.filled { border: 3px solid gold; background: linear-gradient(135deg, #fffde7, #fff9c4); box-shadow: 0 4px 12px rgba(255,215,0,.4); animation: popIn .5s ease; }
   @keyframes popIn { 0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)} }
-  
   .char-wrap { border-radius: 18px; overflow: hidden; margin-bottom: 12px; display: none; background: #f5f5f5; }
   .char-wrap img { width: 100%; height: 200px; object-fit: contain; display: block; }
   .char-wrap.show { display: block; animation: zoomIn .6s ease; }
@@ -79,27 +55,16 @@
   .g-item { border-radius: 18px; border: 2px solid #e8e8e8; background: #f0f0f0; padding: 0; text-align: center; overflow: hidden; display: flex; flex-direction: column; transition: all .3s; }
   .g-item.got { background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.1); border-color: transparent; }
   .g-item.locked { padding: 20px 8px; align-items: center; justify-content: center; }
-  .g-item .g-img { width: 100%; height: 150px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; overflow: hidden; }
-  .g-item .g-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .g-item .g-img { width: 100%; }
+  .g-item .g-img img { width: 100%; height: auto; display: block; }
   .g-item .g-name { font-family: 'Fredoka One', cursive; font-size: 14px; padding: 8px 8px 12px; line-height: 1.3; color: #667eea; word-break: break-word; }
   .g-item .g-q { font-size: 44px; color: #ddd; margin-bottom: 6px; }
-  
-  .celebration { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.9); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .celebration { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.85); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
   .celebration.show { display: flex; }
   .celeb-box { background: transparent; border-radius: 32px; padding: 0; text-align: center; width: 100%; animation: zoomIn .4s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .celeb-emoji { font-size: 60px; display: block; margin-bottom: 10px; }
   .celeb-title { font-family: 'Fredoka One', cursive; font-size: 24px; color: #2d2d2d; margin-bottom: 6px; }
-  
-  .legend-glow {
-    width: 100%; max-width: 400px; border-radius: 20px;
-    box-shadow: 0 0 40px rgba(255, 165, 0, 0.8);
-    animation: legendPulse 1.5s infinite alternate;
-  }
-  @keyframes legendPulse {
-    0% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 165, 0, 0.5); }
-    100% { transform: scale(1.05); box-shadow: 0 0 60px rgba(255, 69, 0, 0.9); }
-  }
-
+  .celeb-img { width: 100%; max-width: 500px; border-radius: 20px; box-shadow: 0 0 30px rgba(255, 165, 0, 0.6); }
   .celeb-text { font-size: 14px; color: #888; font-weight: 700; margin-bottom: 18px; }
   .motivational { background: linear-gradient(135deg, #fff9c4, #ffecb3); border-radius: 14px; padding: 12px; font-size: 13px; font-weight: 700; color: #F57F17; display: none; margin: 8px 0; }
   .debug-btn { margin-top: 15px; font-size: 10px; color: #bbb; background: none; border: 1px dashed #ccc; padding: 5px; border-radius: 8px; width: 100%; cursor: pointer; }
@@ -108,17 +73,6 @@
   .debug-popup-btn.reset { background: #FFEBEE; color: #C62828; border: 1px solid #EF5350; }
   .debug-popup-btn.close { background: #f5f5f5; color: #666; }
   #legendBtn { display: none; }
-  
-  /* Анимация появления ключа */
-  .key-slot.filled::after {
-    content: '🔑';
-    animation: bounceIn .3s ease;
-  }
-  @keyframes bounceIn {
-    0% { transform: scale(0); }
-    50% { transform: scale(1.3); }
-    100% { transform: scale(1); }
-  }
 </style>
 </head>
 <body>
@@ -143,18 +97,16 @@
   </div>
   <div class="greeting" id="greeting">Привет!</div>
   <div class="progress-text" id="progressText"></div>
-  
-  <!-- Горизонтальные компактные слоты -->
   <div class="keys-grid" id="keysGrid">
-    <div class="key-slot" id="ks0"></div>
-    <div class="key-slot" id="ks1"></div>
-    <div class="key-slot" id="ks2"></div>
-    <div class="key-slot" id="ks3"></div>
+    <div class="key-slot" id="ks0"></div><div class="key-slot" id="ks1"></div>
+    <div class="key-slot" id="ks2"></div><div class="key-slot" id="ks3"></div>
   </div>
-  
   <div class="char-wrap" id="charWrap"><img id="charImg" src="" alt=""></div>
   <div class="motivational" id="motivationalBlock"></div>
+  
+  <!-- Кнопка для Легенды -->
   <button class="btn btn-gold" id="legendBtn" onclick="openLegend()">🔥 Открыть Легенду!</button>
+  
   <button class="btn btn-green" id="claimBtn" onclick="doWorkout()">Я сделал(а) зарядку! 🏃</button>
   <div class="cooldown-msg" id="cooldown"></div>
   <div class="collection-bar" onclick="showGallery()"><div class="col-title">🏅 Моя коллекция →</div></div>
@@ -177,7 +129,7 @@
 <div class="celebration" id="celebration">
   <div class="celeb-box" id="celebBox">
     <img class="celeb-img" id="celebImg" src="" alt="">
-    <button class="btn btn-gold" id="celebBtn" onclick="closeCeleb()" style="margin-top:20px; width: 200px;">Ты Легенда! 🔥</button>
+    <button class="btn btn-gold" id="celebBtn" onclick="closeCeleb()" style="margin-top:20px; width: 200px;">Я Легенда! 🔥</button>
   </div>
 </div>
 
@@ -209,17 +161,6 @@ let st = {};
 let playerKey = '';
 let justUnlockedChar = null;
 
-// 🔥 ЧЕСТНЫЙ РАНДОМ (Fisher-Yates shuffle)
-function getRandomItem(array) {
-  if (!array || array.length === 0) return null;
-  let arr = array.slice();
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr[0];
-}
-
 function getToday() {
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
@@ -245,7 +186,7 @@ function calculateCurrentStreak() {
 }
 
 function freshState() {
-  return { streak: 0, keys: 0, stars: 0, shinyStars: 0, gotBase: [], gotRare: [], gotEpic: [], gotLegend: false, lastWorkout: null, name: '', nick: '', charIdx: 0 };
+  return { streak: 0, keys: 0, stars: 0, shinyStars: 0, gotBase: [], gotRare: [], gotEpic: [], gotLegend: false, lastWorkout: null, name: '', nick: '', charIdx: Math.floor(Math.random() * BASE.length) };
 }
 
 function save() { if (playerKey) localStorage.setItem('as_' + playerKey, JSON.stringify(st)); }
@@ -267,8 +208,6 @@ function load() {
 function sound(type) {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    if (ctx.state === 'suspended') ctx.resume();
-    
     const seq = { 
       start:[[440,.12],[550,.12],[660,.12]], 
       key:[[900,0,'tri']], 
@@ -307,6 +246,7 @@ function getRank() {
   return {label:'🌱 НОВИЧОК', cls:'rank-novice'}; 
 }
 
+// ✅ ПРОВЕРКА: СОБРАНО ЛИ ВСЁ ДЛЯ ЛЕГЕНДЫ
 function canOpenLegend() {
   return (st.gotBase?.length >= BASE.length) && 
          (st.gotRare?.length >= RARE.length) && 
@@ -319,15 +259,18 @@ function celebrate(emoji, title, text, img, snd) {
   document.getElementById('celebImg').style.display = 'block';
   document.getElementById('celebBtn').style.display = 'block';
   document.getElementById('celebBtn').innerText = 'Ура! 🎉';
+  
   document.getElementById('celebEmoji').innerHTML = emoji;
   document.getElementById('celebTitle').innerHTML = title;
   document.getElementById('celebText').innerHTML = text;
   const el = document.getElementById('celebImg'); 
   if(img) { el.src=img; el.style.display='block'; } else el.style.display='none';
+  
   document.getElementById('celebration').classList.add('show'); 
   if(snd) sound(snd);
 }
 
+// 🔥 ФУНКЦИЯ ОТКРЫТИЯ ЛЕГЕНДЫ ПО КНОПКЕ
 window.openLegend = function() {
   if (!canOpenLegend()) {
     alert("Сначала собери всех базовых, редких и эпических персонажей!");
@@ -337,20 +280,21 @@ window.openLegend = function() {
   st.gotLegend = true;
   save();
   
+  // Показываем картинку Феникса на весь экран
   const el = document.getElementById('celebImg'); 
   el.src = LEGEND.img; 
   el.style.display = 'block';
-  el.className = 'legend-glow';
+  el.className = 'celeb-img'; // Используем обычный стиль, так как картинка уже красивая
   
-  document.getElementById('celebBtn').innerText = 'Ты Легенда! 🔥';
+  document.getElementById('celebBtn').innerText = 'Я Легенда! 🔥';
   document.getElementById('celebration').classList.add('show');
   sound('legend');
 };
 
 window.closeCeleb = function() { 
   document.getElementById('celebration').classList.remove('show');
-  justUnlockedChar = null;
-  setTimeout(() => render(), 100);
+  if(justUnlockedChar) setTimeout(()=>{justUnlockedChar=null;render();},100); 
+  else render(); 
 };
 
 function render() {
@@ -369,6 +313,7 @@ function render() {
   
   keysGrid.style.display = 'none'; charWrap.style.display = 'none'; charWrap.classList.remove('show'); motivational.style.display = 'none'; progressText.innerHTML = '';
   
+  // Управление кнопкой Легенды
   if (canOpenLegend()) {
     legendBtn.style.display = 'block';
   } else {
@@ -393,13 +338,7 @@ function render() {
     progressText.innerHTML = 'До суперсилы: ' + needed + ' ' + decl(needed, 'зарядка', 'зарядки', 'зарядок');
     for (let i = 0; i < 4; i++) {
       const sl = document.getElementById('ks' + i);
-      if (i < keys) { 
-        sl.classList.add('filled'); 
-        sl.innerHTML = ''; // Эмодзи добавляется через ::after в CSS
-      } else { 
-        sl.classList.remove('filled'); 
-        sl.innerHTML = ''; 
-      }
+      if (i < keys) { sl.classList.add('filled'); sl.innerHTML = '🔑'; } else { sl.classList.remove('filled'); sl.innerHTML = ''; }
     }
   }
   checkCooldown();
@@ -428,23 +367,18 @@ function doWorkout() {
   if (st.lastWorkout && isConsecutiveDay(st.lastWorkout, today)) newStreak = (st.streak || 0) + 1;
   st.streak = newStreak;
   st.lastWorkout = today;
-  
   if (newStreak >= 1 && newStreak <= 4) {
     st.keys = (st.keys || 0) + 1; save(); sound('key');
     if (st.keys >= 4) {
-      // 🔥 РАНДОМНЫЙ ВЫБОР из ещё не открытых базовых персонажей
       const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
       if (available.length > 0) {
-        const randomIdx = getRandomItem(available); 
-        st.gotBase.push(randomIdx); st.charIdx = randomIdx; st.keys = 0; save(); sound('base');
-        justUnlockedChar = BASE[randomIdx];
-        celebrate('🎉', BASE[randomIdx].power + ' открыта!', 'Суперсила добавлена!', BASE[randomIdx].img);
-        setTimeout(() => render(), 100); return;
+        const idx = available[Math.floor(Math.random() * available.length)];
+        st.gotBase.push(idx); st.charIdx = idx; st.keys = 0; save(); sound('base');
+        justUnlockedChar = BASE[idx];
+        celebrate('🎉', BASE[idx].power + ' открыта!', 'Суперсила добавлена!', BASE[idx].img);
+        render(); return;
       }
-    } else { 
-      const praise = getRandomItem(PRAISE_PHRASES);
-      celebrate('🔑', 'Ключ ' + st.keys + ' из 4!', praise); 
-    }
+    } else { celebrate('🔑', 'Ключ ' + st.keys + ' из 4!', PRAISE_PHRASES[Math.floor(Math.random()*PRAISE_PHRASES.length)]); }
   } else if (newStreak === 5 || newStreak === 6) {
     st.stars = (st.stars || 0) + 1; save(); sound('rare');
     celebrate('⭐', 'Звезда получена!', 'У тебя ' + st.stars + ' ⭐.');
@@ -557,19 +491,13 @@ window.hideGallery = function() {
 window.showDebugPopup = function() {
   const today = getToday();
   const streak = calculateCurrentStreak();
-  const canLegend = canOpenLegend();
   const msg = "🕵️ ДАННЫЕ:\n\n" +
               "📅 Сегодня: " + today + "\n" +
               "🏃 Последний клик: " + (st.lastWorkout || "нет") + "\n" +
               "🔥 Стрик: " + st.streak + "\n" +
               "🔑 Ключей: " + (st.keys||0) + "\n" +
               "⭐ Звезд: " + (st.stars||0) + "\n" +
-              "🌟 Сияющих: " + (st.shinyStars||0) + "\n\n" +
-              "📊 Прогресс:\n" +
-              "Базовых: " + (st.gotBase?.length||0) + "/8\n" +
-              "Редких: " + (st.gotRare?.length||0) + "/4\n" +
-              "Эпических: " + (st.gotEpic?.length||0) + "/2\n\n" +
-              "🔥 Можно открыть Легенду: " + (canLegend ? "ДА ✅" : "НЕТ ❌");
+              "🌟 Сияющих: " + (st.shinyStars||0);
   let customAlert = document.createElement('div');
   customAlert.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:20px;border-radius:20px;box-shadow:0 0 20px rgba(0,0,0,0.5);z-index:9999;text-align:center;width:90%;max-width:320px;";
   customAlert.innerHTML = `
@@ -581,11 +509,10 @@ window.showDebugPopup = function() {
   `;
   document.body.appendChild(customAlert);
   document.getElementById('debugTestWeek').onclick = function() {
-    // 🔥 РАНДОМНОЕ ОТКРЫТИЕ одного базового персонажа
     const availableBase = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
     let charAdded = false;
     if (availableBase.length > 0) {
-      const randomIdx = getRandomItem(availableBase);
+      const randomIdx = availableBase[Math.floor(Math.random() * availableBase.length)];
       st.gotBase.push(randomIdx);
       st.charIdx = randomIdx;
       charAdded = true;
