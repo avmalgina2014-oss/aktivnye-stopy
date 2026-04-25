@@ -55,17 +55,46 @@
   .g-item { border-radius: 18px; border: 2px solid #e8e8e8; background: #f0f0f0; padding: 0; text-align: center; overflow: hidden; display: flex; flex-direction: column; transition: all .3s; }
   .g-item.got { background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.1); border-color: transparent; }
   .g-item.locked { padding: 20px 8px; align-items: center; justify-content: center; }
-  /* ✅ ВОЗВРАЩЕН ОРИГИНАЛЬНЫЙ РАЗМЕР КАРТИНОК */
-  .g-item .g-img { width: 100%; }
-  .g-item .g-img img { width: 100%; height: auto; display: block; }
+  
+  /* ✅ КРУПНЫЕ КАРТИНКИ В ГАЛЕРЕЕ */
+  .g-item .g-img { 
+    width: 100%; 
+    height: 150px; /* Больше половины карточки */
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    background: #f8f9fa; 
+    overflow: hidden;
+  }
+  .g-item .g-img img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain; 
+    display: block; 
+  }
+  
   .g-item .g-name { font-family: 'Fredoka One', cursive; font-size: 14px; padding: 8px 8px 12px; line-height: 1.3; color: #667eea; word-break: break-word; }
   .g-item .g-q { font-size: 44px; color: #ddd; margin-bottom: 6px; }
-  .celebration { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.85); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  
+  .celebration { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.9); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
   .celebration.show { display: flex; }
   .celeb-box { background: transparent; border-radius: 32px; padding: 0; text-align: center; width: 100%; animation: zoomIn .4s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .celeb-emoji { font-size: 60px; display: block; margin-bottom: 10px; }
   .celeb-title { font-family: 'Fredoka One', cursive; font-size: 24px; color: #2d2d2d; margin-bottom: 6px; }
-  .celeb-img { width: 100%; max-width: 500px; border-radius: 20px; box-shadow: 0 0 30px rgba(255, 165, 0, 0.6); }
+  
+  /* ✅ ФАНФАРЫ ДЛЯ ФЕНИКСА */
+  .legend-glow {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(255, 165, 0, 0.8);
+    animation: legendPulse 1.5s infinite alternate;
+  }
+  @keyframes legendPulse {
+    0% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 165, 0, 0.5); }
+    100% { transform: scale(1.05); box-shadow: 0 0 60px rgba(255, 69, 0, 0.9); }
+  }
+
   .celeb-text { font-size: 14px; color: #888; font-weight: 700; margin-bottom: 18px; }
   .motivational { background: linear-gradient(135deg, #fff9c4, #ffecb3); border-radius: 14px; padding: 12px; font-size: 13px; font-weight: 700; color: #F57F17; display: none; margin: 8px 0; }
   .debug-btn { margin-top: 15px; font-size: 10px; color: #bbb; background: none; border: 1px dashed #ccc; padding: 5px; border-radius: 8px; width: 100%; cursor: pointer; }
@@ -159,16 +188,13 @@ let st = {};
 let playerKey = '';
 let justUnlockedChar = null;
 
-// 🔥 ЧЕСТНЫЙ РАНДОМ (ПЕРЕМЕШИВАНИЕ МАССИВА)
+// 🔥 ЧЕСТНЫЙ РАНДОМ (ПЕРЕМЕШИВАНИЕ)
 function getRandomItem(array) {
-  // Создаем копию массива, чтобы не ломать оригинал
   let arr = array.slice();
-  // Перемешиваем (алгоритм Фишера-Йетса)
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  // Берем первый элемент из перемешанного
   return arr[0];
 }
 
@@ -218,9 +244,8 @@ function load() {
 
 function sound(type) {
   try {
-    // Инициализация контекста звука
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    if (ctx.state === 'suspended') ctx.resume(); // Важно для мобильных
+    if (ctx.state === 'suspended') ctx.resume();
     
     const seq = { 
       start:[[440,.12],[550,.12],[660,.12]], 
@@ -281,7 +306,7 @@ function celebrate(emoji, title, text, img, snd) {
   if(snd) sound(snd);
 }
 
-// 🔥 ОТКРЫТИЕ ЛЕГЕНДЫ
+// 🔥 ОТКРЫТИЕ ЛЕГЕНДЫ С ФАНФАРАМИ
 window.openLegend = function() {
   if (!canOpenLegend()) {
     alert("Сначала собери всех базовых, редких и эпических персонажей!");
@@ -294,12 +319,13 @@ window.openLegend = function() {
   const el = document.getElementById('celebImg'); 
   el.src = LEGEND.img; 
   el.style.display = 'block';
-  el.className = 'celeb-img';
+  // Добавляем класс для свечения и пульсации
+  el.className = 'legend-glow';
   
   document.getElementById('celebBtn').innerText = 'Ты Легенда! 🔥';
   document.getElementById('celebration').classList.add('show');
   
-  // Звук строго внутри клика
+  // Звук фанфар
   sound('legend');
 };
 
@@ -383,9 +409,7 @@ function doWorkout() {
     if (st.keys >= 4) {
       const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
       if (available.length > 0) {
-        // 🔥 ЧЕСТНЫЙ РАНДОМ (ВЫБИРАЕМ ОДИН ИЗ ДОСТУПНЫХ)
         const randomCharObj = getRandomItem(available); 
-        // randomCharObj это индекс, т.к. available - это массив индексов [0,1,2...]
         const idx = randomCharObj; 
         
         st.gotBase.push(idx); st.charIdx = idx; st.keys = 0; save(); sound('base');
@@ -536,7 +560,6 @@ window.showDebugPopup = function() {
     const availableBase = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
     let charAdded = false;
     if (availableBase.length > 0) {
-      // 🔥 ЧЕСТНЫЙ РАНДОМ В ТЕСТЕ
       const randomCharObj = getRandomItem(availableBase);
       const randomIdx = randomCharObj;
       st.gotBase.push(randomIdx);
