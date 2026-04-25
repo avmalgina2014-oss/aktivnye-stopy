@@ -55,7 +55,7 @@
   .g-item { border-radius: 18px; border: 2px solid #e8e8e8; background: #f0f0f0; padding: 0; text-align: center; overflow: hidden; display: flex; flex-direction: column; transition: all .3s; }
   .g-item.got { background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.1); border-color: transparent; }
   .g-item.locked { padding: 20px 8px; align-items: center; justify-content: center; }
-  /* ✅ ИСХОДНЫЙ РАЗМЕР КАРТИНОК (БЕЗ ИЗМЕНЕНИЙ) */
+  /* ✅ ВОЗВРАЩЕН ОРИГИНАЛЬНЫЙ РАЗМЕР КАРТИНОК */
   .g-item .g-img { width: 100%; }
   .g-item .g-img img { width: 100%; height: auto; display: block; }
   .g-item .g-name { font-family: 'Fredoka One', cursive; font-size: 14px; padding: 8px 8px 12px; line-height: 1.3; color: #667eea; word-break: break-word; }
@@ -159,17 +159,17 @@ let st = {};
 let playerKey = '';
 let justUnlockedChar = null;
 
-// 🔐 ГАРАНТИРОВАННЫЙ РАНДОМ (КРИПТО + СМЕШИВАНИЕ)
-function getRandomIndex(array) {
-  let rnd;
-  if (window.crypto && window.crypto.getRandomValues) {
-    const arr = new Uint32Array(1);
-    window.crypto.getRandomValues(arr);
-    rnd = arr[0] / (0xFFFFFFFF + 1);
-  } else {
-    rnd = Math.random();
+// 🔥 ЧЕСТНЫЙ РАНДОМ (ПЕРЕМЕШИВАНИЕ МАССИВА)
+function getRandomItem(array) {
+  // Создаем копию массива, чтобы не ломать оригинал
+  let arr = array.slice();
+  // Перемешиваем (алгоритм Фишера-Йетса)
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  return Math.floor(rnd * array.length);
+  // Берем первый элемент из перемешанного
+  return arr[0];
 }
 
 function getToday() {
@@ -218,7 +218,10 @@ function load() {
 
 function sound(type) {
   try {
+    // Инициализация контекста звука
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume(); // Важно для мобильных
+    
     const seq = { 
       start:[[440,.12],[550,.12],[660,.12]], 
       key:[[900,0,'tri']], 
@@ -278,7 +281,7 @@ function celebrate(emoji, title, text, img, snd) {
   if(snd) sound(snd);
 }
 
-// 🔥 ОТКРЫТИЕ ЛЕГЕНДЫ ПО КНОПКЕ
+// 🔥 ОТКРЫТИЕ ЛЕГЕНДЫ
 window.openLegend = function() {
   if (!canOpenLegend()) {
     alert("Сначала собери всех базовых, редких и эпических персонажей!");
@@ -296,7 +299,7 @@ window.openLegend = function() {
   document.getElementById('celebBtn').innerText = 'Ты Легенда! 🔥';
   document.getElementById('celebration').classList.add('show');
   
-  // Звук вызывается строго внутри клика (браузеры разрешают)
+  // Звук строго внутри клика
   sound('legend');
 };
 
@@ -380,14 +383,20 @@ function doWorkout() {
     if (st.keys >= 4) {
       const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
       if (available.length > 0) {
-        // 🔐 НАСТОЯЩИЙ РАНДОМ
-        const idx = available[getRandomIndex(available)];
+        // 🔥 ЧЕСТНЫЙ РАНДОМ (ВЫБИРАЕМ ОДИН ИЗ ДОСТУПНЫХ)
+        const randomCharObj = getRandomItem(available); 
+        // randomCharObj это индекс, т.к. available - это массив индексов [0,1,2...]
+        const idx = randomCharObj; 
+        
         st.gotBase.push(idx); st.charIdx = idx; st.keys = 0; save(); sound('base');
         justUnlockedChar = BASE[idx];
         celebrate('🎉', BASE[idx].power + ' открыта!', 'Суперсила добавлена!', BASE[idx].img);
         setTimeout(() => render(), 100); return;
       }
-    } else { celebrate('🔑', 'Ключ ' + st.keys + ' из 4!', PRAISE_PHRASES[getRandomIndex(PRAISE_PHRASES)]); }
+    } else { 
+      const praise = getRandomItem(PRAISE_PHRASES);
+      celebrate('🔑', 'Ключ ' + st.keys + ' из 4!', praise); 
+    }
   } else if (newStreak === 5 || newStreak === 6) {
     st.stars = (st.stars || 0) + 1; save(); sound('rare');
     celebrate('⭐', 'Звезда получена!', 'У тебя ' + st.stars + ' ⭐.');
@@ -527,8 +536,9 @@ window.showDebugPopup = function() {
     const availableBase = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
     let charAdded = false;
     if (availableBase.length > 0) {
-      // 🔐 НАСТОЯЩИЙ РАНДОМ ДЛЯ ТЕСТА
-      const randomIdx = availableBase[getRandomIndex(availableBase)];
+      // 🔥 ЧЕСТНЫЙ РАНДОМ В ТЕСТЕ
+      const randomCharObj = getRandomItem(availableBase);
+      const randomIdx = randomCharObj;
       st.gotBase.push(randomIdx);
       st.charIdx = randomIdx;
       charAdded = true;
