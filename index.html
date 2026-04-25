@@ -15,6 +15,8 @@
   .btn:hover { transform: translateY(-2px); }
   .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
   .btn-green { background: linear-gradient(135deg, #2E7D32, #4CAF50); box-shadow: 0 4px 16px rgba(46,125,50,.4); }
+  .btn-gold { background: linear-gradient(135deg, #F9A825, #FF6F00); box-shadow: 0 4px 16px rgba(249,168,37,.4); animation: pulseGold 2s infinite; }
+  @keyframes pulseGold { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
   .field-label { font-size: 12px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; text-align: left; }
   .field-input { width: 100%; border: 3px solid #e0e4ef; border-radius: 14px; padding: 11px 14px; font-family: 'Nunito', sans-serif; font-size: 17px; font-weight: 700; outline: none; text-align: center; margin-bottom: 14px; transition: border-color .2s; }
   .field-input:focus { border-color: #667eea; }
@@ -57,12 +59,12 @@
   .g-item .g-img img { width: 100%; height: auto; display: block; }
   .g-item .g-name { font-family: 'Fredoka One', cursive; font-size: 14px; padding: 8px 8px 12px; line-height: 1.3; color: #667eea; word-break: break-word; }
   .g-item .g-q { font-size: 44px; color: #ddd; margin-bottom: 6px; }
-  .celebration { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.8); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
+  .celebration { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.85); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
   .celebration.show { display: flex; }
-  .celeb-box { background: #fff; border-radius: 32px; padding: 28px 24px; text-align: center; max-width: 340px; width: 100%; animation: zoomIn .4s ease; }
+  .celeb-box { background: transparent; border-radius: 32px; padding: 0; text-align: center; width: 100%; animation: zoomIn .4s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .celeb-emoji { font-size: 60px; display: block; margin-bottom: 10px; }
   .celeb-title { font-family: 'Fredoka One', cursive; font-size: 24px; color: #2d2d2d; margin-bottom: 6px; }
-  .celeb-img { width: 100%; max-height: 160px; object-fit: contain; border-radius: 14px; margin: 10px 0; display: none; }
+  .celeb-img { width: 100%; max-width: 500px; border-radius: 20px; box-shadow: 0 0 30px rgba(255, 165, 0, 0.6); }
   .celeb-text { font-size: 14px; color: #888; font-weight: 700; margin-bottom: 18px; }
   .motivational { background: linear-gradient(135deg, #fff9c4, #ffecb3); border-radius: 14px; padding: 12px; font-size: 13px; font-weight: 700; color: #F57F17; display: none; margin: 8px 0; }
   .debug-btn { margin-top: 15px; font-size: 10px; color: #bbb; background: none; border: 1px dashed #ccc; padding: 5px; border-radius: 8px; width: 100%; cursor: pointer; }
@@ -70,19 +72,7 @@
   .debug-popup-btn.test { background: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
   .debug-popup-btn.reset { background: #FFEBEE; color: #C62828; border: 1px solid #EF5350; }
   .debug-popup-btn.close { background: #f5f5f5; color: #666; }
-
-  /* Специальный стиль для картинки Феникса (Легенды) */
-  .legend-img-full {
-    width: 100%;
-    height: auto;
-    border-radius: 20px;
-    box-shadow: 0 0 30px rgba(255, 165, 0, 0.6);
-    animation: glowPulse 2s infinite alternate;
-  }
-  @keyframes glowPulse {
-    from { box-shadow: 0 0 20px rgba(255, 165, 0, 0.4); }
-    to { box-shadow: 0 0 40px rgba(255, 69, 0, 0.8); }
-  }
+  #legendBtn { display: none; }
 </style>
 </head>
 <body>
@@ -113,6 +103,7 @@
   </div>
   <div class="char-wrap" id="charWrap"><img id="charImg" src="" alt=""></div>
   <div class="motivational" id="motivationalBlock"></div>
+  <button class="btn btn-gold" id="legendBtn" onclick="openLegend()">🔥 Открыть Легенду!</button>
   <button class="btn btn-green" id="claimBtn" onclick="doWorkout()">Я сделал(а) зарядку! 🏃</button>
   <div class="cooldown-msg" id="cooldown"></div>
   <div class="collection-bar" onclick="showGallery()"><div class="col-title">🏅 Моя коллекция →</div></div>
@@ -134,11 +125,8 @@
 
 <div class="celebration" id="celebration">
   <div class="celeb-box" id="celebBox">
-    <span class="celeb-emoji" id="celebEmoji">🎉</span>
-    <div class="celeb-title" id="celebTitle"></div>
     <img class="celeb-img" id="celebImg" src="" alt="">
-    <div class="celeb-text" id="celebText"></div>
-    <button class="btn" id="celebBtn" onclick="closeCeleb()">Ура! 🎉</button>
+    <button class="btn btn-gold" id="celebBtn" onclick="closeCeleb()" style="margin-top:20px; width: 200px;">Я Легенда! 🔥</button>
   </div>
 </div>
 
@@ -170,6 +158,13 @@ let st = {};
 let playerKey = '';
 let justUnlockedChar = null;
 
+// 🔥 КРИПТОСТОЙКИЙ РАНДОМ (непредсказуемый!)
+function getSecureRandom(max) {
+  const array = new Uint32Array(1);
+  window.crypto.getRandomValues(array);
+  return array[0] % max;
+}
+
 function getToday() {
   const d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
@@ -195,7 +190,7 @@ function calculateCurrentStreak() {
 }
 
 function freshState() {
-  return { streak: 0, keys: 0, stars: 0, shinyStars: 0, gotBase: [], gotRare: [], gotEpic: [], gotLegend: false, lastWorkout: null, name: '', nick: '', charIdx: Math.floor(Math.random() * BASE.length) };
+  return { streak: 0, keys: 0, stars: 0, shinyStars: 0, gotBase: [], gotRare: [], gotEpic: [], gotLegend: false, lastWorkout: null, name: '', nick: '', charIdx: null };
 }
 
 function save() { if (playerKey) localStorage.setItem('as_' + playerKey, JSON.stringify(st)); }
@@ -255,13 +250,18 @@ function getRank() {
   return {label:'🌱 НОВИЧОК', cls:'rank-novice'}; 
 }
 
+function canOpenLegend() {
+  return (st.gotBase?.length >= BASE.length) && 
+         (st.gotRare?.length >= RARE.length) && 
+         (st.gotEpic?.length >= EPIC.length) && 
+         !st.gotLegend;
+}
+
 function celebrate(emoji, title, text, img, snd) {
-  // Сбрасываем стили легенды
   document.getElementById('celebImg').className = 'celeb-img'; 
-  document.getElementById('celebEmoji').style.display = 'block';
-  document.getElementById('celebTitle').style.display = 'block';
-  document.getElementById('celebText').style.display = 'block';
+  document.getElementById('celebImg').style.display = 'block';
   document.getElementById('celebBtn').style.display = 'block';
+  document.getElementById('celebBtn').innerText = 'Ура! 🎉';
   
   document.getElementById('celebEmoji').innerHTML = emoji;
   document.getElementById('celebTitle').innerHTML = title;
@@ -273,29 +273,27 @@ function celebrate(emoji, title, text, img, snd) {
   if(snd) sound(snd);
 }
 
-// Специальная функция для Легенды (Феникса)
-function celebrateLegend() {
-  // Скрываем обычный текст и эмодзи
-  document.getElementById('celebEmoji').style.display = 'none';
-  document.getElementById('celebTitle').style.display = 'none';
-  document.getElementById('celebText').style.display = 'none';
-  document.getElementById('celebBtn').style.display = 'block'; // Кнопку оставляем
-  document.getElementById('celebBtn').innerText = 'Я Легенда! 🔥';
-
+window.openLegend = function() {
+  if (!canOpenLegend()) {
+    alert("Сначала собери всех базовых, редких и эпических персонажей!");
+    return;
+  }
+  
+  st.gotLegend = true;
+  save();
+  
   const el = document.getElementById('celebImg'); 
   el.src = LEGEND.img; 
   el.style.display = 'block';
-  // Добавляем спец класс для свечения и размера
-  el.className = 'legend-img-full';
-
+  el.className = 'celeb-img';
+  
+  document.getElementById('celebBtn').innerText = 'Я Легенда! 🔥';
   document.getElementById('celebration').classList.add('show');
   sound('legend');
-}
+};
 
 window.closeCeleb = function() { 
   document.getElementById('celebration').classList.remove('show');
-  // Возвращаем стили
-  document.getElementById('celebImg').className = 'celeb-img';
   if(justUnlockedChar) setTimeout(()=>{justUnlockedChar=null;render();},100); 
   else render(); 
 };
@@ -312,7 +310,16 @@ function render() {
   const charWrap = document.getElementById('charWrap');
   const progressText = document.getElementById('progressText');
   const motivational = document.getElementById('motivationalBlock');
+  const legendBtn = document.getElementById('legendBtn');
+  
   keysGrid.style.display = 'none'; charWrap.style.display = 'none'; charWrap.classList.remove('show'); motivational.style.display = 'none'; progressText.innerHTML = '';
+  
+  if (canOpenLegend()) {
+    legendBtn.style.display = 'block';
+  } else {
+    legendBtn.style.display = 'none';
+  }
+  
   if (justUnlockedChar) {
     charWrap.style.display = 'block'; charWrap.classList.add('show');
     document.getElementById('charImg').src = justUnlockedChar.img;
@@ -365,11 +372,12 @@ function doWorkout() {
     if (st.keys >= 4) {
       const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
       if (available.length > 0) {
-        const idx = available[Math.floor(Math.random() * available.length)];
+        // 🔥 ИСПОЛЬЗУЕМ КРИПТОСТОЙКИЙ РАНДОМ
+        const idx = available[getSecureRandom(available.length)];
         st.gotBase.push(idx); st.charIdx = idx; st.keys = 0; save(); sound('base');
         justUnlockedChar = BASE[idx];
         celebrate('🎉', BASE[idx].power + ' открыта!', 'Суперсила добавлена!', BASE[idx].img);
-        checkLegendary(); render(); return;
+        render(); return;
       }
     } else { celebrate('🔑', 'Ключ ' + st.keys + ' из 4!', PRAISE_PHRASES[Math.floor(Math.random()*PRAISE_PHRASES.length)]); }
   } else if (newStreak === 5 || newStreak === 6) {
@@ -380,13 +388,6 @@ function doWorkout() {
     celebrate('🌟', 'Сияющая звезда!', 'У тебя ' + st.shinyStars + ' 🌟.');
   }
   save(); render();
-}
-
-function checkLegendary() {
-  if (!st.gotLegend && st.gotBase?.length >= BASE.length && st.gotRare?.length >= RARE.length && st.gotEpic?.length >= EPIC.length) {
-    st.gotLegend = true; save();
-    setTimeout(() => celebrateLegend(), 500);
-  }
 }
 
 window.switchTab = function(tab, btn) { 
@@ -462,7 +463,6 @@ function spendStars(tab, idx, cost) {
     st.gotRare.push(idx); 
     save(); 
     celebrate('⭐',RARE[idx].power+' открыта!',RARE[idx].name+' теперь в твоей коллекции!',RARE[idx].img,'rare');
-    checkLegendary();
     renderGallery(tab);
   } else if(tab==='epic'){
     if((st.shinyStars||0)<cost) { alert('Недостаточно сияющих звёзд!'); return; }
@@ -472,7 +472,6 @@ function spendStars(tab, idx, cost) {
     st.gotEpic.push(idx); 
     save(); 
     celebrate('🌟',EPIC[idx].power+' открыта!',EPIC[idx].name+' теперь в твоей коллекции!',EPIC[idx].img,'epic');
-    checkLegendary();
     renderGallery(tab);
   }
 }
@@ -514,7 +513,8 @@ window.showDebugPopup = function() {
     const availableBase = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
     let charAdded = false;
     if (availableBase.length > 0) {
-      const randomIdx = availableBase[Math.floor(Math.random() * availableBase.length)];
+      // 🔥 КРИПТОСТОЙКИЙ РАНДОМ ДЛЯ ТЕСТА
+      const randomIdx = availableBase[getSecureRandom(availableBase.length)];
       st.gotBase.push(randomIdx);
       st.charIdx = randomIdx;
       charAdded = true;
@@ -525,7 +525,6 @@ window.showDebugPopup = function() {
     st.streak = 0;
     st.lastWorkout = getToday();
     save();
-    checkLegendary();
     render();
     this.parentElement.remove();
     if(charAdded) {
