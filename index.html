@@ -108,31 +108,9 @@
   .celebration { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.9); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
   .celebration.show { display: flex; }
   .celeb-box { background: transparent; max-width: 340px; width: 100%; border-radius: 48px; padding: 12px; text-align: center; animation: zoomIn .3s ease; }
-  
-  /* ✅ КРУПНАЯ КАРТИНКА ФЕНИКСА */
-  .celeb-img { 
-    width: 100%; 
-    max-height: 220px; 
-    object-fit: contain; 
-    border-radius: 28px; 
-    background: white; 
-    padding: 16px; 
-    margin-bottom: 16px; 
-    background: #fff6e0;
-  }
-  
-  /* ✅ ФАНФАРЫ: золотое свечение и пульсация */
-  .legend-glow { 
-    box-shadow: 0 0 40px #ffaa33; 
-    animation: legendPulse 1.2s infinite alternate; 
-    border-radius: 28px; 
-  }
-  @keyframes legendPulse { 
-    0% { transform: scale(1); box-shadow: 0 0 20px #ffaa55; } 
-    100% { transform: scale(1.03); box-shadow: 0 0 60px #ff6a00, 0 0 90px rgba(255,100,0,0.4); } 
-  }
-  
-  /* ✅ КРУПНАЯ НАДПИСЬ "ТЫ ЛЕГЕНДА!" */
+  .celeb-img { width: 100%; max-height: 220px; object-fit: contain; border-radius: 28px; background: white; padding: 16px; margin-bottom: 16px; background: #fff6e0; }
+  .legend-glow { box-shadow: 0 0 40px #ffaa33; animation: legendPulse 1.2s infinite alternate; border-radius: 28px; }
+  @keyframes legendPulse { 0% { transform: scale(1); box-shadow: 0 0 20px #ffaa55; } 100% { transform: scale(1.03); box-shadow: 0 0 60px #ff6a00, 0 0 90px rgba(255,100,0,0.4); } }
   .legend-title {
     font-family: 'Fredoka One', cursive;
     font-size: 32px;
@@ -145,15 +123,8 @@
     margin: 0 0 12px 0;
     text-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
-  @keyframes goldShimmer {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  @keyframes titlePulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-  }
+  @keyframes goldShimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+  @keyframes titlePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
   
   .motivational { background: linear-gradient(135deg, #fff9c4, #ffecb3); border-radius: 20px; padding: 10px; font-size: 12px; font-weight: 700; color: #F57F17; display: none; margin: 6px 0; }
   .debug-btn { margin-top: 12px; font-size: 10px; color: #bbb; background: none; border: 1px dashed #ddd; padding: 4px; border-radius: 20px; width: 100%; cursor: pointer; }
@@ -187,10 +158,7 @@
   </div>
   <div class="char-wrap" id="charWrap"><img id="charImg" src="" alt=""></div>
   <div class="motivational" id="motivationalBlock"></div>
-  
-  <!-- 🔥 КНОПКА ОТКРЫТИЯ ЛЕГЕНДЫ (появляется, когда все собрано) -->
   <button class="btn btn-gold" id="legendBtn" onclick="openLegend()">🔥 Открыть Легенду!</button>
-  
   <button class="btn btn-green" id="claimBtn" onclick="doWorkout()">Я сделал(а) зарядку! 🏃</button>
   <div class="cooldown-msg" id="cooldown"></div>
   <div class="collection-bar" onclick="showGallery()"><div class="col-title">🏅 Моя коллекция →</div></div>
@@ -210,14 +178,10 @@
   <button class="btn" onclick="hideGallery()" style="margin-top:6px">← Назад</button>
 </div>
 
-<!-- ✅ ОКНО ЛЕГЕНДЫ С ФАНФАРАМИ -->
 <div class="celebration" id="celebration">
   <div class="celeb-box" id="celebBox">
-    <!-- Надпись "Ты Легенда!" крупно -->
     <span class="legend-title">ТЫ ЛЕГЕНДА!</span>
-    <!-- Картинка Феникса -->
     <img class="celeb-img legend-glow" id="celebImg" src="" alt="">
-    <!-- Кнопка закрытия -->
     <button class="btn btn-gold" onclick="closeCeleb()" style="margin-top:8px; width: 200px;">Я Легенда! 🔥</button>
   </div>
 </div>
@@ -341,7 +305,6 @@ function getRank() {
   return {label:'🌱 НОВИЧОК', cls:'rank-novice'}; 
 }
 
-// ✅ ПРОВЕРКА: можно ли открыть Легенду?
 function canOpenLegend() {
   return (st.gotBase?.length >= BASE.length) && 
          (st.gotRare?.length >= RARE.length) && 
@@ -349,27 +312,18 @@ function canOpenLegend() {
          !st.gotLegend;
 }
 
-// 🔥 ОТКРЫТИЕ ЛЕГЕНДЫ: Феникс + надпись "Ты Легенда!" + фанфары
 window.openLegend = function() {
   if (!canOpenLegend()) {
     alert("Сначала собери всех персонажей:\n• 8 базовых (через ключи)\n• 4 редких (за 4 ⭐ каждый)\n• 2 эпических (за 4 🌟 каждый)");
     return;
   }
-  
-  // Помечаем Легенду как открытую
   st.gotLegend = true;
   save();
-  
-  // Показываем окно с Фениксом
   const img = document.getElementById('celebImg');
   img.src = LEGEND.img;
   img.style.display = 'block';
-  img.className = 'celeb-img legend-glow'; // включаем свечение
-  
-  // Показываем окно
+  img.className = 'celeb-img legend-glow';
   document.getElementById('celebration').classList.add('show');
-  
-  // Звук фанфар (только по клику — разрешено браузером)
   sound('legend');
 };
 
@@ -395,7 +349,6 @@ function render() {
   
   keysGrid.style.display = 'none'; charWrap.style.display = 'none'; charWrap.classList.remove('show'); motivational.style.display = 'none'; progressText.innerHTML = '';
   
-  // 🔥 Показываем кнопку "Открыть Легенду", если все собрано
   if (canOpenLegend()) {
     legendBtn.style.display = 'block';
   } else {
@@ -440,7 +393,6 @@ function checkCooldown() {
   }
 }
 
-// ОСНОВНАЯ ИГРОВАЯ ЛОГИКА — ты проходишь сама, по 1 неделе
 function doWorkout() {
   const today = getToday();
   if (st.lastWorkout === today) { checkCooldown(); return; }
@@ -449,7 +401,6 @@ function doWorkout() {
   st.streak = newStreak;
   st.lastWorkout = today;
   
-  // Дни 1-4: ключи → при 4 ключах открываем СЛУЧАЙНОГО базового
   if (newStreak >= 1 && newStreak <= 4) {
     st.keys = (st.keys || 0) + 1;
     save(); 
@@ -457,7 +408,6 @@ function doWorkout() {
     if (st.keys >= 4) {
       const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
       if (available.length > 0) {
-        // 🔥 СЛУЧАЙНЫЙ выбор из ещё не открытых
         const randomIndex = getRandomItemFromList(available);
         const idx = randomIndex;
         st.gotBase.push(idx);
@@ -466,12 +416,10 @@ function doWorkout() {
         save();
         sound('base');
         justUnlockedChar = BASE[idx];
-        // Показываем открытого персонажа
         celebrate(BASE[idx].img, `${BASE[idx].power} открыта!`, 'Новая способность активирована!', 'base');
         setTimeout(() => render(), 100);
         return;
       } else {
-        // Все базовые уже открыты — даём звезду за старание
         st.keys = 0;
         st.stars = (st.stars || 0) + 1;
         save();
@@ -482,13 +430,11 @@ function doWorkout() {
       celebrate('', '🔑 Ещё ключ!', praise);
     }
   } 
-  // Дни 5-6: обычная звезда ⭐
   else if (newStreak === 5 || newStreak === 6) {
     st.stars = (st.stars || 0) + 1;
     save(); sound('rare');
     celebrate('', '⭐ Звезда суперсилы!', `У тебя ${st.stars} ⭐. Открывай редких в коллекции!`);
   } 
-  // День 7: сияющая звезда 🌟 + сброс стрика
   else if (newStreak === 7) {
     st.shinyStars = (st.shinyStars || 0) + 1;
     st.streak = 0;
@@ -499,13 +445,12 @@ function doWorkout() {
   render();
 }
 
-// Вспомогательная функция для показа обычных уведомлений
 function celebrate(imgSrc, title, customMsg, sndType) {
   const box = document.getElementById('celebImg');
   if (imgSrc) {
     box.src = imgSrc;
     box.style.display = 'block';
-    box.className = 'celeb-img'; // обычная картинка, без свечения
+    box.className = 'celeb-img';
   } else {
     box.style.display = 'none';
   }
@@ -514,7 +459,6 @@ function celebrate(imgSrc, title, customMsg, sndType) {
   if (sndType) sound(sndType);
 }
 
-// ГАЛЕРЕЯ и покупка за звёзды
 window.switchTab = function(tab, btn) { 
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); 
   btn.classList.add('active'); 
@@ -612,12 +556,63 @@ window.hideGallery = function() {
   render(); 
 };
 
-// Окно отладки (только для тебя, Анастасия)
+// ✅ ИСПРАВЛЕННАЯ ФУНКЦИЯ: ПОШАГОВОЕ ТЕСТИРОВАНИЕ ПО 1 НЕДЕЛЕ
 window.showDebugPopup = function() {
-  const canLegend = canOpenLegend();
-  const msg = `🔍 Данные 🔍\n\n⭐ Звезд: ${st.stars||0}\n🌟 Сияющих: ${st.shinyStars||0}\n📦 Базовых: ${st.gotBase?.length||0}/8\n✨ Редких: ${st.gotRare?.length||0}/4\n🔥 Эпических: ${st.gotEpic?.length||0}/2\n🐉 Легенда: ${st.gotLegend?'ДА':'НЕТ'}\n🏆 Можно Легенду: ${canLegend ? '✅ ДА' : '❌ НЕТ'}\n🔑 Текущие ключи: ${st.keys||0}\n📅 Последняя зарядка: ${st.lastWorkout||'нет'}`;
-  alert(msg);
-};
+  const today = getToday();
+  const msg = `🔍 Данные 🔍\n\n⭐ Звезд: ${st.stars||0}\n🌟 Сияющих: ${st.shinyStars||0}\n📦 Базовых: ${st.gotBase?.length||0}/8\n✨ Редких: ${st.gotRare?.length||0}/4\n🔥 Эпических: ${st.gotEpic?.length||0}/2\n🐉 Легенда: ${st.gotLegend?'ДА':'НЕТ'}\n🔑 Ключей: ${st.keys||0}\n📅 Последняя: ${st.lastWorkout||'нет'}`;
+  
+  let customAlert = document.createElement('div');
+  customAlert.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:18px;border-radius:24px;box-shadow:0 0 25px rgba(0,0,0,0.4);z-index:9999;text-align:center;width:92%;max-width:340px;font-family:'Nunito',sans-serif;";
+  customAlert.innerHTML = `
+    <h3 style="margin:0 0 12px 0;font-family:'Fredoka One';color:#667eea;font-size:18px">🔧 Отладка</h3>
+    <pre style="text-align:left;font-size:11px;font-family:monospace;background:#f8f9ff;padding:12px;border-radius:12px;margin-bottom:14px;white-space:pre-wrap;line-height:1.4;">${msg}</pre>
+    <button id="debugTestWeek" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:30px;padding:10px 16px;font-weight:800;font-size:13px;cursor:pointer;width:100%;margin-bottom:8px;box-shadow:0 4px 12px rgba(102,126,234,.4);">🧪 ПРОТЕСТИРОВАТЬ НЕДЕЛЮ</button>
+    <button id="debugReset" style="background:#FFEBEE;color:#C62828;border:none;border-radius:30px;padding:10px 16px;font-weight:800;font-size:13px;cursor:pointer;width:100%;margin-bottom:8px;">🗑 СБРОСИТЬ</button>
+    <button class="debug-close" style="background:#f5f5f5;color:#666;border:none;border-radius:30px;padding:10px 16px;font-weight:700;font-size:12px;cursor:pointer;width:100%;">Закрыть</button>
+  `;
+  document.body.appendChild(customAlert);
+  
+  // 🔥 КНОПКА: ПРОТЕСТИРОВАТЬ ОДНУ НЕДЕЛЮ
+  document.getElementById('debugTestWeek').onclick = function() {
+    // 1. Открываем ОДНОГО случайного базового персонажа
+    const availableBase = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
+    if (availableBase.length > 0) {
+      const randomIdx = availableBase[Math.floor(Math.random() * availableBase.length)];
+      st.gotBase.push(randomIdx);
+      st.charIdx = randomIdx;
+    }
+    
+    // 2. Добавляем награды за неделю: 2 звезды + 1 сияющая
+    st.stars = (st.stars || 0) + 2;
+    st.shinyStars = (st.shinyStars || 0) + 1;
+    
+    // 3. Сбрасываем ключи и стрик (неделя завершена)
+    st.keys = 0;
+    st.streak = 0;
+    st.lastWorkout = getToday();
+    
+    save();
+    render();
+    
+    this.parentElement.remove();
+    
+    // Показываем результат
+    const opened = st.gotBase?.length || 0;
+    alert(`✅ Неделя протестирована!\n\nОткрыто базовых: ${opened}/8\n⭐ Звёзд: ${st.stars}\n🌟 Сияющих: ${st.shinyStars}`);
+  };
+  
+  // СБРОС ПРОГРЕССА
+  document.getElementById('debugReset').onclick = function() {
+    if(confirm('Точно сбросить весь прогресс?')) {
+      localStorage.removeItem('as_' + playerKey);
+      location.reload();
+    }
+  };
+  
+  customAlert.querySelector('.debug-close').onclick = function() {
+    this.parentElement.remove();
+  };
+}
 
 function checkBtn() { const n=document.getElementById('nameInput').value.trim(); const k=document.getElementById('nickInput').value.trim(); document.getElementById('startBtn').disabled=!(n&&k); }
 let _ac=0; const _at=setInterval(()=>{checkBtn();if(++_ac>=20)clearInterval(_at);},200);
