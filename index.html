@@ -17,12 +17,11 @@
     padding: 16px; 
   }
   
-  /* ✅ ГОРИЗОНТАЛЬНЫЙ ПРЯМОУГОЛЬНИК, МЕНЬШЕ РАЗМЕР */
   .card { 
     background: #fff; 
     border-radius: 36px; 
     padding: 20px 18px; 
-    max-width: 380px;    /* было 420 -> 380 (уже) */
+    max-width: 380px;
     width: 100%; 
     box-shadow: 0 20px 40px rgba(0,0,0,.2); 
     text-align: center; 
@@ -75,13 +74,11 @@
   .greeting { font-size: 17px; font-weight: 900; color: #2d2d2d; margin-bottom: 6px; }
   .progress-text { font-size: 12px; color: #888; font-weight: 800; margin-bottom: 10px; line-height: 1.5; }
   
-  /* КЛЮЧИ — компактные */
   .keys-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
   .key-slot { aspect-ratio: 1 / 0.9; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 2.5px dashed #e0e4ef; background: #faf9fe; transition: all .3s ease; }
   .key-slot.filled { border: 2.5px solid gold; background: linear-gradient(145deg, #fffbe6, #fff5cc); box-shadow: 0 2px 12px rgba(255,215,0,.5); animation: popIn .4s ease; }
   @keyframes popIn { 0%{transform:scale(0.7);opacity:0}80%{transform:scale(1.1)}100%{transform:scale(1)} }
   
-  /* ПЕРСОНАЖ — небольшой, аккуратный */
   .char-wrap { border-radius: 24px; overflow: hidden; margin-bottom: 10px; background: #f8f5ff; display: none; border: 1px solid #f0e9ff; }
   .char-wrap img { width: 100%; height: 150px; object-fit: contain; display: block; background: #faf9fe; }
   .char-wrap.show { display: block; animation: fadeUp .5s ease; }
@@ -95,7 +92,6 @@
   .change-name { font-size: 10px; color: #ccc; margin-top: 8px; cursor: pointer; font-weight: 800; }
   .change-name:hover { color: #667eea; }
   
-  /* галерея */
   #galleryScreen { display: none; }
   .gallery-tabs { display: flex; gap: 2px; margin-bottom: 14px; border-bottom: 2px solid #eef2ff; }
   .tab-btn { flex: 1; background: none; border: none; padding: 8px 2px; font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 11px; color: #aaa; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; }
@@ -109,7 +105,6 @@
   .g-item.locked .g-img { background: #f2f3f8; }
   .g-item .g-q { font-size: 44px; color: #ccc; }
   
-  /* Праздник уменьшенный */
   .celebration { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.85); z-index: 200; align-items: center; justify-content: center; padding: 16px; }
   .celebration.show { display: flex; }
   .celeb-box { background: transparent; max-width: 320px; width: 100%; border-radius: 48px; padding: 8px; text-align: center; animation: zoomIn .3s ease; }
@@ -176,7 +171,6 @@
 </div>
 
 <script>
-// ---------- БАЗА ПЕРСОНАЖЕЙ (рандомно перемешиваем открытие) ----------
 const BASE = [
   { animal:"🐆", power:"Скорость", name:"Гепард", img:"gepard.png" },
   { animal:"🐦", power:"Лёгкость", name:"Колибри", img:"kolibri.png" },
@@ -204,9 +198,7 @@ let st = {};
 let playerKey = '';
 let justUnlockedChar = null;
 
-// ✅ ЧЕСТНЫЙ РАНДОМ — перетасовка Фишера-Йетса (для открытия разных персонажей)
 function getRandomItemFromList(arr) {
-  // возвращает случайный индекс с равномерным распределением, без привязки к порядку
   if (!arr.length) return null;
   const randomIndex = Math.floor(Math.random() * arr.length);
   return arr[randomIndex];
@@ -388,7 +380,6 @@ function checkCooldown() {
   }
 }
 
-// ОСНОВНАЯ МЕХАНИКА — повышенная рандомность открытия
 function doWorkout() {
   const today = getToday();
   if (st.lastWorkout === today) { checkCooldown(); return; }
@@ -397,7 +388,6 @@ function doWorkout() {
   st.streak = newStreak;
   st.lastWorkout = today;
   
-  // ✅ СТРИК 1-4 дня: даём ключ, при 4 ключах открываем случайного базового (рандомность)
   if (newStreak >= 1 && newStreak <= 4) {
     st.keys = (st.keys || 0) + 1;
     save(); 
@@ -405,7 +395,6 @@ function doWorkout() {
     if (st.keys >= 4) {
       const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
       if (available.length > 0) {
-        // 🔥 СЛУЧАЙНЫЙ НЕОТКРЫТЫЙ ПЕРСОНАЖ, а не по порядку!
         const randomIndex = getRandomItemFromList(available);
         const idx = randomIndex;
         st.gotBase.push(idx);
@@ -418,7 +407,6 @@ function doWorkout() {
         setTimeout(() => render(), 100);
         return;
       } else {
-        // если все открыты - сбрасываем ключи просто так, но даём звезду за переполнение
         st.keys = 0;
         st.stars = (st.stars || 0) + 1;
         save();
@@ -429,13 +417,11 @@ function doWorkout() {
       celebrate('', '🔑 Ещё ключ!', praise);
     }
   } 
-  // стрик 5-6: звезда
   else if (newStreak === 5 || newStreak === 6) {
     st.stars = (st.stars || 0) + 1;
     save(); sound('rare');
     celebrate('', '⭐ Звезда суперсилы!', `У тебя ${st.stars} ⭐. Скоро откроешь редкого героя!`);
   } 
-  // стрик 7: сияющая звезда и сброс
   else if (newStreak === 7) {
     st.shinyStars = (st.shinyStars || 0) + 1;
     st.streak = 0;
@@ -446,7 +432,6 @@ function doWorkout() {
   render();
 }
 
-// ГАЛЕРЕЯ и покупка с помощью звезд
 window.switchTab = function(tab, btn) { 
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); 
   btn.classList.add('active'); 
@@ -544,11 +529,78 @@ window.hideGallery = function() {
   render(); 
 };
 
+// 🔥 НОВАЯ ФУНКЦИЯ: ТЕСТ НА ВСЮ ИГРУ
+function testFullGame() {
+  // 1. Открываем ВСЕ базовые в случайном порядке
+  const baseIndices = BASE.map((_,i) => i);
+  // Перемешиваем для рандома
+  for (let i = baseIndices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [baseIndices[i], baseIndices[j]] = [baseIndices[j], baseIndices[i]];
+  }
+  st.gotBase = [...baseIndices];
+  st.charIdx = baseIndices[baseIndices.length - 1]; // последний открытый
+  
+  // 2. Добавляем звёзды за 8 недель (2 обычные + 1 сияющая в неделю)
+  st.stars = 16; // 2 звезды × 8 недель
+  st.shinyStars = 8; // 1 сияющая × 8 недель
+  
+  // 3. Открываем ВСЕ редкие (4 шт)
+  st.gotRare = [0, 1, 2, 3];
+  
+  // 4. Открываем ВСЕ эпические (2 шт)
+  st.gotEpic = [0, 1];
+  
+  // 5. Сбрасываем ключи и стрик (неделя завершена)
+  st.keys = 0;
+  st.streak = 0;
+  st.lastWorkout = getToday();
+  
+  // 6. Сохраняем и показываем Легенду
+  save();
+  
+  // 7. Показываем Феникса с фанфарами
+  setTimeout(() => {
+    openLegend();
+    alert('🎉 Тест завершён! Ты собрал(а) ВСЕ суперсилы и стал(а) ЛЕГЕНДОЙ! 🔥');
+  }, 300);
+  
+  render();
+}
+
 window.showDebugPopup = function() {
   const canLegend = canOpenLegend();
   const msg = `🔍 Данные Анастасии 🔍\n\n⭐ Звезд: ${st.stars||0}\n🌟 Сияющих: ${st.shinyStars||0}\n📦 Базовых: ${st.gotBase?.length||0}/8\n✨ Редких: ${st.gotRare?.length||0}/4\n🔥 Эпических: ${st.gotEpic?.length||0}/2\n🐉 Легенда: ${st.gotLegend?'ДА':'НЕТ'}\n🏆 Можно Легенду: ${canLegend ? '✅ ДА' : '❌ НЕТ'}\n🔑 Текущие ключи: ${st.keys||0}\n📅 Последняя зарядка: ${st.lastWorkout||'нет'}`;
-  alert(msg);
-};
+  
+  let customAlert = document.createElement('div');
+  customAlert.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:18px;border-radius:24px;box-shadow:0 0 25px rgba(0,0,0,0.4);z-index:9999;text-align:center;width:92%;max-width:340px;font-family:'Nunito',sans-serif;";
+  customAlert.innerHTML = `
+    <h3 style="margin:0 0 12px 0;font-family:'Fredoka One';color:#667eea;font-size:18px">🔧 Отладка</h3>
+    <pre style="text-align:left;font-size:11px;font-family:monospace;background:#f8f9ff;padding:12px;border-radius:12px;margin-bottom:14px;white-space:pre-wrap;line-height:1.4;">${msg}</pre>
+    <button id="debugTestFull" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:30px;padding:10px 16px;font-weight:800;font-size:13px;cursor:pointer;width:100%;margin-bottom:8px;box-shadow:0 4px 12px rgba(102,126,234,.4);">🧪 ПРОТЕСТИРОВАТЬ ВСЮ ИГРУ</button>
+    <button id="debugReset" style="background:#FFEBEE;color:#C62828;border:none;border-radius:30px;padding:10px 16px;font-weight:800;font-size:13px;cursor:pointer;width:100%;margin-bottom:8px;">🗑 СБРОСИТЬ ПРОГРЕСС</button>
+    <button class="debug-close" style="background:#f5f5f5;color:#666;border:none;border-radius:30px;padding:10px 16px;font-weight:700;font-size:12px;cursor:pointer;width:100%;">Закрыть</button>
+  `;
+  document.body.appendChild(customAlert);
+  
+  document.getElementById('debugTestFull').onclick = function() {
+    if(confirm('⚠️ Это откроет ВСЕ персонажи и покажет Феникса!\nПрогресс будет изменён.\n\nПродолжить?')) {
+      this.parentElement.remove();
+      testFullGame();
+    }
+  };
+  
+  document.getElementById('debugReset').onclick = function() {
+    if(confirm('Точно сбросить весь прогресс?')) {
+      localStorage.removeItem('as_' + playerKey);
+      location.reload();
+    }
+  };
+  
+  customAlert.querySelector('.debug-close').onclick = function() {
+    this.parentElement.remove();
+  };
+}
 
 function checkBtn() { const n=document.getElementById('nameInput').value.trim(); const k=document.getElementById('nickInput').value.trim(); document.getElementById('startBtn').disabled=!(n&&k); }
 let _ac=0; const _at=setInterval(()=>{checkBtn();if(++_ac>=20)clearInterval(_at);},200);
