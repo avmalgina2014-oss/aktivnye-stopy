@@ -111,6 +111,14 @@
     font-weight: bold;
     margin: 10px 0;
   }
+  .week-counter {
+    background: #e0e7ff;
+    padding: 10px;
+    border-radius: 60px;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 10px 0;
+  }
   .progress-text {
     background: #f8fafc;
     padding: 12px;
@@ -192,7 +200,7 @@
     background: #fefce8;
     padding: 10px;
     border-radius: 28px;
-    font-size: 12px;
+    font-size: 13px;
     margin-top: 10px;
     display: none;
     color: #b45309;
@@ -341,6 +349,10 @@
     </div>
   </div>
   <div class="greeting" id="greeting">Привет!</div>
+  
+  <!-- СЧЁТЧИК ЗАРЯДОК ЗА НЕДЕЛЮ -->
+  <div class="week-counter" id="weekCounter">Зарядок за неделю: 0 из 7</div>
+  
   <div class="progress-text" id="progressText"></div>
   <div class="keys-grid" id="keysGrid">
     <div class="key-slot" id="k0"></div><div class="key-slot" id="k1"></div>
@@ -425,6 +437,20 @@ function getRewardType(workoutCount) {
   return null;
 }
 
+function getRewardDescription(workoutCount) {
+  if (workoutCount === 4) return '🔑 Золотой ключ';
+  if (workoutCount === 5 || workoutCount === 6) return '⭐ Обычная звезда';
+  if (workoutCount === 7) return '🌟 Сияющая звезда';
+  return '❓ Нет награды';
+}
+
+function getNextRewardInfo(workoutCount) {
+  if (workoutCount < 4) return { need: 4 - workoutCount, reward: '🔑 ключ' };
+  if (workoutCount < 5) return { need: 5 - workoutCount, reward: '⭐ звезду' };
+  if (workoutCount < 7) return { need: 7 - workoutCount, reward: '🌟 сияющую звезду' };
+  return { need: 0, reward: 'всё собрано' };
+}
+
 function getRank(totalWorkouts) {
   if (totalWorkouts >= 50) return { label:"👑 МАСТЕР", cls:"rank-master" };
   if (totalWorkouts >= 36) return { label:"⚡ ПРОФИ", cls:"rank-pro" };
@@ -466,11 +492,11 @@ let game = {
 let playerId = "";
 
 function saveGame() {
-  if (playerId) localStorage.setItem("as_final_v2_" + playerId, JSON.stringify(game));
+  if (playerId) localStorage.setItem("as_clear_v3_" + playerId, JSON.stringify(game));
 }
 
 function loadGame() {
-  let raw = localStorage.getItem("as_final_v2_" + playerId);
+  let raw = localStorage.getItem("as_clear_v3_" + playerId);
   if (!raw) return false;
   try {
     let data = JSON.parse(raw);
@@ -542,7 +568,7 @@ function doWorkout() {
   let today = new Date().toISOString();
   game.workoutHistory.push(today);
   game.lastWorkoutDate = today;
-  if (game.workoutHistory.length > 30) game.workoutHistory = game.workoutHistory.slice(-30);
+  if (game.workoutHistory.length > 100) game.workoutHistory = game.workoutHistory.slice(-100);
   
   let workoutsLast7 = getWorkoutsInLast7Days(game.workoutHistory);
   let rewardType = getRewardType(workoutsLast7);
@@ -586,25 +612,50 @@ function doWorkout() {
 function renderGame() {
   let totalWorkouts = game.workoutHistory.length;
   let rank = getRank(totalWorkouts);
+  let workoutsLast7 = getWorkoutsInLast7Days(game.workoutHistory);
+  let rewardType = getRewardType(workoutsLast7);
+  let rewardDesc = getRewardDescription(workoutsLast7);
+  let nextInfo = getNextRewardInfo(workoutsLast7);
+  let isBaseCompleted = game.gotBase.length === BASE.length;
+  let showKeys = (rewardType === 'key' && !isBaseCompleted);
+  
   document.getElementById("rankBadge").className = "rank-badge " + rank.cls;
   document.getElementById("rankBadge").innerHTML = rank.label;
   document.getElementById("starCount").innerHTML = game.stars;
   document.getElementById("shinyCount").innerHTML = game.shinyStars;
   document.getElementById("greeting").innerHTML = "Привет, " + (game.name || "") + "!";
   
-  let isBaseCompleted = game.gotBase.length === BASE.length;
-  let workoutsLast7 = getWorkoutsInLast7Days(game.workoutHistory);
-  let rewardType = getRewardType(workoutsLast7);
-  let showKeys = (rewardType === 'key' && !isBaseCompleted);
+  // СЧЁТЧИК ЗА НЕДЕЛЮ
+  document.getElementById("weekCounter").innerHTML = `📅 Зарядок за последние 7 дней: ${workoutsLast7} из 7`;
   
+  // ИНФОРМАЦИЯ О ТОМ, КАКАЯ НАГРАДА СЕГОДНЯ И ЧТО ДАЛЬШЕ
+  let infoBox = document.getElementById("infoBox");
+  if (nextInfo.need > 0) {
+    infoBox.style.display = "block";
+    infoBox.innerHTML = `🎯 Сегодня ты получишь: ${rewardDesc}<br>💪 До следующей награды: ${nextInfo.need} зарядк${nextInfo.need===1?"а":"и"} → ${nextInfo.reward}`;
+  } else {
+    infoBox.style.display = "block";
+    infoBox.innerHTML = `🎯 Сегодня ты получишь: ${rewardDesc}<br>🏆 Ты молодец! Продолжай в том же духе!`;
+  }
+  
+  // НАСТРОЙКА КНОПКИ
   let btn = document.getElementById("workoutBtn");
-  let info = document.getElementById("infoBox");
+  if (rewardType === 'star') {
+    btn.className = "btn btn-star";
+    btn.innerHTML = "⭐ Я сделал(а) зарядку!";
+  } else if (rewardType === 'shiny') {
+    btn.className = "btn btn-shiny";
+    btn.innerHTML = "🌟 Я сделал(а) зарядку!";
+  } else {
+    btn.className = "btn btn-green";
+    btn.innerHTML = "🏃‍♀️ Я сделал(а) зарядку!";
+  }
+  
+  // КАРТИНКА ПЕРСОНАЖА ИЛИ МОТИВАЦИОННЫЙ БЛОК
   let charWrap = document.getElementById("charWrap");
   let charImg = document.getElementById("charImg");
-  let keysGrid = document.getElementById("keysGrid");
   let motivBox = document.getElementById("motivationBox");
   
-  // Управление картинкой персонажа и мотивационным блоком
   if (isBaseCompleted) {
     charWrap.classList.remove("show");
     motivBox.style.display = "block";
@@ -621,24 +672,8 @@ function renderGame() {
     }
   }
   
-  // Настройка кнопки и подсказки
-  if (rewardType === 'star') {
-    info.style.display = "block";
-    info.innerHTML = "⭐ Сегодня ты получишь ЗВЕЗДУ! ⭐";
-    btn.className = "btn btn-star";
-    btn.innerHTML = "⭐ Я сделал(а) зарядку!";
-  } else if (rewardType === 'shiny') {
-    info.style.display = "block";
-    info.innerHTML = "🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟";
-    btn.className = "btn btn-shiny";
-    btn.innerHTML = "🌟 Я сделал(а) зарядку!";
-  } else {
-    info.style.display = "none";
-    btn.className = "btn btn-green";
-    btn.innerHTML = "🏃‍♀️ Я сделал(а) зарядку!";
-  }
-  
-  // Отрисовка ключей или текста прогресса
+  // КЛЮЧИ
+  let keysGrid = document.getElementById("keysGrid");
   if (showKeys) {
     keysGrid.style.display = "grid";
     for (let i=0; i<4; i++) {
@@ -668,11 +703,11 @@ function renderGame() {
     } else if (isBaseCompleted && rewardType === 'key') {
       document.getElementById("progressText").innerHTML = "💪 Молодец! Так держать!";
     } else {
-      document.getElementById("progressText").innerHTML = "🏃‍♀️ Продолжай в том же духе!";
+      document.getElementById("progressText").innerHTML = "🏃‍♀️ Продолжай заниматься каждый день!";
     }
   }
   
-  // Кулдаун
+  // КУЛДАУН
   let coolDiv = document.getElementById("cooldownMsg");
   if (!canWorkoutToday(game.lastWorkoutDate)) {
     btn.style.display = "none";
@@ -686,7 +721,7 @@ function renderGame() {
 }
 
 // ██████████████████████████████████████████████████████████████
-// ГАЛЕРЕЯ
+// ГАЛЕРЕЯ (та же логика)
 // ██████████████████████████████████████████████████████████████
 let currentTab = "base";
 
@@ -817,7 +852,7 @@ function startGame() {
 }
 
 function resetGame() {
-  localStorage.removeItem("as_final_v2_" + playerId);
+  localStorage.removeItem("as_clear_v3_" + playerId);
   document.getElementById("gameScreen").style.display = "none";
   document.getElementById("enterScreen").style.display = "block";
   document.getElementById("playerName").value = "";
