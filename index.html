@@ -248,6 +248,11 @@ let st = {};
 let playerKey = '';
 let justUnlockedChar = null;
 
+function getToday() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
 function freshState() {
   return {
     streak: 0,
@@ -265,29 +270,44 @@ function freshState() {
   };
 }
 
-function getToday() {
-  const d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+function save() { 
+  if (playerKey) localStorage.setItem('as_' + playerKey, JSON.stringify(st)); 
 }
 
-function save() { localStorage.setItem('as_' + playerKey, JSON.stringify(st)); }
 function load() {
+  if (!playerKey) return false;
   const raw = localStorage.getItem('as_' + playerKey);
   if (!raw) return false;
   try { 
-    st = JSON.parse(raw); 
-    if (st.step !== undefined) {
-      st.keys = st.step || 0;
-      st.streak = st.step || 0;
-      delete st.step;
+    let data = JSON.parse(raw);
+    
+    // Миграция старых данных
+    if (data.step !== undefined) {
+      data.keys = data.step || 0;
+      data.streak = data.step || 0;
+      delete data.step;
     }
-    if (st.weekCount !== undefined) delete st.weekCount;
-    if (st.weekStart !== undefined) delete st.weekStart;
-    if (st.weeksPlayed !== undefined) delete st.weeksPlayed;
-    if (st.lastClaim !== undefined) delete st.lastClaim;
-    if (st.lastUnlockWeek !== undefined) delete st.lastUnlockWeek;
+    if (data.weekCount !== undefined) delete data.weekCount;
+    if (data.weekStart !== undefined) delete data.weekStart;
+    if (data.weeksPlayed !== undefined) delete data.weeksPlayed;
+    if (data.lastClaim !== undefined) delete data.lastClaim;
+    if (data.lastUnlockWeek !== undefined) delete data.lastUnlockWeek;
+    
+    // Инициализация новых полей
+    if (data.streak === undefined) data.streak = 0;
+    if (data.keys === undefined) data.keys = 0;
+    if (data.stars === undefined) data.stars = 0;
+    if (data.shinyStars === undefined) data.shinyStars = 0;
+    if (!Array.isArray(data.gotBase)) data.gotBase = [];
+    if (!Array.isArray(data.gotRare)) data.gotRare = [];
+    if (!Array.isArray(data.gotEpic)) data.gotEpic = [];
+    
+    st = data;
     return true; 
-  } catch(e) { return false; }
+  } catch(e) { 
+    console.error('Load error:', e);
+    return false; 
+  }
 }
 
 function sound(type) {
@@ -351,6 +371,18 @@ window.closeCeleb = function() {
   }
 };
 
+function calculateStreak() {
+  if (!st.lastWorkout) return 1;
+  
+  const last = new Date(st.lastWorkout + 'T00:00:00');
+  const today = new Date(getToday() + 'T00:00:00');
+  const diffDays = Math.floor((today - last) / (24*3600*1000));
+  
+  if (diffDays === 0) return st.streak || 1; // уже сделал сегодня
+  if (diffDays === 1) return (st.streak || 0) + 1; // вчера делал — продолжаем
+  return 1; // пропустил — сброс
+}
+
 function render() {
   const rank = getRank();
   const badge = document.getElementById('rankBadge');
@@ -371,6 +403,7 @@ function render() {
   motivational.style.display = 'none';
   progressText.innerHTML = '';
 
+  // Показываем только что открытого персонажа (3 секунды)
   if (justUnlockedChar) {
     charWrap.style.display = 'block';
     charWrap.classList.add('show');
@@ -379,22 +412,28 @@ function render() {
     return;
   }
 
+  // Мотивационный блок после сбора всех базовых
   if (st.gotBase && st.gotBase.length >= BASE.length) {
     motivational.style.display = 'block';
     motivational.innerHTML = '🏆 Ты собрал(а) все базовые суперсилы! Круто!';
   }
 
-  if (st.streak >= 5 && st.streak <= 6) {
+  // Рассчитываем актуальный стрик для отображения
+  const currentStreak = calculateStreak();
+  
+  if (currentStreak >= 5 && currentStreak <= 6) {
     progressText.innerHTML = '⭐ Сегодня ты получишь ЗВЕЗДУ! ⭐';
-  } else if (st.streak === 7) {
+  } else if (currentStreak === 7) {
     progressText.innerHTML = '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
   } else {
+    // Дни 1-4: показываем сбор ключей
     keysGrid.style.display = 'grid';
-    const needed = 4 - (st.keys || 0);
+    const keys = Math.min(st.keys || 0, 4);
+    const needed = 4 - keys;
     progressText.innerHTML = 'До суперсилы: ' + needed + ' ' + decl(needed, 'зарядка', 'зарядки', 'зарядок');
     for (let i = 0; i < 4; i++) {
       const sl = document.getElementById('ks' + i);
-      if (i < (st.keys || 0)) { 
+      if (i < keys) { 
         sl.classList.add('filled'); 
         sl.innerHTML = '🔑'; 
       } else { 
@@ -416,6 +455,7 @@ function checkCooldown() {
     claimBtn.style.display = 'none';
     coolEl.style.display = 'block';
     updateCountdown();
+    // Обновляем таймер каждые 30 сек
     const iv = setInterval(() => {
       if (getToday() !== today) { 
         clearInterval(iv); 
@@ -463,35 +503,29 @@ function updateCountdown() {
 function doWorkout() {
   const today = getToday();
   
+  // Защита от повторного нажатия в тот же день
   if (st.lastWorkout === today) {
     checkCooldown();
     return;
   }
   
-  if (st.lastWorkout) {
-    const last = new Date(st.lastWorkout + 'T00:00:00');
-    const curr = new Date(today + 'T00:00:00');
-    const diffDays = Math.floor((curr - last) / (24*3600*1000));
-    
-    if (diffDays === 1) {
-      st.streak = (st.streak || 0) + 1;
-    } else {
-      st.streak = 1;
-    }
-  } else {
-    st.streak = 1;
-  }
-  
+  // Рассчитываем новый стрик
+  const newStreak = calculateStreak();
+  st.streak = newStreak;
   st.lastWorkout = today;
   
-  if (st.streak >= 1 && st.streak <= 4) {
+  // Логика наград по дням стрика
+  if (newStreak >= 1 && newStreak <= 4) {
     st.keys = (st.keys || 0) + 1;
+    save();
     sound('key');
     
     if (st.keys >= 4) {
+      // Открываем базовую суперсилу
       const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
       if (available.length > 0) {
         const idx = available[Math.floor(Math.random() * available.length)];
+        if (!st.gotBase) st.gotBase = [];
         st.gotBase.push(idx);
         st.charIdx = idx;
         st.keys = 0;
@@ -510,14 +544,14 @@ function doWorkout() {
       const phrase = PRAISE_PHRASES[Math.floor(Math.random() * PRAISE_PHRASES.length)];
       celebrate('🔑', 'Ключ ' + st.keys + ' из 4!', phrase);
     }
-  } else if (st.streak === 5 || st.streak === 6) {
+  } else if (newStreak === 5 || newStreak === 6) {
     st.stars = (st.stars || 0) + 1;
     save();
     sound('rare');
     celebrate('⭐', 'Звезда получена!', 'У тебя ' + st.stars + ' ⭐. Накопи 4 — открой редкого персонажа!');
-  } else if (st.streak === 7) {
+  } else if (newStreak === 7) {
     st.shinyStars = (st.shinyStars || 0) + 1;
-    st.streak = 0;
+    st.streak = 0; // сброс после 7 дня
     save();
     sound('rare');
     celebrate('🌟', 'Сияющая звезда получена!', 'У тебя ' + st.shinyStars + ' 🌟. Накопи 4 — открой эпического персонажа!');
@@ -665,14 +699,17 @@ window.startGame = function() {
   if (!name || !nick) return;
   playerKey = (name + '_' + nick).toLowerCase().replace(/[^a-zа-яё0-9]/gi, '_');
   localStorage.setItem('as_who', JSON.stringify({name, nick}));
+  
   if (!load()) st = freshState();
   st.name = name; st.nick = nick;
   save();
+  
   sound('start');
   document.getElementById('nameScreen').style.display = 'none';
   document.getElementById('gameScreen').style.display = 'block';
   render();
 };
+
 window.changeName = function() {
   localStorage.removeItem('as_who');
   document.getElementById('gameScreen').style.display = 'none';
@@ -681,6 +718,8 @@ window.changeName = function() {
   document.getElementById('nickInput').value = '';
   checkBtn();
 };
+
+// Автозаполнение имени при загрузке
 const _who = localStorage.getItem('as_who');
 if (_who) {
   try {
@@ -693,6 +732,7 @@ if (_who) {
   } catch(e) {}
 }
 
+// Инициализация при загрузке страницы
 if (playerKey && load()) {
   render();
 }
