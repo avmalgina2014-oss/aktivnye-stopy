@@ -338,12 +338,14 @@ function render() {
   document.getElementById('greeting').innerHTML = 'Привет, ' + (st.name || '') + '!';
 
   const isBaseCompleted = st.gotBase.length === BASE.length;
+  const hasAnyProgress = (st.gotBase.length > 0) || (st.stars > 0) || (st.starsShiny > 0) || (st.step > 0);
   const currentStreak = st.streak || 0;
   const isKeyDay = (currentStreak >= 1 && currentStreak <= 4);
   const isStarDay = (currentStreak === 5 || currentStreak === 6);
   const isShinyDay = (currentStreak === 7);
 
-  if (!isBaseCompleted && isKeyDay && st.step < 4) {
+  // ЕСЛИ НЕТ НИКАКОГО ПРОГРЕССА (совсем новый игрок) — показываем ключи
+  if (!hasAnyProgress && !isBaseCompleted) {
     document.getElementById('keysGrid').style.display = 'grid';
     document.getElementById('charWrap').classList.remove('show');
     document.getElementById('progressText').innerHTML = 'До суперсилы: ' + (4 - st.step) + ' ' + decl(4 - st.step, 'зарядка', 'зарядки', 'зарядок');
@@ -352,12 +354,22 @@ function render() {
       if (i < st.step) { sl.classList.add('filled'); sl.innerHTML = '🔑'; }
       else { sl.classList.remove('filled'); sl.innerHTML = ''; }
     }
-  } else if (!isBaseCompleted && isKeyDay && st.step >= 4) {
+    checkCooldown();
+    return;
+  }
+
+  // ЕСЛИ ЕСТЬ ОТКРЫТЫЕ БАЗОВЫЕ, НО НЕ ВСЕ — ПОКАЗЫВАЕМ ПОСЛЕДНЕГО ОТКРЫТОГО ПЕРСОНАЖА
+  if (st.gotBase.length > 0 && !isBaseCompleted) {
     document.getElementById('keysGrid').style.display = 'none';
     document.getElementById('charWrap').classList.add('show');
     document.getElementById('charImg').src = char.img;
     document.getElementById('progressText').innerHTML = '<div style="font-family:Fredoka One,cursive;font-size:26px;font-weight:900;color:#667eea;margin:12px 0 6px">' + char.power + '</div><div style="font-size:13px;color:#aaa">суперсила открыта ✨</div>';
-  } else if (isBaseCompleted) {
+    checkCooldown();
+    return;
+  }
+
+  // ЕСЛИ ВСЕ БАЗОВЫЕ ОТКРЫТЫ — МОТИВАЦИЯ
+  if (isBaseCompleted) {
     document.getElementById('keysGrid').style.display = 'none';
     document.getElementById('charWrap').classList.remove('show');
     if (isStarDay) {
@@ -367,10 +379,18 @@ function render() {
     } else {
       document.getElementById('progressText').innerHTML = '💪 Молодец! Так держать!';
     }
-  } else {
-    document.getElementById('keysGrid').style.display = 'none';
-    document.getElementById('charWrap').classList.remove('show');
-    document.getElementById('progressText').innerHTML = '🏃‍♀️ Сделай зарядку 4 дня подряд, чтобы получить суперсилу!';
+    checkCooldown();
+    return;
+  }
+
+  // ЕСЛИ ЕСТЬ ЗВЁЗДЫ, НО НЕТ ОТКРЫТЫХ ПЕРСОНАЖЕЙ (СТРАННАЯ СИТУАЦИЯ) — ПОКАЗЫВАЕМ КЛЮЧИ
+  document.getElementById('keysGrid').style.display = 'grid';
+  document.getElementById('charWrap').classList.remove('show');
+  document.getElementById('progressText').innerHTML = 'До суперсилы: ' + (4 - st.step) + ' ' + decl(4 - st.step, 'зарядка', 'зарядки', 'зарядок');
+  for (let i = 0; i < 4; i++) {
+    const sl = document.getElementById('ks' + i);
+    if (i < st.step) { sl.classList.add('filled'); sl.innerHTML = '🔑'; }
+    else { sl.classList.remove('filled'); sl.innerHTML = ''; }
   }
   checkCooldown();
 }
