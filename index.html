@@ -53,24 +53,8 @@
   .g-item { border-radius: 18px; border: 2px solid #e8e8e8; background: #f0f0f0; padding: 0; text-align: center; overflow: hidden; display: flex; flex-direction: column; transition: all .3s; }
   .g-item.got { background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.1); border-color: transparent; }
   .g-item.locked { padding: 20px 8px; align-items: center; justify-content: center; }
-  
-  /* ✅ ЕДИНЫЙ РАЗМЕР ДЛЯ ВСЕХ КАРТИНОК */
-  .g-item .g-img { 
-    width: 100%; 
-    height: 130px; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f8f9fa;
-    overflow: hidden;
-  }
-  .g-item .g-img img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: contain; 
-    display: block; 
-  }
-  
+  .g-item .g-img { width: 100%; }
+  .g-item .g-img img { width: 100%; height: auto; display: block; }
   .g-item .g-name { font-family: 'Fredoka One', cursive; font-size: 14px; padding: 8px 8px 12px; line-height: 1.3; color: #667eea; word-break: break-word; }
   .g-item .g-q { font-size: 44px; color: #ddd; margin-bottom: 6px; }
   .celebration { display: none; position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,.8); z-index: 100; align-items: center; justify-content: center; padding: 20px; }
@@ -86,46 +70,13 @@
   .debug-popup-btn.test { background: #E3F2FD; color: #1565C0; border: 1px solid #90CAF9; }
   .debug-popup-btn.reset { background: #FFEBEE; color: #C62828; border: 1px solid #EF5350; }
   .debug-popup-btn.close { background: #f5f5f5; color: #666; }
-  
-  /* 🎆 СТИЛИ ДЛЯ ФАНФАР ЛЕГЕНДЫ */
-  .legend-box {
-    animation: legendGlow 1.5s ease-in-out infinite;
-    border: 3px solid #FFD700;
-  }
-  @keyframes legendGlow {
-    0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.5); transform: scale(1); }
-    50% { box-shadow: 0 0 50px rgba(255,215,0,0.9), 0 0 80px rgba(255,165,0,0.5); transform: scale(1.03); }
-  }
-  .legend-title {
-    font-size: 36px !important;
-    background: linear-gradient(45deg, #FFD700, #FFA500, #FF4500, #FFD700);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: goldShimmer 2s ease-in-out infinite, titlePulse 1s ease-in-out infinite;
-    display: block;
-    margin-bottom: 10px;
-  }
-  @keyframes goldShimmer {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  @keyframes titlePulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-  }
-  .confetti {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    background: #FFD700;
-    animation: confettiFall 3s ease-in-out infinite;
-  }
-  @keyframes confettiFall {
-    0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(500px) rotate(720deg); opacity: 0; }
-  }
+  .legend-box { animation: legendGlow 1.5s ease-in-out infinite; border: 3px solid #FFD700; }
+  @keyframes legendGlow { 0%, 100% { box-shadow: 0 0 20px rgba(255,215,0,0.5); transform: scale(1); } 50% { box-shadow: 0 0 50px rgba(255,215,0,0.9), 0 0 80px rgba(255,165,0,0.5); transform: scale(1.03); } }
+  .legend-title { font-size: 36px !important; background: linear-gradient(45deg, #FFD700, #FFA500, #FF4500, #FFD700); background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: goldShimmer 2s ease-in-out infinite, titlePulse 1s ease-in-out infinite; display: block; margin-bottom: 10px; }
+  @keyframes goldShimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+  @keyframes titlePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+  .confetti { position: absolute; width: 10px; height: 10px; background: #FFD700; animation: confettiFall 3s ease-in-out infinite; }
+  @keyframes confettiFall { 0% { transform: translateY(-100px) rotate(0deg); opacity: 1; } 100% { transform: translateY(500px) rotate(720deg); opacity: 0; } }
 </style>
 </head>
 <body>
@@ -242,62 +193,87 @@ function freshState() {
 }
 
 function save() { if (playerKey) localStorage.setItem('as_' + playerKey, JSON.stringify(st)); }
+
 function load() {
   if (!playerKey) return false;
   const raw = localStorage.getItem('as_' + playerKey);
   if (!raw) return false;
   try { 
     let data = JSON.parse(raw);
-    ['step','weekCount','weekStart','weeksPlayed','lastClaim','lastUnlockWeek'].forEach(k => delete data[k]);
-    ['streak','keys','stars','shinyStars'].forEach(k => { if (data[k]===undefined) data[k]=0; });
-    ['gotBase','gotRare','gotEpic'].forEach(k => { if (!Array.isArray(data[k])) data[k]=[]; });
-    st = data; return true; 
-  } catch(e) { return false; }
+    ['step','weekCount','weekStart','weeksPlayed','lastClaim','lastUnlockWeek'].forEach(k => { if (data[k] !== undefined) delete data[k]; });
+    ['streak','keys','stars','shinyStars'].forEach(k => { if (data[k] === undefined) data[k] = 0; });
+    ['gotBase','gotRare','gotEpic'].forEach(k => { if (!Array.isArray(data[k])) data[k] = []; });
+    st = data; 
+    return true; 
+  } catch(e) { 
+    console.error('Load error:', e);
+    return false; 
+  }
 }
 
 function sound(type) {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const seq = { start:[[440,.12],[550,.12],[660,.12]], key:[[900,0,'tri']], base:[[523,.18],[659,.18],[784,.18],[1047,.18]], rare:[[440,.15],[554,.15],[659,.15],[880,.15],[1109,.15]], epic:[[330,.2],[415,.2],[523,.2],[659,.2],[830,.2],[1047,.2]], legend:[[262,.25],[330,.25],[392,.25],[523,.25],[659,.25],[784,.25]] };
-    const p = seq[type]; if (!p) return;
-    p.forEach(([f, dt, sh], i) => { const o=ctx.createOscillator(), g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.type=sh||'sine'; const t=ctx.currentTime+i*(dt||0.18); o.frequency.setValueAtTime(f,t); g.gain.setValueAtTime(0.3,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.4); o.start(t); o.stop(t+0.4); });
+    const seq = { 
+      start:[[440,.12],[550,.12],[660,.12]], 
+      key:[[900,0,'tri']], 
+      base:[[523,.18],[659,.18],[784,.18],[1047,.18]], 
+      rare:[[440,.15],[554,.15],[659,.15],[880,.15],[1109,.15]], 
+      epic:[[330,.2],[415,.2],[523,.2],[659,.2],[830,.2],[1047,.2]], 
+      legend:[[262,.25],[330,.25],[392,.25],[523,.25],[659,.25],[784,.25]] 
+    };
+    const p = seq[type]; 
+    if (!p) return;
+    p.forEach(([f, dt, sh], i) => { 
+      const o=ctx.createOscillator(), g=ctx.createGain(); 
+      o.connect(g); g.connect(ctx.destination); 
+      o.type=sh||'sine'; 
+      const t=ctx.currentTime+i*(dt||0.18); 
+      o.frequency.setValueAtTime(f,t); 
+      g.gain.setValueAtTime(0.3,t); 
+      g.gain.exponentialRampToValueAtTime(0.001,t+0.4); 
+      o.start(t); o.stop(t+0.4); 
+    });
   } catch(e) {}
 }
 
-function decl(n, a, b, c) { const m=n%10, mm=n%100; if(m===1&&mm!==11) return a; if(m>=2&&m<=4&&(mm<10||mm>=20)) return b; return c; }
-function getRank() { const total=(st.gotBase?.length||0)+(st.gotRare?.length||0)+(st.gotEpic?.length||0)+(st.gotLegend?1:0); if(total>=10) return {label:'👑 МАСТЕР', cls:'rank-master'}; if(total>=6) return {label:'⚡ ПРОФИ', cls:'rank-pro'}; if(total>=3) return {label:'📖 УЧЕНИК', cls:'rank-student'}; return {label:'🌱 НОВИЧОК', cls:'rank-novice'}; }
+function decl(n, a, b, c) { 
+  const m=n%10, mm=n%100; 
+  if(m===1&&mm!==11) return a; 
+  if(m>=2&&m<=4&&(mm<10||mm>=20)) return b; 
+  return c; 
+}
 
-// ✅ ОБНОВЛЁННАЯ ФУНКЦИЯ ПРАЗДНОВАНИЯ С ФАНФАРАМИ
+function getRank() { 
+  const total=(st.gotBase?.length||0)+(st.gotRare?.length||0)+(st.gotEpic?.length||0)+(st.gotLegend?1:0); 
+  if(total>=10) return {label:'👑 МАСТЕР', cls:'rank-master'}; 
+  if(total>=6) return {label:'⚡ ПРОФИ', cls:'rank-pro'}; 
+  if(total>=3) return {label:'📖 УЧЕНИК', cls:'rank-student'}; 
+  return {label:'🌱 НОВИЧОК', cls:'rank-novice'}; 
+}
+
 function celebrate(emoji, title, text, img, snd) {
   document.getElementById('celebEmoji').innerHTML = emoji;
   document.getElementById('celebTitle').innerHTML = title;
   document.getElementById('celebText').innerHTML = text;
   const el = document.getElementById('celebImg'); 
   if(img) { el.src=img; el.style.display='block'; } else el.style.display='none';
-  
-  // Убираем класс легенды если был
   document.getElementById('celebBox').classList.remove('legend-box');
-  // Убираем конфетти если были
   document.querySelectorAll('.confetti').forEach(c => c.remove());
-  
   document.getElementById('celebration').classList.add('show'); 
   if(snd) sound(snd);
 }
 
-// 🎆 СПЕЦИАЛЬНЫЕ ФАНФАРЫ ДЛЯ ФЕНИКСА
 function celebrateLegend() {
-  document.getElementById('celebEmoji').innerHTML = '🔥👑🔥';
+  document.getElementById('celebEmoji').innerHTML = '🔥🔥';
   document.getElementById('celebTitle').innerHTML = '<span class="legend-title">ТЫ ЛЕГЕНДА!</span>';
   document.getElementById('celebText').innerHTML = 'Ты собрал(а) все суперсилы! Невероятно круто!';
   const el = document.getElementById('celebImg'); 
   el.src = LEGEND.img; 
   el.style.display = 'block';
-  
   document.getElementById('celebBox').classList.add('legend-box');
   document.getElementById('celebration').classList.add('show');
   sound('legend');
-  
-  // Добавляем конфетти
   const colors = ['#FFD700', '#FFA500', '#FF4500', '#FF69B4', '#00CED1', '#98FB98'];
   for(let i=0; i<30; i++) {
     const confetti = document.createElement('div');
@@ -326,23 +302,18 @@ function render() {
   document.getElementById('starCount').innerText = st.stars || 0;
   document.getElementById('starShinyCount').innerText = st.shinyStars || 0;
   document.getElementById('greeting').innerHTML = 'Привет, ' + (st.name || '') + '!';
-
   const keysGrid = document.getElementById('keysGrid');
   const charWrap = document.getElementById('charWrap');
   const progressText = document.getElementById('progressText');
   const motivational = document.getElementById('motivationalBlock');
-  
   keysGrid.style.display = 'none'; charWrap.style.display = 'none'; charWrap.classList.remove('show'); motivational.style.display = 'none'; progressText.innerHTML = '';
-
   if (justUnlockedChar) {
     charWrap.style.display = 'block'; charWrap.classList.add('show');
     document.getElementById('charImg').src = justUnlockedChar.img;
     progressText.innerHTML = `<div style="font-family:Fredoka One,cursive;font-size:26px;font-weight:900;color:#667eea;margin:12px 0 6px">${justUnlockedChar.power}</div><div style="font-size:13px;color:#aaa">суперсила открыта ✨</div>`;
     return;
   }
-
   if (st.gotBase?.length >= BASE.length) { motivational.style.display = 'block'; motivational.innerHTML = '🏆 Ты собрал(а) все базовые суперсилы! Круто!'; }
-
   if (currentStreak >= 5 && currentStreak <= 6) {
     progressText.innerHTML = '⭐ Сегодня ты получишь ЗВЕЗДУ! ⭐';
   } else if (currentStreak === 7) {
@@ -379,13 +350,10 @@ function checkCooldown() {
 function doWorkout() {
   const today = getToday();
   if (st.lastWorkout === today) { checkCooldown(); return; }
-  
   let newStreak = 1;
   if (st.lastWorkout && isConsecutiveDay(st.lastWorkout, today)) newStreak = (st.streak || 0) + 1;
-  
   st.streak = newStreak;
   st.lastWorkout = today;
-  
   if (newStreak >= 1 && newStreak <= 4) {
     st.keys = (st.keys || 0) + 1; save(); sound('key');
     if (st.keys >= 4) {
@@ -411,14 +379,19 @@ function doWorkout() {
 function checkLegendary() {
   if (!st.gotLegend && st.gotBase?.length >= BASE.length && st.gotRare?.length >= RARE.length && st.gotEpic?.length >= EPIC.length) {
     st.gotLegend = true; save();
-    // 🎆 ВЫЗЫВАЕМ СПЕЦИАЛЬНЫЕ ФАНФАРЫ
     setTimeout(() => celebrateLegend(), 1000);
   }
 }
 
-window.switchTab = function(tab, btn) { document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderGallery(tab); };
+window.switchTab = function(tab, btn) { 
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); 
+  btn.classList.add('active'); 
+  renderGallery(tab); 
+};
+
 function renderGallery(tab) {
-  const cont = document.getElementById('galleryContent'); cont.innerHTML = '';
+  const cont = document.getElementById('galleryContent'); 
+  cont.innerHTML = '';
   let chars, collection;
   if (tab === 'base') { chars=BASE; collection=st.gotBase||[]; }
   if (tab === 'rare') { chars=RARE; collection=st.gotRare||[]; }
@@ -427,34 +400,90 @@ function renderGallery(tab) {
   const grid = document.createElement('div'); grid.className = 'gallery-grid';
   chars.forEach((c, i) => {
     const got = collection.includes(i);
-    const div = document.createElement('div'); div.className = 'g-item' + (got ? ' got' : ' locked');
+    const div = document.createElement('div'); 
+    div.className = 'g-item' + (got ? ' got' : ' locked');
     if(got){div.style.borderColor='#667eea';div.style.background='#EDF2FF';}
     const area = document.createElement('div'); area.className='g-img';
-    if(got){const img=document.createElement('img');img.src=c.img;img.onerror=()=>{img.style.display='none';area.innerHTML='<span style="font-size:40px">'+c.animal+'</span>';};area.appendChild(img);}
-    else area.innerHTML='<span class="g-q">❓</span>';
-    div.appendChild(area);
-    if(got){const nm=document.createElement('div');nm.className='g-name';nm.textContent=c.power;div.appendChild(nm);}
-    if(!got&&(tab==='rare'||tab==='epic')){
-      const cost=4; const can=tab==='rare'?((st.stars||0)>=cost):((st.shinyStars||0)>=cost);
-      if(can){const btn=document.createElement('button');btn.innerHTML=(tab==='rare'?'⭐':'🌟')+' '+cost;btn.style.cssText='border:none;background:#FFF8E1;color:#F9A825;border-radius:10px;padding:6px;font-weight:800;font-size:11px;cursor:pointer;margin-top:8px;';btn.onclick=(e)=>{e.stopPropagation();spendStars(tab,i,cost);};div.appendChild(btn);}
-      else{const p=document.createElement('div');p.innerHTML=(tab==='rare'?'⭐':'🌟')+' '+cost;p.style.cssText='font-size:11px;font-weight:700;color:#bbb;margin-top:6px;';div.appendChild(p);}
+    if(got){
+      const img=document.createElement('img');
+      img.src=c.img;
+      img.alt=c.power;
+      img.onerror=()=>{img.style.display='none';area.innerHTML='<span style="font-size:40px">'+c.animal+'</span>';};
+      area.appendChild(img);
+    } else {
+      area.innerHTML='<span class="g-q">❓</span>';
     }
-    if(tab==='legend'&&!got){const h=document.createElement('div');h.innerHTML='Собери всех!';h.style.cssText='font-size:11px;color:#aaa;margin-top:6px;';div.appendChild(h);}
+    div.appendChild(area);
+    if(got){
+      const nm=document.createElement('div');
+      nm.className='g-name';
+      nm.textContent=c.power;
+      div.appendChild(nm);
+    }
+    if(!got&&(tab==='rare'||tab==='epic')){
+      const cost=4; 
+      const can=tab==='rare'?((st.stars||0)>=cost):((st.shinyStars||0)>=cost);
+      if(can){
+        const btn=document.createElement('button');
+        btn.innerHTML=(tab==='rare'?'⭐':'🌟')+' '+cost+' → Открыть!';
+        btn.style.cssText='border:none;background:#FFF8E1;color:#F9A825;border-radius:10px;padding:8px;font-weight:800;font-size:12px;cursor:pointer;margin:8px 8px 12px;';
+        btn.onclick=(e)=>{e.stopPropagation();spendStars(tab,i,cost);};
+        div.appendChild(btn);
+      } else {
+        const p=document.createElement('div');
+        p.innerHTML=(tab==='rare'?'⭐':'🌟')+' '+cost;
+        p.style.cssText='font-size:11px;font-weight:700;color:#bbb;margin-top:6px;';
+        div.appendChild(p);
+      }
+    }
+    if(tab==='legend'&&!got){
+      const h=document.createElement('div');
+      h.innerHTML='Собери всех!';
+      h.style.cssText='font-size:11px;color:#aaa;margin-top:6px;';
+      div.appendChild(h);
+    }
     grid.appendChild(div);
   });
   cont.appendChild(grid);
 }
 
 function spendStars(tab, idx, cost) {
-  if(tab==='rare'){if((st.stars||0)<cost||(st.gotRare||[]).includes(idx))return; st.stars-=cost; if(!st.gotRare)st.gotRare=[]; st.gotRare.push(idx); save(); celebrate('⭐',RARE[idx].power+' открыта!',RARE[idx].name,RARE[idx].img,'rare');}
-  else if(tab==='epic'){if((st.shinyStars||0)<cost||(st.gotEpic||[]).includes(idx))return; st.shinyStars-=cost; if(!st.gotEpic)st.gotEpic=[]; st.gotEpic.push(idx); save(); celebrate('🌟',EPIC[idx].power+' открыта!',EPIC[idx].name,EPIC[idx].img,'epic');}
-  checkLegendary(); renderGallery(tab);
+  if(tab==='rare'){
+    if((st.stars||0)<cost) { alert('Недостаточно звёзд!'); return; }
+    if((st.gotRare||[]).includes(idx)) { alert('Уже открыто!'); return; }
+    st.stars-=cost; 
+    if(!st.gotRare)st.gotRare=[]; 
+    st.gotRare.push(idx); 
+    save(); 
+    celebrate('⭐',RARE[idx].power+' открыта!',RARE[idx].name+' теперь в твоей коллекции!',RARE[idx].img,'rare');
+    checkLegendary();
+    renderGallery(tab);
+  } else if(tab==='epic'){
+    if((st.shinyStars||0)<cost) { alert('Недостаточно сияющих звёзд!'); return; }
+    if((st.gotEpic||[]).includes(idx)) { alert('Уже открыто!'); return; }
+    st.shinyStars-=cost; 
+    if(!st.gotEpic)st.gotEpic=[]; 
+    st.gotEpic.push(idx); 
+    save(); 
+    celebrate('🌟',EPIC[idx].power+' открыта!',EPIC[idx].name+' теперь в твоей коллекции!',EPIC[idx].img,'epic');
+    checkLegendary();
+    renderGallery(tab);
+  }
 }
 
-window.showGallery = function() { document.getElementById('gameScreen').style.display='none'; document.getElementById('galleryScreen').style.display='block'; renderGallery('base'); document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===0)); };
-window.hideGallery = function() { document.getElementById('galleryScreen').style.display='none'; document.getElementById('gameScreen').style.display='block'; render(); };
+window.showGallery = function() { 
+  document.getElementById('gameScreen').style.display='none'; 
+  document.getElementById('galleryScreen').style.display='block'; 
+  renderGallery('base'); 
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===0)); 
+};
 
-// ✅ ОБНОВЛЁННАЯ КНОПКА ОТЛАДКИ С РАНДОМОМ
+window.hideGallery = function() { 
+  document.getElementById('galleryScreen').style.display='none'; 
+  document.getElementById('gameScreen').style.display='block'; 
+  render(); 
+};
+
 window.showDebugPopup = function() {
   const today = getToday();
   const streak = calculateCurrentStreak();
@@ -465,7 +494,6 @@ window.showDebugPopup = function() {
               "🔑 Ключей: " + (st.keys||0) + "\n" +
               "⭐ Звезд: " + (st.stars||0) + "\n" +
               "🌟 Сияющих: " + (st.shinyStars||0);
-
   let customAlert = document.createElement('div');
   customAlert.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:20px;border-radius:20px;box-shadow:0 0 20px rgba(0,0,0,0.5);z-index:9999;text-align:center;width:90%;max-width:320px;";
   customAlert.innerHTML = `
@@ -476,37 +504,30 @@ window.showDebugPopup = function() {
     <button class="debug-popup-btn close" onclick="this.parentElement.remove()">Закрыть</button>
   `;
   document.body.appendChild(customAlert);
-
   document.getElementById('debugTestWeek').onclick = function() {
-    // 🎲 РАНДОМНОЕ ОТКРЫТИЕ ПЕРСОНАЖА
     const availableBase = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
     let charAdded = false;
-
     if (availableBase.length > 0) {
       const randomIdx = availableBase[Math.floor(Math.random() * availableBase.length)];
       st.gotBase.push(randomIdx);
       st.charIdx = randomIdx;
       charAdded = true;
     }
-
     st.stars = (st.stars || 0) + 2;
     st.shinyStars = (st.shinyStars || 0) + 1;
     st.keys = 0;
     st.streak = 0;
     st.lastWorkout = getToday();
-
     save();
     checkLegendary();
     render();
-
     this.parentElement.remove();
     if(charAdded) {
-      alert("✅ Готово! Открыт случайный персонаж: " + BASE[st.charIdx].name + "\nНаграды добавлены.");
+      alert("✅ Готово! Открыт: " + BASE[st.charIdx].name + "\nЗвёзд: " + st.stars + "\nСияющих: " + st.shinyStars);
     } else {
-      alert("⚠️ Все базовые уже открыты! Награды добавлены.");
+      alert("⚠️ Все базовые открыты! Награды добавлены.");
     }
   };
-
   document.getElementById('debugReset').onclick = function() {
     if(confirm("Точно сбросить весь прогресс?")) {
       localStorage.removeItem('as_' + playerKey);
@@ -525,6 +546,7 @@ window.startGame = function() {
   if(!load()) st=freshState(); st.name=name; st.nick=nick; save();
   sound('start'); document.getElementById('nameScreen').style.display='none'; document.getElementById('gameScreen').style.display='block'; render();
 };
+
 window.changeName = function() { localStorage.removeItem('as_who'); document.getElementById('gameScreen').style.display='none'; document.getElementById('nameScreen').style.display='block'; document.getElementById('nameInput').value=''; document.getElementById('nickInput').value=''; checkBtn(); };
 
 document.addEventListener('DOMContentLoaded', function() {
