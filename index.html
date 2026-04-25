@@ -158,11 +158,9 @@ let st = {};
 let playerKey = '';
 let justUnlockedChar = null;
 
-// 🔥 КРИПТОСТОЙКИЙ РАНДОМ (непредсказуемый!)
-function getSecureRandom(max) {
-  const array = new Uint32Array(1);
-  window.crypto.getRandomValues(array);
-  return array[0] % max;
+// 🔥 НАДЕЖНЫЙ РАНДОМ
+function getRandomIndex(array) {
+  return Math.floor(Math.random() * array.length);
 }
 
 function getToday() {
@@ -190,7 +188,7 @@ function calculateCurrentStreak() {
 }
 
 function freshState() {
-  return { streak: 0, keys: 0, stars: 0, shinyStars: 0, gotBase: [], gotRare: [], gotEpic: [], gotLegend: false, lastWorkout: null, name: '', nick: '', charIdx: null };
+  return { streak: 0, keys: 0, stars: 0, shinyStars: 0, gotBase: [], gotRare: [], gotEpic: [], gotLegend: false, lastWorkout: null, name: '', nick: '', charIdx: 0 };
 }
 
 function save() { if (playerKey) localStorage.setItem('as_' + playerKey, JSON.stringify(st)); }
@@ -251,10 +249,11 @@ function getRank() {
 }
 
 function canOpenLegend() {
-  return (st.gotBase?.length >= BASE.length) && 
+  const can = (st.gotBase?.length >= BASE.length) && 
          (st.gotRare?.length >= RARE.length) && 
          (st.gotEpic?.length >= EPIC.length) && 
          !st.gotLegend;
+  return can;
 }
 
 function celebrate(emoji, title, text, img, snd) {
@@ -294,8 +293,8 @@ window.openLegend = function() {
 
 window.closeCeleb = function() { 
   document.getElementById('celebration').classList.remove('show');
-  if(justUnlockedChar) setTimeout(()=>{justUnlockedChar=null;render();},100); 
-  else render(); 
+  justUnlockedChar = null;
+  setTimeout(() => render(), 100);
 };
 
 function render() {
@@ -314,8 +313,10 @@ function render() {
   
   keysGrid.style.display = 'none'; charWrap.style.display = 'none'; charWrap.classList.remove('show'); motivational.style.display = 'none'; progressText.innerHTML = '';
   
+  // 🔥 ПРОВЕРКА КНОПКИ ЛЕГЕНДЫ
   if (canOpenLegend()) {
     legendBtn.style.display = 'block';
+    console.log('✅ Кнопка Легенды показана!');
   } else {
     legendBtn.style.display = 'none';
   }
@@ -372,14 +373,15 @@ function doWorkout() {
     if (st.keys >= 4) {
       const available = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
       if (available.length > 0) {
-        // 🔥 ИСПОЛЬЗУЕМ КРИПТОСТОЙКИЙ РАНДОМ
-        const idx = available[getSecureRandom(available.length)];
+        // 🔥 РАНДОМНЫЙ ВЫБОР
+        const randomIndex = getRandomIndex(available);
+        const idx = available[randomIndex];
         st.gotBase.push(idx); st.charIdx = idx; st.keys = 0; save(); sound('base');
         justUnlockedChar = BASE[idx];
         celebrate('🎉', BASE[idx].power + ' открыта!', 'Суперсила добавлена!', BASE[idx].img);
-        render(); return;
+        setTimeout(() => render(), 100); return;
       }
-    } else { celebrate('🔑', 'Ключ ' + st.keys + ' из 4!', PRAISE_PHRASES[Math.floor(Math.random()*PRAISE_PHRASES.length)]); }
+    } else { celebrate('🔑', 'Ключ ' + st.keys + ' из 4!', PRAISE_PHRASES[getRandomIndex(PRAISE_PHRASES)]); }
   } else if (newStreak === 5 || newStreak === 6) {
     st.stars = (st.stars || 0) + 1; save(); sound('rare');
     celebrate('⭐', 'Звезда получена!', 'У тебя ' + st.stars + ' ⭐.');
@@ -492,13 +494,19 @@ window.hideGallery = function() {
 window.showDebugPopup = function() {
   const today = getToday();
   const streak = calculateCurrentStreak();
+  const canLegend = canOpenLegend();
   const msg = "🕵️ ДАННЫЕ:\n\n" +
               "📅 Сегодня: " + today + "\n" +
               "🏃 Последний клик: " + (st.lastWorkout || "нет") + "\n" +
               "🔥 Стрик: " + st.streak + "\n" +
               "🔑 Ключей: " + (st.keys||0) + "\n" +
               "⭐ Звезд: " + (st.stars||0) + "\n" +
-              "🌟 Сияющих: " + (st.shinyStars||0);
+              "🌟 Сияющих: " + (st.shinyStars||0) + "\n\n" +
+              "📊 Прогресс:\n" +
+              "Базовых: " + (st.gotBase?.length||0) + "/8\n" +
+              "Редких: " + (st.gotRare?.length||0) + "/4\n" +
+              "Эпических: " + (st.gotEpic?.length||0) + "/2\n\n" +
+              "🔥 Можно открыть Легенду: " + (canLegend ? "ДА ✅" : "НЕТ ❌");
   let customAlert = document.createElement('div');
   customAlert.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;padding:20px;border-radius:20px;box-shadow:0 0 20px rgba(0,0,0,0.5);z-index:9999;text-align:center;width:90%;max-width:320px;";
   customAlert.innerHTML = `
@@ -513,8 +521,8 @@ window.showDebugPopup = function() {
     const availableBase = BASE.map((_,i) => i).filter(i => !st.gotBase.includes(i));
     let charAdded = false;
     if (availableBase.length > 0) {
-      // 🔥 КРИПТОСТОЙКИЙ РАНДОМ ДЛЯ ТЕСТА
-      const randomIdx = availableBase[getSecureRandom(availableBase.length)];
+      // 🔥 РАНДОМ
+      const randomIdx = availableBase[getRandomIndex(availableBase)];
       st.gotBase.push(randomIdx);
       st.charIdx = randomIdx;
       charAdded = true;
