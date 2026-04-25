@@ -248,22 +248,40 @@ let st = {};
 let playerKey = '';
 let justUnlockedChar = null;
 
-// 🔹 Надёжное получение даты как строки 'YYYY-MM-DD' (без часовых поясов)
 function getToday() {
   const d = new Date();
-  return d.getFullYear() + '-' + 
-         String(d.getMonth()+1).padStart(2,'0') + '-' + 
-         String(d.getDate()).padStart(2,'0');
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
 
-// 🔹 Проверяет, является ли date2 следующим днём после date1 (обе в формате 'YYYY-MM-DD')
 function isConsecutiveDay(date1, date2) {
+  if (!date1 || !date2) return false;
   const [y1, m1, d1] = date1.split('-').map(Number);
   const [y2, m2, d2] = date2.split('-').map(Number);
   const dt1 = new Date(y1, m1 - 1, d1);
   const dt2 = new Date(y2, m2 - 1, d2);
-  const diff = Math.round((dt2 - dt1) / (24 * 3600 * 1000));
-  return diff === 1;
+  const diffTime = dt2.getTime() - dt1.getTime();
+  const diffDays = Math.round(diffTime / (1000 * 3600 * 24));
+  console.log('📅 isConsecutiveDay:', {date1, date2, diffDays});
+  return diffDays === 1;
+}
+
+function calculateCurrentStreak() {
+  const today = getToday();
+  if (!st.lastWorkout) {
+    console.log('📊 Нет lastWorkout, стрик = 0');
+    return 0;
+  }
+  if (st.lastWorkout === today) {
+    console.log('📊 Уже сделала сегодня, стрик =', st.streak);
+    return st.streak || 0;
+  }
+  if (isConsecutiveDay(st.lastWorkout, today)) {
+    const newStreak = (st.streak || 0) + 1;
+    console.log('📊 Вчера делала, новый стрик =', newStreak);
+    return newStreak;
+  }
+  console.log('📊 Пропустила день, сброс стрика');
+  return 0;
 }
 
 function freshState() {
@@ -284,7 +302,10 @@ function freshState() {
 }
 
 function save() { 
-  if (playerKey) localStorage.setItem('as_' + playerKey, JSON.stringify(st)); 
+  if (playerKey) {
+    localStorage.setItem('as_' + playerKey, JSON.stringify(st));
+    console.log('💾 Saved:', st);
+  }
 }
 
 function load() {
@@ -293,12 +314,10 @@ function load() {
   if (!raw) return false;
   try { 
     let data = JSON.parse(raw);
+    console.log('📥 Loaded:', data);
     
-    // Миграция старых полей
     if (data.step !== undefined) { data.keys = data.step; data.streak = data.step; delete data.step; }
     ['weekCount','weekStart','weeksPlayed','lastClaim','lastUnlockWeek'].forEach(k => { if (data[k] !== undefined) delete data[k]; });
-    
-    // Инициализация новых полей
     ['streak','keys','stars','shinyStars'].forEach(k => { if (data[k] === undefined) data[k] = 0; });
     ['gotBase','gotRare','gotEpic'].forEach(k => { if (!Array.isArray(data[k])) data[k] = []; });
     
@@ -366,16 +385,12 @@ window.closeCeleb = function() {
   else render(); 
 };
 
-// 🔹 Рассчитывает, каким БУДЕТ стрик, если игрок сделает зарядку сегодня
-function getPotentialStreak() {
-  const today = getToday();
-  if (!st.lastWorkout) return 1;
-  if (st.lastWorkout === today) return st.streak || 1; // уже сделал
-  if (isConsecutiveDay(st.lastWorkout, today)) return (st.streak || 0) + 1;
-  return 1; // пропустил
-}
-
 function render() {
+  console.log('🎨 Render called, state:', st);
+  
+  const currentStreak = calculateCurrentStreak();
+  console.log('🎨 Current streak:', currentStreak);
+  
   const rank = getRank();
   document.getElementById('rankBadge').className = 'rank-badge ' + rank.cls;
   document.getElementById('rankBadge').textContent = rank.label;
@@ -394,7 +409,6 @@ function render() {
   motivational.style.display = 'none';
   progressText.innerHTML = '';
 
-  // Показ открытого персонажа (3 сек после получения)
   if (justUnlockedChar) {
     charWrap.style.display = 'block';
     charWrap.classList.add('show');
@@ -403,21 +417,17 @@ function render() {
     return;
   }
 
-  // Мотивация после сбора всех базовых
   if (st.gotBase?.length >= BASE.length) {
     motivational.style.display = 'block';
     motivational.innerHTML = '🏆 Ты собрал(а) все базовые суперсилы! Круто!';
   }
 
-  // 🔹 Отображаем награду на основе ПОТЕНЦИАЛЬНОГО стрика (до клика)
-  const potential = getPotentialStreak();
-  
-  if (potential >= 5 && potential <= 6) {
+  // 🔹 ИСПОЛЬЗУЕМ currentStreak (рассчитанный), а не st.keys
+  if (currentStreak >= 5 && currentStreak <= 6) {
     progressText.innerHTML = '⭐ Сегодня ты получишь ЗВЕЗДУ! ⭐';
-  } else if (potential === 7) {
+  } else if (currentStreak === 7) {
     progressText.innerHTML = '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
   } else {
-    // Дни 1-4: сбор ключей
     keysGrid.style.display = 'grid';
     const keys = Math.min(st.keys || 0, 4);
     const needed = 4 - keys;
@@ -478,7 +488,11 @@ function doWorkout() {
   const today = getToday();
   if (st.lastWorkout === today) { checkCooldown(); return; }
   
-  const newStreak = getPotentialStreak(); // то, чем станет стрик после клика
+  const currentStreak = calculateCurrentStreak();
+  const newStreak = currentStreak + 1;
+  
+  console.log('🏃 doWorkout: currentStreak =', currentStreak, ', newStreak =', newStreak);
+  
   st.streak = newStreak;
   st.lastWorkout = today;
   
@@ -663,7 +677,6 @@ window.changeName = function() {
   checkBtn();
 };
 
-// 🔹 ГЛАВНОЕ ИСПРАВЛЕНИЕ: инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
   const _who = localStorage.getItem('as_who');
   if (_who) {
@@ -676,7 +689,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         playerKey = (d.name + '_' + d.nick).toLowerCase().replace(/[^a-zа-яё0-9]/gi, '_');
         if (load()) {
-          // Если состояние загрузилось — сразу показываем игру
           document.getElementById('nameScreen').style.display = 'none';
           document.getElementById('gameScreen').style.display = 'block';
           render();
