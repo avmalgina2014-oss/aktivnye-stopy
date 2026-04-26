@@ -256,44 +256,22 @@ function sound(type) {
   } catch(e) {}
 }
 
-// ✅ Фанфары для Феникса
+// ✅ Звук Феникса — оригинальная мелодия, но дольше
 function fanfare() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    // Ноты фанфар: [частота, начало, длительность, громкость, тип]
-    const notes = [
-      // Разбег вверх — короткие форшлаги
-      [392, 0.00, 0.10, 0.25, 'square'],
-      [523, 0.10, 0.10, 0.28, 'square'],
-      [659, 0.20, 0.10, 0.30, 'square'],
-      // Главная тема — торжественные аккорды
-      [784, 0.32, 0.22, 0.40, 'square'],
-      [988, 0.32, 0.22, 0.25, 'square'], // квинта сверху
-      [523, 0.32, 0.22, 0.15, 'sine'],   // октава снизу
-
-      [880, 0.56, 0.18, 0.35, 'square'],
-      [1109,0.56, 0.18, 0.22, 'square'],
-
-      [784, 0.76, 0.14, 0.30, 'square'],
-      [659, 0.92, 0.12, 0.28, 'square'],
-
-      // Финальный мощный аккорд
-      [1047,1.06, 0.55, 0.45, 'square'],
-      [784, 1.06, 0.55, 0.30, 'square'],
-      [523, 1.06, 0.55, 0.20, 'sine'],
-      [1319,1.06, 0.55, 0.18, 'sine'],  // высокая нота блеска
-    ];
-    notes.forEach(([freq, start, dur, vol, type]) => {
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
+    const notes = [262, 330, 392, 523, 659, 784];
+    const dt = 0.32;
+    notes.forEach((f, i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
       o.connect(g); g.connect(ctx.destination);
-      o.type = type;
-      o.frequency.setValueAtTime(freq, ctx.currentTime + start);
-      g.gain.setValueAtTime(0, ctx.currentTime + start);
-      g.gain.linearRampToValueAtTime(vol, ctx.currentTime + start + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
-      o.start(ctx.currentTime + start);
-      o.stop(ctx.currentTime + start + dur + 0.05);
+      o.type = 'sine';
+      const t = ctx.currentTime + i * dt;
+      const dur = i === notes.length - 1 ? 1.8 : 0.65;
+      o.frequency.setValueAtTime(f, t);
+      g.gain.setValueAtTime(0.35, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      o.start(t); o.stop(t + dur);
     });
   } catch(e) {}
 }
