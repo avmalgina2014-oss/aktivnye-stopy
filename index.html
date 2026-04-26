@@ -256,6 +256,48 @@ function sound(type) {
   } catch(e) {}
 }
 
+// ✅ Фанфары для Феникса
+function fanfare() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // Ноты фанфар: [частота, начало, длительность, громкость, тип]
+    const notes = [
+      // Разбег вверх — короткие форшлаги
+      [392, 0.00, 0.10, 0.25, 'square'],
+      [523, 0.10, 0.10, 0.28, 'square'],
+      [659, 0.20, 0.10, 0.30, 'square'],
+      // Главная тема — торжественные аккорды
+      [784, 0.32, 0.22, 0.40, 'square'],
+      [988, 0.32, 0.22, 0.25, 'square'], // квинта сверху
+      [523, 0.32, 0.22, 0.15, 'sine'],   // октава снизу
+
+      [880, 0.56, 0.18, 0.35, 'square'],
+      [1109,0.56, 0.18, 0.22, 'square'],
+
+      [784, 0.76, 0.14, 0.30, 'square'],
+      [659, 0.92, 0.12, 0.28, 'square'],
+
+      // Финальный мощный аккорд
+      [1047,1.06, 0.55, 0.45, 'square'],
+      [784, 1.06, 0.55, 0.30, 'square'],
+      [523, 1.06, 0.55, 0.20, 'sine'],
+      [1319,1.06, 0.55, 0.18, 'sine'],  // высокая нота блеска
+    ];
+    notes.forEach(([freq, start, dur, vol, type]) => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type = type;
+      o.frequency.setValueAtTime(freq, ctx.currentTime + start);
+      g.gain.setValueAtTime(0, ctx.currentTime + start);
+      g.gain.linearRampToValueAtTime(vol, ctx.currentTime + start + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+      o.start(ctx.currentTime + start);
+      o.stop(ctx.currentTime + start + dur + 0.05);
+    });
+  } catch(e) {}
+}
+
 function decl(n, a, b, c) {
   const m=n%10, mm=n%100;
   if(m===1&&mm!==11) return a;
@@ -303,7 +345,7 @@ window.openLegend = function() {
   el.className = 'celeb-img celeb-img-feniks'; // ✅ пульсация
   document.getElementById('celebBtn').innerText = 'Ты Легенда! 🔥';
   document.getElementById('celebration').classList.add('show');
-  sound('legend');
+  fanfare(); // ✅ Фанфары!
 };
 
 window.closeCeleb = function() {
