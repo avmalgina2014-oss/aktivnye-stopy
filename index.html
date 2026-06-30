@@ -412,11 +412,14 @@ function render() {
     progressText.innerHTML=`<div style="font-family:Fredoka One,cursive;font-size:26px;font-weight:900;color:#667eea;margin:12px 0 6px">${justUnlockedChar.power}</div><div style="font-size:13px;color:#aaa">суперсила открыта ✨</div>`;
     return;
   }
-  if (st.gotBase?.length >= BASE.length) { motivational.style.display='block'; motivational.innerHTML='🏆 Ты собрал(а) все базовые суперсилы! Круто!'; }
+  if (st.gotBase?.length >= BASE.length) { motivational.style.display='block'; motivational.innerHTML='🏆 Ты собрал(а) все базовые суперсилы! Теперь собирай редких и эпических за звёзды!'; }
+  const allBaseCollected = (st.gotBase?.length || 0) >= BASE.length;
   if (currentStreak >= 5 && currentStreak <= 6) {
     progressText.innerHTML = '⭐ Сегодня ты получишь ЗВЕЗДУ! ⭐';
   } else if (currentStreak === 7) {
     progressText.innerHTML = '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
+  } else if (allBaseCollected) {
+    progressText.innerHTML = '💪 Продолжай делать зарядку — на 5-й день будет звезда!';
   } else {
     keysGrid.style.display='grid';
     const keys = Math.min(st.keys || 0, 4);
@@ -456,6 +459,22 @@ function doWorkout() {
   if (st.lastWorkout && isConsecutiveDay(st.lastWorkout, today)) newStreak = (st.streak || 0) + 1;
   st.streak = newStreak;
   st.lastWorkout = today;
+  const allBaseCollected = (st.gotBase?.length || 0) >= BASE.length;
+  if (allBaseCollected) {
+    // Все базовые уже собраны — фаза ключей больше не нужна,
+    // сразу идём по циклу звёзд (5-6 день звезда, 7 день сияющая)
+    if (newStreak >= 1 && newStreak <= 4) {
+      celebrate('💪', 'Зарядка засчитана!', PRAISE_PHRASES[Math.floor(Math.random()*PRAISE_PHRASES.length)]);
+    } else if (newStreak === 5 || newStreak === 6) {
+      st.stars=(st.stars||0)+1; save(); sound('rare');
+      celebrate('⭐','Звезда получена!','У тебя '+st.stars+' ⭐.');
+    } else if (newStreak === 7) {
+      st.shinyStars=(st.shinyStars||0)+1; st.streak=0; save(); sound('rare');
+      celebrate('🌟','Сияющая звезда!','У тебя '+st.shinyStars+' 🌟.');
+    }
+    save(); render();
+    return;
+  }
   if (newStreak >= 1 && newStreak <= 4) {
     st.keys = (st.keys || 0) + 1; save(); sound('key');
     if (st.keys >= 4) {
