@@ -419,7 +419,7 @@ function render() {
   } else if (currentStreak === 7) {
     progressText.innerHTML = '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
   } else if (allBaseCollected) {
-    progressText.innerHTML = '💪 Продолжай делать зарядку — на 5-й день будет звезда!';
+    progressText.innerHTML = `💪 День ${currentStreak} из 5 — ещё ${5-currentStreak} ${decl(5-currentStreak,'день','дня','дней')} до звезды!`;
   } else {
     keysGrid.style.display='grid';
     const keys = Math.min(st.keys || 0, 4);
@@ -678,3 +678,4 @@ document.addEventListener('DOMContentLoaded', async function() {
 </script>
 </body>
 </html>
+
