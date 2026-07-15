@@ -428,12 +428,21 @@ function render() {
   }
   if (st.gotBase?.length >= BASE.length) { motivational.style.display='block'; motivational.innerHTML='🏆 Ты собрал(а) все базовые суперсилы! Теперь собирай редкие и эпические за звёзды!'; }
   const allBaseCollected = (st.gotBase?.length || 0) >= BASE.length;
+  const doneToday = st.lastWorkout === getToday();
   if (currentStreak >= 5 && currentStreak <= 6) {
-    progressText.innerHTML = '⭐ Сегодня ты получишь ЗВЕЗДУ! ⭐';
+    progressText.innerHTML = doneToday
+      ? '⭐ Звезда получена! Молодец! ⭐'
+      : '⭐ Сегодня ты получишь ЗВЕЗДУ! ⭐';
   } else if (currentStreak === 7) {
-    progressText.innerHTML = '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
+    progressText.innerHTML = doneToday
+      ? '🌟 Сияющая звезда получена! Ты супер! 🌟'
+      : '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
   } else if (allBaseCollected) {
-    progressText.innerHTML = `💪 День ${currentStreak} из 5 — ещё ${5-currentStreak} ${decl(5-currentStreak,'день','дня','дней')} до звезды!`;
+    const daysToStar = 5 - currentStreak;
+    const daysToShiny = 7 - currentStreak;
+    progressText.innerHTML = doneToday
+      ? `💪 День ${currentStreak} из 7 — ещё ${daysToStar} ${decl(daysToStar,'день','дня','дней')} до ⭐, ${daysToShiny} до 🌟`
+      : `💪 День ${currentStreak} из 7 — ещё ${daysToStar} ${decl(daysToStar,'день','дня','дней')} до ⭐, ${daysToShiny} до 🌟`;
   } else {
     keysGrid.style.display='grid';
     const keys = Math.min(st.keys || 0, 4);
@@ -700,4 +709,3 @@ document.addEventListener('DOMContentLoaded', async function() {
 </script>
 </body>
 </html>
-
