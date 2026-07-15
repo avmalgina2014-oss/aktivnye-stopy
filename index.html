@@ -438,11 +438,14 @@ function render() {
       ? '🌟 Сияющая звезда получена! Ты супер! 🌟'
       : '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
   } else if (allBaseCollected) {
+    const allRareCollected = (st.gotRare?.length || 0) >= RARE.length;
     const daysToStar = 5 - currentStreak;
     const daysToShiny = 7 - currentStreak;
-    progressText.innerHTML = doneToday
-      ? `💪 День ${currentStreak} из 7 — ещё ${daysToStar} ${decl(daysToStar,'день','дня','дней')} до ⭐, ${daysToShiny} до 🌟`
-      : `💪 День ${currentStreak} из 7 — ещё ${daysToStar} ${decl(daysToStar,'день','дня','дней')} до ⭐, ${daysToShiny} до 🌟`;
+    if (allRareCollected) {
+      progressText.innerHTML = `💪 День ${currentStreak} из 7 — ещё ${daysToShiny} ${decl(daysToShiny,'день','дня','дней')} до 🌟`;
+    } else {
+      progressText.innerHTML = `💪 День ${currentStreak} из 7 — ещё ${daysToStar} ${decl(daysToStar,'день','дня','дней')} до ⭐, ${daysToShiny} до 🌟`;
+    }
   } else {
     keysGrid.style.display='grid';
     const keys = Math.min(st.keys || 0, 4);
