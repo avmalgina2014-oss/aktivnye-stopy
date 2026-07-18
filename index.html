@@ -439,11 +439,11 @@ function render() {
       : '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
   } else if (allBaseCollected) {
     const allRareCollected = (st.gotRare?.length || 0) >= RARE.length;
-    const daysToStar = 5 - currentStreak;
     const daysToShiny = 7 - currentStreak;
     if (allRareCollected) {
       progressText.innerHTML = `💪 День ${currentStreak} из 7 — ещё ${daysToShiny} ${decl(daysToShiny,'день','дня','дней')} до 🌟`;
     } else {
+      const daysToStar = 5 - currentStreak;
       progressText.innerHTML = `💪 День ${currentStreak} из 7 — ещё ${daysToStar} ${decl(daysToStar,'день','дня','дней')} до ⭐, ${daysToShiny} до 🌟`;
     }
   } else {
@@ -494,17 +494,28 @@ function doWorkout() {
   st.streak = newStreak;
   st.lastWorkout = today;
   const allBaseCollected = (st.gotBase?.length || 0) >= BASE.length;
+  const allRareCollected = (st.gotRare?.length || 0) >= RARE.length;
   if (allBaseCollected) {
-    // Все базовые уже собраны — фаза ключей больше не нужна,
-    // сразу идём по циклу звёзд (5-6 день звезда, 7 день сияющая)
-    if (newStreak >= 1 && newStreak <= 4) {
-      celebrate('💪', 'Зарядка засчитана!', PRAISE_PHRASES[Math.floor(Math.random()*PRAISE_PHRASES.length)]);
-    } else if (newStreak === 5 || newStreak === 6) {
-      st.stars=(st.stars||0)+1; save(); sound('rare');
-      celebrate('⭐','Звезда получена!','У тебя '+st.stars+' ⭐.');
-    } else if (newStreak === 7) {
-      st.shinyStars=(st.shinyStars||0)+1; st.streak=0; save(); sound('rare');
-      celebrate('🌟','Сияющая звезда!','У тебя '+st.shinyStars+' 🌟.');
+    if (allRareCollected) {
+      // Все редкие собраны — обычные звёзды больше не нужны
+      // Дни 1-6 просто зарядка, только 7-й день = сияющая
+      if (newStreak >= 1 && newStreak <= 6) {
+        celebrate('💪', 'Зарядка засчитана!', PRAISE_PHRASES[Math.floor(Math.random()*PRAISE_PHRASES.length)]);
+      } else if (newStreak === 7) {
+        st.shinyStars=(st.shinyStars||0)+1; st.streak=0; save(); sound('rare');
+        celebrate('🌟','Сияющая звезда!','У тебя '+st.shinyStars+' 🌟.');
+      }
+    } else {
+      // Базовые собраны, редкие ещё нет — дни 5-6 звезда, 7 сияющая
+      if (newStreak >= 1 && newStreak <= 4) {
+        celebrate('💪', 'Зарядка засчитана!', PRAISE_PHRASES[Math.floor(Math.random()*PRAISE_PHRASES.length)]);
+      } else if (newStreak === 5 || newStreak === 6) {
+        st.stars=(st.stars||0)+1; save(); sound('rare');
+        celebrate('⭐','Звезда получена!','У тебя '+st.stars+' ⭐.');
+      } else if (newStreak === 7) {
+        st.shinyStars=(st.shinyStars||0)+1; st.streak=0; save(); sound('rare');
+        celebrate('🌟','Сияющая звезда!','У тебя '+st.shinyStars+' 🌟.');
+      }
     }
     save(); render();
     return;
