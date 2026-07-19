@@ -426,7 +426,13 @@ function render() {
     progressText.innerHTML=`<div style="font-family:Fredoka One,cursive;font-size:26px;font-weight:900;color:#667eea;margin:12px 0 6px">${justUnlockedChar.power}</div><div style="font-size:13px;color:#aaa">суперсила открыта ✨</div>`;
     return;
   }
-  if (st.gotBase?.length >= BASE.length) { motivational.style.display='block'; motivational.innerHTML='🏆 Ты собрал(а) все базовые суперсилы! Теперь собирай редкие и эпические за звёзды!'; }
+  if (st.gotBase?.length >= BASE.length) {
+    motivational.style.display='block';
+    const allRareCollected = (st.gotRare?.length || 0) >= RARE.length;
+    motivational.innerHTML = allRareCollected
+      ? '🏆 Ты собрал(а) все редкие суперсилы! Теперь собирай эпических за сияющие звёзды!'
+      : '🏆 Ты собрал(а) все базовые суперсилы! Теперь собирай редкие и эпические за звёзды!';
+  }
   const allBaseCollected = (st.gotBase?.length || 0) >= BASE.length;
   const doneToday = st.lastWorkout === getToday();
   if (currentStreak >= 5 && currentStreak <= 6) {
@@ -745,3 +751,4 @@ document.addEventListener('DOMContentLoaded', async function() {
 </script>
 </body>
 </html>
+
