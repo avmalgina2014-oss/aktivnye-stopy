@@ -472,7 +472,15 @@ function checkCooldown() {
     const diff = midnight - now;
     const hours = Math.floor(diff/3600000); const minutes = Math.floor((diff%3600000)/60000);
     const timeString = hours > 0 ? `${hours} ч ${minutes} мин` : `${minutes} мин`;
-    let message = diff>12*3600000 ? 'Отличная работа! Приходи завтра 🌙' : (diff>5*3600000 ? `Скоро! Осталось: ${timeString}` : (diff>3600000 ? `Совсем скоро! Осталось: ${timeString}` : `Уже почти! Осталось: ${timeString}`));
+    const allRareCollected = (st.gotRare?.length || 0) >= RARE.length;
+    const allBaseCollected = (st.gotBase?.length || 0) >= BASE.length;
+    let message;
+    if (allBaseCollected && allRareCollected && st.streak < 7) {
+      const daysLeft = 7 - st.streak;
+      message = `День ${st.streak} из 7 засчитан! Ещё ${daysLeft} ${decl(daysLeft,'день','дня','дней')} до 🌟`;
+    } else {
+      message = diff>12*3600000 ? 'Отличная работа! Приходи завтра 🌙' : (diff>5*3600000 ? `Скоро! Осталось: ${timeString}` : (diff>3600000 ? `Совсем скоро! Осталось: ${timeString}` : `Уже почти! Осталось: ${timeString}`));
+    }
     coolEl.innerHTML=`${message}<span class="cooldown-time">${timeString}</span>`;
   } else {
     claimBtn.style.display='block'; claimBtn.className='btn btn-green'; claimBtn.innerHTML='Я сделал(а) зарядку! 🏃'; claimBtn.onclick=doWorkout; coolEl.style.display='none';
