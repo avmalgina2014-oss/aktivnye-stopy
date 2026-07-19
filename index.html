@@ -439,9 +439,17 @@ function render() {
       : '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
   } else if (allBaseCollected) {
     const allRareCollected = (st.gotRare?.length || 0) >= RARE.length;
-    const daysToShiny = 7 - currentStreak;
+    const daysToShiny = 4 - currentStreak;
+    const daysToReset = 7 - currentStreak;
     if (allRareCollected) {
-      progressText.innerHTML = `💪 День ${currentStreak} из 7 — ещё ${daysToShiny} ${decl(daysToShiny,'день','дня','дней')} до 🌟`;
+      if (currentStreak === 2 || currentStreak === 4) {
+        progressText.innerHTML = doneToday
+          ? '🌟 Сияющая звезда получена! Ты супер! 🌟'
+          : '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
+      } else {
+        const daysToShiny = currentStreak === 1 ? 1 : currentStreak === 3 ? 1 : 2;
+        progressText.innerHTML = `💪 День ${currentStreak} из 4 — ещё ${daysToShiny} ${decl(daysToShiny,'день','дня','дней')} до 🌟`;
+      }
     } else {
       const daysToStar = 5 - currentStreak;
       progressText.innerHTML = `💪 День ${currentStreak} из 7 — ещё ${daysToStar} ${decl(daysToStar,'день','дня','дней')} до ⭐, ${daysToShiny} до 🌟`;
@@ -475,9 +483,13 @@ function checkCooldown() {
     const allRareCollected = (st.gotRare?.length || 0) >= RARE.length;
     const allBaseCollected = (st.gotBase?.length || 0) >= BASE.length;
     let message;
-    if (allBaseCollected && allRareCollected && st.streak < 7) {
-      const daysLeft = 7 - st.streak;
-      message = `День ${st.streak} из 7 засчитан! Ещё ${daysLeft} ${decl(daysLeft,'день','дня','дней')} до 🌟`;
+    if (allBaseCollected && allRareCollected) {
+      if (st.streak === 2 || st.streak === 4) {
+        message = `День ${st.streak} из 4 засчитан — сияющая звезда получена! 🌟`;
+      } else {
+        const daysLeft = st.streak === 1 ? 1 : 1;
+        message = `День ${st.streak} из 4 засчитан! Ещё ${daysLeft} ${decl(daysLeft,'день','дня','дней')} до 🌟`;
+      }
     } else {
       message = diff>12*3600000 ? 'Отличная работа! Приходи завтра 🌙' : (diff>5*3600000 ? `Скоро! Осталось: ${timeString}` : (diff>3600000 ? `Совсем скоро! Осталось: ${timeString}` : `Уже почти! Осталось: ${timeString}`));
     }
@@ -505,11 +517,13 @@ function doWorkout() {
   const allRareCollected = (st.gotRare?.length || 0) >= RARE.length;
   if (allBaseCollected) {
     if (allRareCollected) {
-      // Все редкие собраны — обычные звёзды больше не нужны
-      // Дни 1-6 просто зарядка, только 7-й день = сияющая
-      if (newStreak >= 1 && newStreak <= 6) {
+      // Финальная фаза: 4-дневный цикл, дни 2 и 4 дают сияющую
+      if (newStreak === 1 || newStreak === 3) {
         celebrate('💪', 'Зарядка засчитана!', PRAISE_PHRASES[Math.floor(Math.random()*PRAISE_PHRASES.length)]);
-      } else if (newStreak === 7) {
+      } else if (newStreak === 2) {
+        st.shinyStars=(st.shinyStars||0)+1; save(); sound('rare');
+        celebrate('🌟','Сияющая звезда!','У тебя '+st.shinyStars+' 🌟.');
+      } else if (newStreak === 4) {
         st.shinyStars=(st.shinyStars||0)+1; st.streak=0; save(); sound('rare');
         celebrate('🌟','Сияющая звезда!','У тебя '+st.shinyStars+' 🌟.');
       }
