@@ -152,6 +152,7 @@
     <div id="legendWorkoutCount" style="font-family:'Fredoka One',cursive;font-size:18px;color:#FF9800;margin-bottom:24px;"></div>
     <button class="btn" onclick="showGalleryFromLegend()" style="background:linear-gradient(135deg,#FFD700,#FF8C00);margin-bottom:12px;box-shadow:0 4px 20px rgba(255,215,0,.5);">🏅 Моя коллекция</button>
     <button class="btn" onclick="restartGame()" style="background:linear-gradient(135deg,#667eea,#764ba2);">🔄 Начать заново</button>
+    <div class="change-name" style="color:#aaa;margin-top:12px;" onclick="changeName()">Это не я → сменить имя</div>
   </div>
 </div>
 
@@ -803,9 +804,12 @@ window.startGame = async function() {
 window.changeName = function() {
   localStorage.removeItem('as_who');
   document.getElementById('gameScreen').style.display='none';
+  document.getElementById('galleryScreen').style.display='none';
+  document.getElementById('legendScreen').style.display='none';
   document.getElementById('nameScreen').style.display='block';
   document.getElementById('nameInput').value='';
   document.getElementById('nickInput').value='';
+  if (sparksRAF) { cancelAnimationFrame(sparksRAF); sparksRAF=null; }
   checkBtn();
 };
 
