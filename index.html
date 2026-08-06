@@ -450,8 +450,25 @@ function render() {
       : '🏆 Ты собрал(а) все базовые суперсилы! Теперь собирай редкие и эпические за звёзды!';
   }
   const allBaseCollected = (st.gotBase?.length || 0) >= BASE.length;
+  const allRareCollected = (st.gotRare?.length || 0) >= RARE.length;
   const doneToday = st.lastWorkout === getToday();
-  if (currentStreak >= 5 && currentStreak <= 6) {
+
+  if (allBaseCollected && allRareCollected) {
+    // Финальная фаза — 4-дневный цикл, только сияющие
+    if (currentStreak === 2 || currentStreak === 4) {
+      progressText.innerHTML = doneToday
+        ? '🌟 Сияющая звезда получена! Ты супер! 🌟'
+        : '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
+    } else if (currentStreak > 4) {
+      // Стрик > 4 — остаток от старого цикла, показываем нейтрально
+      progressText.innerHTML = doneToday
+        ? '💪 Зарядка засчитана! Приходи завтра'
+        : '💪 День 1 из 4 — ещё 1 день до 🌟';
+    } else {
+      const daysToShiny = currentStreak === 1 ? 1 : 1;
+      progressText.innerHTML = `💪 День ${currentStreak} из 4 — ещё ${daysToShiny} ${decl(daysToShiny,'день','дня','дней')} до 🌟`;
+    }
+  } else if (currentStreak >= 5 && currentStreak <= 6) {
     progressText.innerHTML = doneToday
       ? '⭐ Звезда получена! Молодец! ⭐'
       : '⭐ Сегодня ты получишь ЗВЕЗДУ! ⭐';
@@ -460,22 +477,9 @@ function render() {
       ? '🌟 Сияющая звезда получена! Ты супер! 🌟'
       : '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
   } else if (allBaseCollected) {
-    const allRareCollected = (st.gotRare?.length || 0) >= RARE.length;
-    const daysToShiny = 4 - currentStreak;
-    const daysToReset = 7 - currentStreak;
-    if (allRareCollected) {
-      if (currentStreak === 2 || currentStreak === 4) {
-        progressText.innerHTML = doneToday
-          ? '🌟 Сияющая звезда получена! Ты супер! 🌟'
-          : '🌟 Сегодня ты получишь СИЯЮЩУЮ ЗВЕЗДУ! 🌟';
-      } else {
-        const daysToShiny = currentStreak === 1 ? 1 : currentStreak === 3 ? 1 : 2;
-        progressText.innerHTML = `💪 День ${currentStreak} из 4 — ещё ${daysToShiny} ${decl(daysToShiny,'день','дня','дней')} до 🌟`;
-      }
-    } else {
-      const daysToStar = 5 - currentStreak;
-      progressText.innerHTML = `💪 День ${currentStreak} из 7 — ещё ${daysToStar} ${decl(daysToStar,'день','дня','дней')} до ⭐, ${daysToShiny} до 🌟`;
-    }
+    const daysToStar = 5 - currentStreak;
+    const daysToShiny2 = 7 - currentStreak;
+    progressText.innerHTML = `💪 День ${currentStreak} из 7 — ещё ${daysToStar} ${decl(daysToStar,'день','дня','дней')} до ⭐, ${daysToShiny2} до 🌟`;
   } else {
     keysGrid.style.display='grid';
     const keys = Math.min(st.keys || 0, 4);
@@ -548,6 +552,10 @@ function doWorkout() {
       } else if (newStreak === 4) {
         st.shinyStars=(st.shinyStars||0)+1; st.streak=0; save(); sound('rare');
         celebrate('🌟','Сияющая звезда!','У тебя '+st.shinyStars+' 🌟.');
+      } else {
+        // Стрик > 4 (остаток от старого цикла) — сбрасываем
+        st.streak = 1; save();
+        celebrate('💪', 'Зарядка засчитана!', PRAISE_PHRASES[Math.floor(Math.random()*PRAISE_PHRASES.length)]);
       }
     } else {
       // Базовые собраны, редкие ещё нет — дни 5-6 звезда, 7 сияющая
