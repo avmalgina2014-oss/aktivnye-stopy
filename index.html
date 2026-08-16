@@ -481,14 +481,22 @@ function render() {
     const daysToShiny2 = 7 - currentStreak;
     progressText.innerHTML = `💪 День ${currentStreak} из 7 — ещё ${daysToStar} ${decl(daysToStar,'день','дня','дней')} до ⭐, ${daysToShiny2} до 🌟`;
   } else {
-    keysGrid.style.display='grid';
-    const keys = Math.min(st.keys || 0, 4);
-    const needed = 4 - keys;
-    progressText.innerHTML = 'До суперсилы: ' + needed + ' ' + decl(needed,'зарядка','зарядки','зарядок');
-    for (let i = 0; i < 4; i++) {
-      const sl = document.getElementById('ks' + i);
-      if (i < keys) { sl.classList.add('filled'); sl.innerHTML='🔑'; }
-      else { sl.classList.remove('filled'); sl.innerHTML=''; }
+    if (currentStreak === 4) {
+      // Стрик 4 — завтра звезда, не показываем пустые ключи
+      progressText.innerHTML = '⭐ Завтра получишь ЗВЕЗДУ! ⭐';
+    } else if (currentStreak >= 5 && currentStreak <= 6) {
+      // Не должно сюда попасть если base не собрана, но на всякий случай
+      progressText.innerHTML = '⭐ Сегодня ты получишь ЗВЕЗДУ! ⭐';
+    } else {
+      keysGrid.style.display='grid';
+      const keys = Math.min(st.keys || 0, 4);
+      const needed = 4 - keys;
+      progressText.innerHTML = 'До суперсилы: ' + needed + ' ' + decl(needed,'зарядка','зарядки','зарядок');
+      for (let i = 0; i < 4; i++) {
+        const sl = document.getElementById('ks' + i);
+        if (i < keys) { sl.classList.add('filled'); sl.innerHTML='🔑'; }
+        else { sl.classList.remove('filled'); sl.innerHTML=''; }
+      }
     }
   }
   checkCooldown();
