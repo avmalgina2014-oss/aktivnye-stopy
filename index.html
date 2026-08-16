@@ -510,14 +510,43 @@ function checkCooldown() {
     const allBaseCollected = (st.gotBase?.length || 0) >= BASE.length;
     let message;
     if (allBaseCollected && allRareCollected) {
+      // Финальная фаза — 4-дневный цикл
       if (st.streak === 2 || st.streak === 4) {
         message = `День ${st.streak} из 4 засчитан — сияющая звезда получена! 🌟`;
+      } else if (st.streak === 1 || st.streak === 3) {
+        message = `День ${st.streak} из 4 засчитан! Завтра получишь 🌟`;
       } else {
-        const daysLeft = st.streak === 1 ? 1 : 1;
-        message = `День ${st.streak} из 4 засчитан! Ещё ${daysLeft} ${decl(daysLeft,'день','дня','дней')} до 🌟`;
+        message = `День ${st.streak} засчитан! Приходи завтра`;
+      }
+    } else if (allBaseCollected) {
+      // Промежуточная фаза — 7-дневный цикл
+      if (st.streak === 5) {
+        message = `День 5 из 7 засчитан — звезда получена! ⭐ Завтра ещё одна ⭐`;
+      } else if (st.streak === 6) {
+        message = `День 6 из 7 засчитан — звезда получена! ⭐ Завтра получишь 🌟`;
+      } else if (st.streak === 7) {
+        message = `День 7 из 7 засчитан — сияющая звезда получена! 🌟`;
+      } else if (st.streak === 4) {
+        message = `День 4 из 7 засчитан! Завтра получишь ⭐`;
+      } else {
+        const daysToStar = 5 - st.streak;
+        message = `День ${st.streak} из 7 засчитан! Ещё ${daysToStar} ${decl(daysToStar,'день','дня','дней')} до ⭐`;
       }
     } else {
-      message = diff>12*3600000 ? 'Отличная работа! Приходи завтра 🌙' : (diff>5*3600000 ? `Скоро! Осталось: ${timeString}` : (diff>3600000 ? `Совсем скоро! Осталось: ${timeString}` : `Уже почти! Осталось: ${timeString}`));
+      // Фаза базовых — ключи
+      if (st.keys >= 4) {
+        message = `Суперсила открыта! 🎉 Приходи завтра`;
+      } else if (st.streak === 5) {
+        message = `День 5 из 7 засчитан — звезда получена! ⭐ Завтра ещё одна ⭐`;
+      } else if (st.streak === 6) {
+        message = `День 6 из 7 засчитан — звезда получена! ⭐ Завтра получишь 🌟`;
+      } else if (st.streak === 7) {
+        message = `День 7 из 7 засчитан — сияющая звезда получена! 🌟`;
+      } else if (st.streak === 4) {
+        message = `День 4 из 7 засчитан! Завтра получишь ⭐`;
+      } else {
+        message = `День ${st.streak} из 7 засчитан! Ключей: ${st.keys} из 4 🔑`;
+      }
     }
     coolEl.innerHTML=`${message}<span class="cooldown-time">${timeString}</span>`;
   } else {
@@ -848,3 +877,4 @@ document.addEventListener('DOMContentLoaded', async function() {
 </script>
 </body>
 </html>
+
