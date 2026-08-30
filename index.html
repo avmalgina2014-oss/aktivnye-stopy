@@ -267,6 +267,7 @@ function setSyncDot(status) {
 // ─── Сохранение: localStorage + Firestore ────────────────────────────────────
 function save() {
   if (!playerKey) return;
+  st._savedAt = Date.now(); // ← метка времени сохранения
   localStorage.setItem('as_' + playerKey, JSON.stringify(st));
   setSyncDot('saving');
   db.collection('players').doc(playerKey).set(st)
@@ -286,14 +287,34 @@ function loadLocal() {
 }
 
 // ─── Загрузка из Firestore ────────────────────────────────────────────────────
+// Берём более свежие данные из двух источников по метке времени _savedAt
 async function loadCloud() {
   try {
     const doc = await db.collection('players').doc(playerKey).get();
     if (doc.exists) {
-      st = validateState(doc.data());
-      // Обновляем локальный кэш
-      localStorage.setItem('as_' + playerKey, JSON.stringify(st));
-      setSyncDot('ok');
+      const cloudData = validateState(doc.data());
+      const localRaw = localStorage.getItem('as_' + playerKey);
+      let localData = null;
+      try { localData = localRaw ? JSON.parse(localRaw) : null; } catch(e) {}
+
+      const cloudTime = cloudData._savedAt || 0;
+      const localTime = localData?._savedAt || 0;
+
+      if (localData && localTime > cloudTime) {
+        // Локальные данные свежее — используем их и синхронизируем в облако
+        console.log('Local data is newer, using local. Local:', localTime, 'Cloud:', cloudTime);
+        st = validateState(localData);
+        // Обновляем облако свежими локальными данными
+        db.collection('players').doc(playerKey).set(st)
+          .then(() => setSyncDot('ok'))
+          .catch(() => setSyncDot('err'));
+      } else {
+        // Облако свежее или равно — используем облако
+        console.log('Cloud data is newer or equal, using cloud. Local:', localTime, 'Cloud:', cloudTime);
+        st = cloudData;
+        localStorage.setItem('as_' + playerKey, JSON.stringify(st));
+        setSyncDot('ok');
+      }
       return true;
     }
   } catch(e) {
