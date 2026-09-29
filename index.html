@@ -148,8 +148,7 @@
   <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;max-width:400px;width:100%;">
     <img id="legendFinalImg" src="feniks.png" alt="Феникс" style="width:220px;max-width:80%;border-radius:20px;box-shadow:0 0 60px rgba(255,140,0,.8);animation:pulseFeniks 1.4s ease-in-out infinite;margin-bottom:20px;">
     <div style="font-family:'Fredoka One',cursive;font-size:36px;color:#FFD700;margin-bottom:8px;text-shadow:0 0 20px rgba(255,215,0,.8);">🔥 Ты — Легенда!</div>
-    <div style="font-size:15px;color:#e0d5ff;font-weight:700;margin-bottom:6px;line-height:1.6;">Все суперсилы собраны!<br>Ты прошёл(а) путь от Новичка до Легенды!</div>
-    <div id="legendWorkoutCount" style="font-family:'Fredoka One',cursive;font-size:18px;color:#FF9800;margin-bottom:24px;"></div>
+    <div style="font-size:15px;color:#e0d5ff;font-weight:700;margin-bottom:24px;line-height:1.6;">Все суперсилы собраны!<br>Ты прошёл(а) путь от Новичка до Легенды!</div>
     <button class="btn" onclick="showGalleryFromLegend()" style="background:linear-gradient(135deg,#FFD700,#FF8C00);margin-bottom:12px;box-shadow:0 4px 20px rgba(255,215,0,.5);">🏅 Моя коллекция</button>
     <button class="btn" onclick="restartGame()" style="background:linear-gradient(135deg,#667eea,#764ba2);">🔄 Начать заново</button>
     <div class="change-name" style="color:#aaa;margin-top:12px;" onclick="changeName()">Это не я → сменить имя</div>
@@ -752,8 +751,6 @@ function showLegendScreen() {
   document.getElementById('nameScreen').style.display='none';
   const ls = document.getElementById('legendScreen');
   ls.style.display='flex';
-  const count = Array.isArray(st.history) ? st.history.length : '—';
-  document.getElementById('legendWorkoutCount').textContent = `💪 Всего зарядок сделано: ${count}`;
   startSparks();
 }
 
@@ -906,4 +903,5 @@ document.addEventListener('DOMContentLoaded', async function() {
 </script>
 </body>
 </html>
+
 
